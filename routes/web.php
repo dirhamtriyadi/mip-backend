@@ -9,12 +9,15 @@ use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 
-Route::get("/", function () {
-    return view("welcome");
-});
+// Route::get("/", function () {
+//     return view("welcome");
+// });
 
-Route::get('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/login', [AuthController::class, 'postLogin'])->name('postLogin');
+Route::middleware(['guest'])->group(function () {
+    Route::get('/', [AuthController::class, 'login'])->name('login');
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/login', [AuthController::class, 'postLogin'])->name('postLogin');
+});
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get("/dashboard", function () {
