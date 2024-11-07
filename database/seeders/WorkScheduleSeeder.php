@@ -16,9 +16,9 @@ class WorkScheduleSeeder extends Seeder
         WorkSchedule::create([
             'work_start_time' => '08:00:00',
             'work_end_time' => '17:00:00',
-            'working_days' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+            'working_days' => '["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]',
             'created_at' => now(),
             'updated_at' => now()
-        ])
+        ]);
     }
 }
