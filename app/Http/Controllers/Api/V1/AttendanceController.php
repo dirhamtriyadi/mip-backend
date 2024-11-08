@@ -20,7 +20,7 @@ class AttendanceController extends Controller
         $validator = Validator::make($request->all(), [
             // 'code' => 'required',
             'date' => 'required|date',
-            'time_check_in' => 'required|date_format:H:i',
+            'time_check_in' => 'required|date_format:H:i:s',
             'type' => 'required|in:present,sick,permit',
             'description_check_in' => 'nullable',
             'image_check_in' => 'nullable|image',
@@ -210,7 +210,7 @@ class AttendanceController extends Controller
         $validator = Validator::make($request->all(), [
             // 'code' => 'required',
             'date' => 'required|date',
-            'time_check_in' => 'required|date_format:H:i',
+            'time_check_in' => 'required|date_format:H:i:s',
             'type' => 'required|in:present,sick,permit',
             'description_check_in' => 'nullable',
             'image_check_in' => 'nullable|image',
@@ -301,7 +301,7 @@ class AttendanceController extends Controller
         $validator = Validator::make($request->all(), [
             // 'code' => 'required',
             'date' => 'required|date',
-            'time_check_in' => 'required|date_format:H:i',
+            'time_check_in' => 'required|date_format:H:i:s',
             'type' => 'required|in:present,sick,permit',
             'description_check_in' => 'nullable',
             'image_check_in' => 'nullable|image',
