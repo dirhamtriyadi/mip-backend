@@ -13,6 +13,17 @@ use App\Http\Resources\Api\V1\AttendanceResource;
 
 class AttendanceController extends Controller
 {
+    public function workSchedules()
+    {
+        $workSchedule = WorkSchedule::first();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data jadwal kerja berhasil diambil.',
+            'data' => $workSchedule,
+        ], 200);
+    }
+
     public function checkIn(Request $request)
     {
         $user = auth()->user();
@@ -132,7 +143,7 @@ class AttendanceController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'date' => 'required|date',
-            'time_check_out' => 'required|date_format:H:i',
+            'time_check_out' => 'required|date_format:H:i:s',
             'description_check_out' => 'nullable',
             'image_check_out' => 'nullable|image',
             'location_check_out' => 'nullable',

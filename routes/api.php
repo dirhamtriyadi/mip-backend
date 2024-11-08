@@ -15,6 +15,7 @@ Route::post('/v1/login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('v1')->group(function () {
+        Route::get('attendances/work-schedules', [AttendanceController::class, 'workSchedules'])->name('attendances.work-schedules');
         Route::post('attendances/check-in', [AttendanceController::class, 'checkIn'])->name('attendances.check-in');
         Route::post('attendances/check-out', [AttendanceController::class, 'checkOut'])->name('attendances.check-out');
         Route::post('attendances/sick', [AttendanceController::class, 'sick'])->name('attendances.sick');
