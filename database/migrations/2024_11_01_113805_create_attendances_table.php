@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('late_duration')->nullable(); // durasi terlambat
             $table->integer('early_leave_duration')->nullable(); // durasi pulang lebih awal
             $table->enum('type', ['present', 'sick', 'permit'])->comment('Tipe absensi');
-            $table->string('description_check_in')->nullable()->comment('Deskripsi absensi');
-            $table->string('description_check_out')->nullable()->comment('Deskripsi absensi');
+            $table->string('reason_late')->nullable()->comment('Deskripsi absensi');
+            $table->string('reason_early_out')->nullable()->comment('Deskripsi absensi');
             $table->string('image_check_in')->nullable()->comment('Bukti absensi masuk');
             $table->string('image_check_out')->nullable()->comment('Bukti absensi keluar');
             $table->string('location_check_in')->nullable()->comment('Lokasi absensi');

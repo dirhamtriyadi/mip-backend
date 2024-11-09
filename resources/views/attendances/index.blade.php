@@ -95,8 +95,8 @@
                                                             <span class="badge badge-warning">{{ $value->type }}</span>
                                                         @endif
                                                     </td>
-                                                    <td>{{ $value->description_check_in ?? '-' }}</td>
-                                                    <td>{{ $value->description_check_out ?? '-' }}</td>
+                                                    <td>{{ $value->reason_late ?? '-' }}</td>
+                                                    <td>{{ $value->reason_early_out ?? '-' }}</td>
                                                     {{-- redirect to new tab see image --}}
                                                     <td><a href="{{ asset('images/attendances/' . $value->image_check_in) }}" target="_blank">Masuk</a> {!! $value->image_check_out ? '| <a href="' . asset('images/attendances/' . $value->image_check_out) . '" target="_blank">Pulang</a>' : '| -' !!}</td>
                                                     {{-- redirect to gmpas with latitude and longititude and split string $value->image --}}

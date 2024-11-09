@@ -226,8 +226,8 @@
                     body += '<td>' + (item.early_leave_duration ?? '-') + '</td>'
                     body += '<td>' + (item.time_check_out ? moment(item.time_check_out, 'HH:mm:ss').format('HH:mm') : '-') + '</td>';
                     body += '<td>' + (item.type == 'present' ? '<span class="badge badge-success">' + item.type + '</span>' : (item.type == 'sick' ? '<span class="badge badge-info">' + item.type + '</span>' : '<span class="badge badge-danger">' + item.type + '</span>')) + '</td>';
-                    body += '<td>' + (item.description_check_in == null ? '-' : item.description_check_in) + '</td>';
-                    body += '<td>' + (item.description_check_out == null ? '-' : item.description_check_out) + '</td>';
+                    body += '<td>' + (item.reason_late == null ? '-' : item.reason_late) + '</td>';
+                    body += '<td>' + (item.reason_early_out == null ? '-' : item.reason_early_out) + '</td>';
                     body += `<td>` + (item.image_check_in ? `<a href='{{ asset('images/attendances/`+item.image_check_in+`') }}' target='_blank'>Masuk</a>` : '-') + (item.image_check_out ? ` | <a href='{{ asset('images/attendances/`+item.image_check_out+`') }}' target='_blank'>Pulang</a>` : '-') + `</td>`;
                     let locationCheckIn = item.location_check_in ? item.location_check_in.split(',') : null;
                     let locationCheckOut = item.location_check_out ? item.location_check_out.split(',') : null;

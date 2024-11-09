@@ -136,20 +136,20 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="description_check_in">Keterangan Masuk</label>
-                                        <input type="text" class="form-control" id="description_check_in"
-                                            name="description_check_in" placeholder="Masukkan Keterangan"
-                                            value="{{ old('description_check_in', $data->description_check_in) }}">
-                                        @error('description_check_in')
+                                        <label for="reason_late">Keterangan Masuk</label>
+                                        <input type="text" class="form-control" id="reason_late"
+                                            name="reason_late" placeholder="Masukkan Keterangan"
+                                            value="{{ old('reason_late', $data->reason_late) }}">
+                                        @error('reason_late')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="description_check_out">Keterangan Pulang</label>
-                                        <input type="text" class="form-control" id="description_check_out"
-                                            name="description_check_out" placeholder="Masukkan Nama"
-                                            value="{{ old('description_check_out', $data->description_check_in) }}">
-                                        @error('description_check_out')
+                                        <label for="reason_early_out">Keterangan Pulang</label>
+                                        <input type="text" class="form-control" id="reason_early_out"
+                                            name="reason_early_out" placeholder="Masukkan Nama"
+                                            value="{{ old('reason_early_out', $data->reason_late) }}">
+                                        @error('reason_early_out')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>

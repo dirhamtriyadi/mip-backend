@@ -33,7 +33,7 @@ class AttendanceController extends Controller
             'date' => 'required|date',
             'time_check_in' => 'required|date_format:H:i:s',
             'type' => 'required|in:present,sick,permit',
-            'description_check_in' => 'nullable',
+            'reason_late' => 'nullable',
             'image_check_in' => 'nullable|image',
             'location_check_in' => 'nullable',
         ]);
@@ -144,7 +144,7 @@ class AttendanceController extends Controller
         $validator = Validator::make($request->all(), [
             'date' => 'required|date',
             'time_check_out' => 'required|date_format:H:i:s',
-            'description_check_out' => 'nullable',
+            'reason_early_out' => 'nullable',
             'image_check_out' => 'nullable|image',
             'location_check_out' => 'nullable',
         ]);
@@ -223,7 +223,7 @@ class AttendanceController extends Controller
             'date' => 'required|date',
             'time_check_in' => 'required|date_format:H:i:s',
             'type' => 'required|in:present,sick,permit',
-            'description_check_in' => 'nullable',
+            'reason_late' => 'nullable',
             'image_check_in' => 'nullable|image',
             'location_check_in' => 'nullable',
         ]);
@@ -314,7 +314,7 @@ class AttendanceController extends Controller
             'date' => 'required|date',
             'time_check_in' => 'required|date_format:H:i:s',
             'type' => 'required|in:present,sick,permit',
-            'description_check_in' => 'nullable',
+            'reason_late' => 'nullable',
             'image_check_in' => 'nullable|image',
             'location_check_in' => 'nullable',
         ]);
