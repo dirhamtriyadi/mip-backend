@@ -9,7 +9,7 @@ use Validator;
 
 class LeaveController extends Controller
 {
-    public function submission(Reques $request)
+    public function submission(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'start_date' => 'required|date',
