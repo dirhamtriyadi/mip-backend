@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Auth;
 use Validator;
 use App\Models\User;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Api\V1\UserResource;
 
 class AuthController extends Controller
 {
