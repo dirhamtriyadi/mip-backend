@@ -6,6 +6,7 @@ use App\Http\Controllers\AnnualHolidayController;
 use App\Http\Controllers\WorkScheduleController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 
@@ -30,6 +31,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('work-schedules', WorkScheduleController::class);
     Route::resource('attendances', AttendanceController::class);
     Route::get('attendance-reports', [AttendanceReportController::class, 'index'])->name('attendance-reports.index');
+    Route::resource('leaves', LeaveController::class);
+    Route::post('leaves/{leave}/response', [LeaveController::class, 'response'])->name('leaves.response');
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
 });

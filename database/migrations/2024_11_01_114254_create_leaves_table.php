@@ -16,10 +16,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->date('start_date')->comment('Tanggal mulai cuti');
             $table->date('end_date')->comment('Tanggal selesai cuti');
-            $table->enum('type', ['annual', 'sick', 'permission'])->comment('Tipe cuti');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->comment('Status cuti');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending')->comment('Status cuti');
             $table->string('response')->nullable()->comment('Balasan dari atasan');
-            $table->string('description')->nullable()->comment('Deskripsi cuti');
+            // $table->string('description')->nullable()->comment('Deskripsi cuti');
             $table->timestamps();
         });
     }

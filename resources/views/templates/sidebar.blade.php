@@ -69,8 +69,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item {{ Route::is('attendances.*') | Route::is('attendance-reports.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is('attendances.*') | Route::is('attendance-reports.*') ? 'active' : '' }}">
+                <li class="nav-item {{ Route::is('attendances.*') | Route::is('attendance-reports.*') | Route::is('leaves.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ Route::is('attendances.*') | Route::is('attendance-reports.*') | Route::is('leaves.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-briefcase"></i>
                         <p>
                             Absen
@@ -88,6 +88,12 @@
                             <a href="{{ route('attendance-reports.index') }}" class="nav-link {{ Route::is('attendance-reports.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Laporan Absen</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('leaves.index') }}" class="nav-link {{ Route::is('leaves.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Cuti</p>
                             </a>
                         </li>
                     </ul>
