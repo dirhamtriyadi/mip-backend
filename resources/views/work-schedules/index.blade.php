@@ -29,7 +29,7 @@
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Title</h3>
+                                <h3 class="card-title">Jam dan Hari Kerja</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"
@@ -60,8 +60,8 @@
                                             @forelse ($data as $item => $value)
                                                 <tr>
                                                     <td>{{ $item + 1 }}</td>
-                                                    <td>{{ $value->work_start_time }}</td>
-                                                    <td>{{ $value->work_end_time }}</td>
+                                                    <td>{{ Carbon\Carbon::parse($value->work_start_time)->format('H:i') }}</td>
+                                                    <td>{{ Carbon\Carbon::parse($value->work_end_time)->format('H:i') }}</td>
                                                     <td>{{ json_encode($value->working_days) }}</td>
                                                     <td class="d-flex justify-content-center">
                                                         <a href="{{ route('work-schedules.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>

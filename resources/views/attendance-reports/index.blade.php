@@ -84,6 +84,8 @@
                                                 <th>No</th>
                                                 <th>Nama</th>
                                                 <th>Hadir</th>
+                                                <th>Masuk Terlambat</th>
+                                                <th>Pulang Lebih Awal</th>
                                                 <th>Sakit</th>
                                                 <th>Izin</th>
                                                 <th>Aksi</th>
@@ -95,6 +97,8 @@
                                                     <td>{{ $item + 1 }}</td>
                                                     <td>{{ $value->name }}</td>
                                                     <td>{{ $value->attendances->where('type', 'present')->count() }}</td>
+                                                    <td>{{ $value->attendances->where('type', 'present')->where('late_duration', '<', 0)->count() }}</td>
+                                                    <td>{{ $value->attendances->where('type', 'present')->where('early_leave_duration', '<', 0)->count() }}</td>
                                                     <td>{{ $value->attendances->where('type', 'sick')->count() }}</td>
                                                     <td>{{ $value->attendances->where('type', 'permit')->count() }}</td>
                                                     <td class="d-flex justify-content-center">
