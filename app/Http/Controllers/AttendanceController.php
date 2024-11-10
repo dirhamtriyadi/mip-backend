@@ -16,7 +16,7 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $attendaces = Attendance::latest()->get();
+        $attendaces = Attendance::latest()->orderBy('date', 'desc')->get();
 
         return view('attendances.index', [
             'data' => $attendaces
