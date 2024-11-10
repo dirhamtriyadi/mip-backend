@@ -97,19 +97,23 @@
                                                     <td><a href="{{ asset('images/attendances/' . $value->image_check_in) }}" target="_blank">Masuk</a> {!! $value->image_check_out ? '| <a href="' . asset('images/attendances/' . $value->image_check_out) . '" target="_blank">Pulang</a>' : '| -' !!}</td>
                                                     {{-- redirect to gmpas with latitude and longititude and split string $value->image --}}
                                                     @php
-                                                        $location_check_in = explode(',', $value->location_check_in);
+                                                        if (isset($value->location_check_in)) {
+                                                            $location_check_in = explode(',', $value->location_check_in);
+                                                        }
                                                         if (isset($value->location_check_out)) {
                                                             $location_check_out = explode(',', $value->location_check_out);
                                                         }
 
-                                                        $latitude_check_in = $location_check_in[0];
-                                                        $longitude_check_in = $location_check_in[1];
+                                                        if (isset($value->location_check_in)) {
+                                                            $latitude_check_in = $location_check_in[0];
+                                                            $longitude_check_in = $location_check_in[1];
+                                                        }
                                                         if (isset($value->location_check_out)) {
                                                             $latitude_check_out = $location_check_out[0];
                                                             $longitude_check_out = $location_check_out[1];
                                                         }
                                                     @endphp
-                                                    <td><a href="https://www.google.com/maps/search/?api=1&query={{ $latitude_check_in }},{{ $longitude_check_in }}" target="_blank">Masuk</a> {!! $value->location_check_out ? '| <a href="https://www.google.com/maps/search/?api=1&query=' . $latitude_check_out . ',' . $longitude_check_out .'" target="_blank">Pulang</a>' : '| -' !!}</td>
+                                                    <td>{!! $value->location_check_in ? '<a href="https://www.google.com/maps/search/?api=1&query=' . $latitude_check_in . ',' . $longitude_check_in .'" target="_blank">Masuk</a>' : '-' !!} {!! $value->location_check_out ? '| <a href="https://www.google.com/maps/search/?api=1&query=' . $latitude_check_out . ',' . $longitude_check_out .'" target="_blank">Pulang</a>' : '| -' !!}</td>
                                                     <td class="d-flex justify-content-center">
                                                         <a href="{{ route('attendances.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
                                                         <form action="{{ route('attendances.destroy', $value->id) }}" method="post">
