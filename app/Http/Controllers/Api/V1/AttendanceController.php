@@ -219,12 +219,11 @@ class AttendanceController extends Controller
         $user = auth()->user();
 
         $validator = Validator::make($request->all(), [
-            // 'code' => 'required',
-            'date' => 'required|date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
             'time_check_in' => 'required|date_format:H:i:s',
             'type' => 'required|in:present,sick,permit',
-            'reason_late' => 'nullable',
-            'image_check_in' => 'nullable|image',
+            'image_check_in' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'location_check_in' => 'nullable',
         ]);
 
@@ -237,51 +236,6 @@ class AttendanceController extends Controller
 
         $validatedData = $validator->validated();
 
-        // Cek apakah hari ini adalah hari libur
-        $isHoliday = AnnualHoliday::where('holiday_date', $validatedData['date'])->exists();
-        if ($isHoliday) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Hari ini adalah hari libur.',
-            ], 400);
-        }
-
-        // Ambil jadwal kerja
-        $workSchedule = WorkSchedule::first();
-        if (!$workSchedule) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Jadwal kerja belum diatur.',
-            ], 400);
-        }
-
-        // Periksa apakah hari ini adalah hari kerja
-        $dayOfWeek = Carbon::parse($validatedData['date'])->format('l');
-        if (!in_array($dayOfWeek, $workSchedule->working_days)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Hari ini bukan hari kerja.',
-            ], 400);
-        }
-
-        // Cek apakah user absen sakit hari ini
-        $isSickIn = Attendance::where('user_id', $user->id)
-            ->where('date', $validatedData['date'])
-            ->where('type', 'sick')
-            ->exists();
-        if ($isSickIn) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Anda sudah absen sakit hari ini.'
-            ], 400);
-        }
-
-        // Hitung keterlambatan
-        $checkInTime = Carbon::parse($validatedData['time_check_in']);
-        $workStartTime = Carbon::parse($workSchedule->work_start_time);
-        $lateDuration = $checkInTime->greaterThan($workStartTime) ? $checkInTime->diffInMinutes($workStartTime) : 0;
-        $validatedData['late_duration'] = $lateDuration;
-
         // Save image check in
         if ($request->hasFile('image_check_in')) {
             // save image to public/images/attendances and change name file to name user-timestamp
@@ -291,17 +245,33 @@ class AttendanceController extends Controller
             $validatedData['image_check_in'] = $fileName;
         }
 
-        // generate code absen masuk (nama user + 1/1/2021)
-        $validatedData['code'] = $user->name . Carbon::parse($validatedData['date'])->format('d/m/Y');
-        $validatedData['user_id'] = auth()->id();
-        $validatedData['created_by'] = auth()->id();
+        // mapping $start_date to $end_date for input data
+        $datas = [];
+        $start = Carbon::parse($request->start_date);
+        $end = Carbon::parse($request->end_date);
+        for ($date = $start; $date->lte($end); $date->addDay()) {
+            // generate code absen masuk (nama user + 1/1/2021)
+            $validatedData['code'] = $user->name . $date->format('Y-m-d');
+            $validatedData['user_id'] = $user->id;
+            $validatedData['created_by'] = $user->id;
 
-        $data = Attendance::create($validatedData);
+            $data = Attendance::create([
+                'user_id' => $validatedData['user_id'],
+                'code' => $validatedData['code'],
+                'date' => $date->format('Y-m-d'),
+                'time_check_in' => $validatedData['time_check_in'],
+                'type' => $validatedData['type'],
+                'image_check_in' => $validatedData['image_check_in'],
+                'location_check_in' => $validatedData['location_check_in'],
+            ]);
+
+            $datas[] = $data;
+        }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Absen sakit berhasil.',
-            'data' => new AttendanceResource($data),
+            'data' => new AttendanceResource($datas),
         ], 201);
     }
 
@@ -366,12 +336,6 @@ class AttendanceController extends Controller
                 'message' => 'Anda sudah absen izin hari ini.'
             ], 400);
         }
-
-        // Hitung keterlambatan
-        $checkInTime = Carbon::parse($validatedData['time_check_in']);
-        $workStartTime = Carbon::parse($workSchedule->work_start_time);
-        $lateDuration = $checkInTime->greaterThan($workStartTime) ? $checkInTime->diffInMinutes($workStartTime) : 0;
-        $validatedData['late_duration'] = $lateDuration;
 
         // Save image check in
         if ($request->hasFile('image_check_in')) {
