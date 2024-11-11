@@ -88,6 +88,7 @@
                                                 <th>Pulang Lebih Awal</th>
                                                 <th>Sakit</th>
                                                 <th>Izin</th>
+                                                <th>Cuti</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -101,14 +102,27 @@
                                                     <td>{{ $value->attendances->where('type', 'present')->where('early_leave_duration', '<', 0)->count() }}</td>
                                                     <td>{{ $value->attendances->where('type', 'sick')->count() }}</td>
                                                     <td>{{ $value->attendances->where('type', 'permit')->count() }}</td>
-                                                    <td class="d-flex justify-content-center">
-                                                        <button id="btn-detail" type="button" class="btn btn-sm btn-info" data-toggle="modal"
-                                                            data-target="#modal-xl" data-attendance="{{ $value }}">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-primary ml-1">
-                                                            <i class="fas fa-download"></i>
-                                                        </button>
+                                                    {{-- <td>{{ $value->leaves }}</td> --}}
+                                                    {{-- map $value->leaves and return start_date and end_date --}}
+                                                    <td>
+                                                        <b>Total cuti : </b>{{ $value->leaves->count() }}<br>
+                                                        @forelse ($value->leaves as $item)
+                                                        {{-- if latest data not add comma --}}
+                                                            {{ Carbon\Carbon::parse($item->start_date )->format('d-m-Y') }} s/d {{ Carbon\Carbon::parse($item->start_date )->format('d-m-Y') }}{{ $loop->last ? '' : ', ' }}
+                                                        @empty
+                                                            0
+                                                        @endforelse
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <button id="btn-detail" type="button" class="btn btn-sm btn-info" data-toggle="modal"
+                                                                data-target="#modal-xl" data-attendance="{{ $value }}">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-primary ml-1">
+                                                                <i class="fas fa-download"></i>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                     {{-- <td class="d-flex justify-content-center">
                                                         <a href="{{ route('users.edit', $value->id) }}"

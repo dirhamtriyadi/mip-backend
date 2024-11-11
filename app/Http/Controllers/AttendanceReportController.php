@@ -20,6 +20,8 @@ class AttendanceReportController extends Controller
         // }])->get();
         $attendanceReports = User::with(['attendances' => function ($query) use ($start_date, $end_date) {
             $query->whereBetween('date', [$start_date, $end_date]);
+        }, 'leaves' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('start_date', [$start_date, $end_date]);
         }])->get();
 
         return view('attendance-reports.index', [
