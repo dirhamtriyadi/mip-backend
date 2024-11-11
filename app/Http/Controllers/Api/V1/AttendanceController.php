@@ -236,6 +236,69 @@ class AttendanceController extends Controller
 
         $validatedData = $validator->validated();
 
+        // Cek apakah hari ini adalah hari libur
+        $isHoliday = AnnualHoliday::where('holiday_date', $validatedData['date'])->exists();
+        if ($isHoliday) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Hari ini adalah hari libur.',
+            ], 400);
+        }
+
+        // Ambil jadwal kerja
+        $workSchedule = WorkSchedule::first();
+        if (!$workSchedule) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jadwal kerja belum diatur.',
+            ], 400);
+        }
+
+        // Periksa apakah hari ini adalah hari kerja
+        $dayOfWeek = Carbon::parse($validatedData['date'])->format('l');
+        if (!in_array($dayOfWeek, $workSchedule->working_days)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Hari ini bukan hari kerja.',
+            ], 400);
+        }
+
+        // Cek apakah user sudah absen masuk hari ini
+        $isCheckIn = Attendance::where('user_id', $user->id)
+            ->where('date', $validatedData['date'])
+            ->where('type', 'present')
+            ->exists();
+        if ($isCheckIn) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda sudah absen masuk hari ini.',
+            ], 400);
+        }
+
+        // Cek apakah user absen sakit hari ini
+        $isSickIn = Attendance::where('user_id', $user->id)
+            ->where('date', $validatedData['date'])
+            ->where('type', 'sick')
+            ->exists();
+        if ($isSickIn) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda sudah absen sakit hari ini.'
+            ], 400);
+        }
+
+        // Cek apakah user absen izin hari ini
+        $isPermitIn = Attendance::where('user_id', $user->id)
+            ->where('date', $validatedData['date'])
+            ->where('type', 'permit')
+            ->exists();
+        if ($isPermitIn) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda sudah absen izin hari ini.'
+            ], 400);
+        }
+
         // Save image check in
         if ($request->hasFile('image_check_in')) {
             // save image to public/images/attendances and change name file to name user-timestamp
@@ -322,6 +385,30 @@ class AttendanceController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Hari ini bukan hari kerja.',
+            ], 400);
+        }
+
+        // Cek apakah user sudah absen masuk hari ini
+        $isCheckIn = Attendance::where('user_id', $user->id)
+            ->where('date', $validatedData['date'])
+            ->where('type', 'present')
+            ->exists();
+        if ($isCheckIn) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda sudah absen masuk hari ini.',
+            ], 400);
+        }
+
+        // Cek apakah user absen sakit hari ini
+        $isSickIn = Attendance::where('user_id', $user->id)
+            ->where('date', $validatedData['date'])
+            ->where('type', 'sick')
+            ->exists();
+        if ($isSickIn) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda sudah absen sakit hari ini.'
             ], 400);
         }
 
