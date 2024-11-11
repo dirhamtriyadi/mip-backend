@@ -237,7 +237,7 @@ class AttendanceController extends Controller
         $validatedData = $validator->validated();
 
         // Cek apakah hari ini adalah hari libur
-        $isHoliday = AnnualHoliday::where('holiday_date', $validatedData['date'])->exists();
+        $isHoliday = AnnualHoliday::where('holiday_date', $validatedData['start_date'])->exists();
         if ($isHoliday) {
             return response()->json([
                 'status' => 'error',
@@ -255,7 +255,7 @@ class AttendanceController extends Controller
         }
 
         // Periksa apakah hari ini adalah hari kerja
-        $dayOfWeek = Carbon::parse($validatedData['date'])->format('l');
+        $dayOfWeek = Carbon::parse($validatedData['start_date'])->format('l');
         if (!in_array($dayOfWeek, $workSchedule->working_days)) {
             return response()->json([
                 'status' => 'error',
@@ -265,7 +265,7 @@ class AttendanceController extends Controller
 
         // Cek apakah user sudah absen masuk hari ini
         $isCheckIn = Attendance::where('user_id', $user->id)
-            ->where('date', $validatedData['date'])
+            ->where('date', $validatedData['start_date'])
             ->where('type', 'present')
             ->exists();
         if ($isCheckIn) {
@@ -277,7 +277,7 @@ class AttendanceController extends Controller
 
         // Cek apakah user absen sakit hari ini
         $isSickIn = Attendance::where('user_id', $user->id)
-            ->where('date', $validatedData['date'])
+            ->where('date', $validatedData['start_date'])
             ->where('type', 'sick')
             ->exists();
         if ($isSickIn) {
@@ -289,7 +289,7 @@ class AttendanceController extends Controller
 
         // Cek apakah user absen izin hari ini
         $isPermitIn = Attendance::where('user_id', $user->id)
-            ->where('date', $validatedData['date'])
+            ->where('date', $validatedData['start_date'])
             ->where('type', 'permit')
             ->exists();
         if ($isPermitIn) {
