@@ -46,8 +46,8 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') ? 'active' : '' }}">
+                <li class="nav-item {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('bank-accounts.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('bank-accounts.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-database"></i>
                         <p>
                             Master Data
@@ -65,6 +65,12 @@
                             <a href="{{ route('annual-holidays.index') }}" class="nav-link {{ Route::is('annual-holidays.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Hari Libur</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('bank-accounts.index') }}" class="nav-link {{ Route::is('bank-accounts.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Akun Bank</p>
                             </a>
                         </li>
                     </ul>

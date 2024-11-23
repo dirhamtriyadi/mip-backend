@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AnnualHolidayController;
 use App\Http\Controllers\WorkScheduleController;
+use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\LeaveController;
@@ -29,6 +30,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('annual-holidays', AnnualHolidayController::class);
     Route::resource('work-schedules', WorkScheduleController::class);
+    Route::resource('bank-accounts', BankAccountController::class);
     Route::resource('attendances', AttendanceController::class);
     Route::get('attendance-reports', [AttendanceReportController::class, 'index'])->name('attendance-reports.index');
     Route::resource('leaves', LeaveController::class);
