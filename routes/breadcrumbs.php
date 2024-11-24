@@ -89,6 +89,13 @@ Breadcrumbs::for('attendances.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('attendances.create'));
 });
 
+// Dashboard > Absen > Attendance Reports
+Breadcrumbs::for('attendance-reports', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Absen');
+    $trail->push('Attendance Reports', route('attendance-reports.index'));
+});
+
 // Dashboard > Roles
 Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
