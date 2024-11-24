@@ -27,12 +27,24 @@ class Attendance extends Model
 
     protected function pruning(): void
     {
-        // delete image from public/images/attendances
-        $filePath = public_path('images/attendances/' . $this->image);
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        } else {
-            \Log::warning("File not found for pruning: " . $filePath);
+        // delete image check in or check out from public/images/attendances
+        if ($this->image_check_in) {
+            $filePathImageCheckIn = public_path('images/attendances/' . $this->image_check_in);
+            if (file_exists($filePathImageCheckIn)) {
+                unlink($filePathImageCheckIn);
+            } else {
+                \Log::warning("File not found for pruning: " . $filePathImageCheckIn);
+            }
         }
+
+        if ($this->image_check_out) {
+            $filePathImageCheckOut = public_path('images/attendances/' . $this->image_check_out);
+            if (file_exists($filePathImageCheckOut)) {
+                unlink($filePathImageCheckOut);
+            } else {
+                \Log::warning("File not found for pruning: " . $filePathImageCheckOut);
+            }
+        }
+
     }
 }

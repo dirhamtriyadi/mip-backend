@@ -150,19 +150,19 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
-                                        <label for="image_check_out">Foto Selfie</label>
+                                        <label for="image_check_in">Foto Selfie Masuk</label>
 
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="image_check_out"
-                                                name="image_check_out">
-                                            <label class="custom-file-label" for="image_check_out">Choose file</label>
+                                            <input type="file" class="custom-file-input" id="image_check_in"
+                                                name="image_check_in">
+                                            <label class="custom-file-label" for="image_check_in">Choose file</label>
                                         </div>
-                                        @error('image_check_out')
+                                        @error('image_check_in')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
-                                        @if ($data->image_check_out)
+                                        @if ($data->image_check_in)
                                             <div class="mt-2">
-                                                <img src="{{ asset('images/attendances/' . $data->image_check_out) }}" alt="Current Image" width="150">
+                                                <img src="{{ asset('images/attendances/' . $data->image_check_in) }}" alt="Current Image" width="150">
                                             </div>
                                         @endif
                                     </div>
@@ -177,9 +177,9 @@
                                         @error('image_check_out')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
-                                        @if ($data->image_check_in)
+                                        @if ($data->image_check_out)
                                             <div class="mt-2">
-                                                <img src="{{ asset('images/attendances/' . $data->image_check_in) }}" alt="Current Image" width="150">
+                                                <img src="{{ asset('images/attendances/' . $data->image_check_out) }}" alt="Current Image" width="150">
                                             </div>
                                         @endif
                                     </div>
