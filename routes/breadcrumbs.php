@@ -32,6 +32,25 @@ Breadcrumbs::for('work-schedules.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('work-schedules.create'));
 });
 
+// Dashboard > Master Data > Annual Holidays
+Breadcrumbs::for('annual-holidays', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Master Data');
+    $trail->push('Annual Holidays', route('annual-holidays.index'));
+});
+
+// Dashboard > Master Data > Annual Holidays > [Annual Holiday] > Edit
+Breadcrumbs::for('annual-holidays.edit', function (BreadcrumbTrail $trail, $annualHoliday) {
+    $trail->parent('annual-holidays');
+    $trail->push('Edit', route('annual-holidays.edit', $annualHoliday));
+});
+
+// Dashboard > Master Data > Annual Holidays > Create
+Breadcrumbs::for('annual-holidays.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('annual-holidays');
+    $trail->push('Create', route('annual-holidays.create'));
+});
+
 // Dashboard > Roles
 Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
