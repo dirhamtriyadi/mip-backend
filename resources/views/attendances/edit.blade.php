@@ -20,11 +20,7 @@
                         <h1>Edit Kehadiran</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{-- <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Kehadiran</a></li>
-                            <li class="breadcrumb-item active">Edit Kehadiran</li>
-                        </ol> --}}
+                        {{  Breadcrumbs::render('attendances.edit', $data->id) }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -98,7 +94,7 @@
                                         <label for="time_check_in">Jam Masuk</label>
                                         <div class="input-group date" id="time_check_in" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
-                                                data-target="#time_check_in" name="time" placeholder="Masukan Jam" value="{{ old('time_check_in', $data->time_check_in) }}">
+                                                data-target="#time_check_in" name="time_check_in" placeholder="Masukan Jam" value="{{ old('time_check_in', $data->time_check_in) }}">
                                             <div class="input-group-append" data-target="#time_check_in"
                                                 data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-clock"></i></div>
@@ -262,14 +258,14 @@
                 let name = $(this).find(':selected').text();
                 let date = $('#reservationdate').val();
                 // create code with name and timestamp
-                $('#code').val(name + moment(date).format('DD/MM/YYYY/'));
+                $('#code').val(name + moment(date).format('DD/MM/YYYY'));
             });
 
             $('#reservationdate').on('change.datetimepicker', function() {
                 let name = $('#user_id').find(':selected').text();
                 let date = $('.datetimepicker-input').val();
                 // create code with name and timestamp
-                $('#code').val(name + moment(date).format('DD/MM/YYYY/'));
+                $('#code').val(name + moment(date).format('DD/MM/YYYY'));
             });
         });
     </script>

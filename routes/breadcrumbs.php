@@ -70,6 +70,25 @@ Breadcrumbs::for('bank-accounts.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('bank-accounts.create'));
 });
 
+// Dashboard > Absen > Attendances
+Breadcrumbs::for('attendances', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Absen');
+    $trail->push('Attendances', route('attendances.index'));
+});
+
+// Dashboard > Absen > Attendances > [Attendance] > Edit
+Breadcrumbs::for('attendances.edit', function (BreadcrumbTrail $trail, $attendance) {
+    $trail->parent('attendances');
+    $trail->push('Edit', route('attendances.edit', $attendance));
+});
+
+// Dashboard > Absen > Attendances > Create
+Breadcrumbs::for('attendances.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('attendances');
+    $trail->push('Create', route('attendances.create'));
+});
+
 // Dashboard > Roles
 Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

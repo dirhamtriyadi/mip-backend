@@ -70,7 +70,6 @@ class AttendanceController extends Controller
         // Periksa apakah hari ini adalah hari kerja
         $dayOfWeek = Carbon::parse($validatedData['date'])->format('l');
         if (!in_array($dayOfWeek, $workSchedule->working_days)) {
-            dd('Hari ini bukan hari kerja', $dayOfWeek, $workSchedule->working_days);
             return redirect()->back()->with('error', 'Hari ini bukan hari kerja');
         }
 

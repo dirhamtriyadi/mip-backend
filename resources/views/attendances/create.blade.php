@@ -20,11 +20,7 @@
                         <h1>Tambah Kehadiran</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{-- <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Layout</a></li>
-                            <li class="breadcrumb-item active">Fixed Layout</li>
-                        </ol> --}}
+                        {{  Breadcrumbs::render('attendances.create') }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -276,14 +272,14 @@
                 let name = $(this).find(':selected').text();
                 let date = $('#reservationdate').val();
                 // create code with name and timestamp
-                $('#code').val(name + moment(date).format('DD/MM/YYYY/'));
+                $('#code').val(name + moment(date).format('DD/MM/YYYY'));
             });
 
             $('#reservationdate').on('change.datetimepicker', function() {
                 let name = $('#user_id').find(':selected').text();
                 let date = $('.datetimepicker-input').val();
                 // create code with name and timestamp
-                $('#code').val(name + moment(date).format('DD/MM/YYYY/'));
+                $('#code').val(name + moment(date).format('DD/MM/YYYY'));
             });
         });
     </script>
