@@ -13,6 +13,25 @@ Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('dashboard'));
 });
 
+// Dashboard > Master Data > Work Schedules
+Breadcrumbs::for('work-schedules', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Master Data');
+    $trail->push('Work Schedules', route('work-schedules.index'));
+});
+
+// Dashboard > Master Data > Work Schedules > [Work Schedule] > Edit
+Breadcrumbs::for('work-schedules.edit', function (BreadcrumbTrail $trail, $workSchedule) {
+    $trail->parent('work-schedules');
+    $trail->push('Edit', route('work-schedules.edit', $workSchedule));
+});
+
+// Dashboard > Master Data > Work Schedules > Create
+Breadcrumbs::for('work-schedules.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('work-schedules');
+    $trail->push('Create', route('work-schedules.create'));
+});
+
 // Dashboard > Roles
 Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
