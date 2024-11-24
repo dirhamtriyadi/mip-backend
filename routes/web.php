@@ -23,7 +23,7 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get("/dashboard", function () {
-        return view("templates.main");
+        return view("dashboard.index");
     })->name("dashboard");
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
