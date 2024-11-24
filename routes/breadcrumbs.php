@@ -13,19 +13,26 @@ Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('dashboard'));
 });
 
-// Home
-// Breadcrumbs::for('home', function (BreadcrumbTrail $trail) {
-//     $trail->push('Home', route('home'));
-// });
+// Dashboard > Users
+Breadcrumbs::for('users', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Users', route('users.index'));
+});
 
-// // Home > Blog
-// Breadcrumbs::for('blog', function (BreadcrumbTrail $trail) {
-//     $trail->parent('home');
-//     $trail->push('Blog', route('blog'));
-// });
+// Dashboard > Users > [User]
+Breadcrumbs::for('users.show', function (BreadcrumbTrail $trail, $user) {
+    $trail->parent('users');
+    $trail->push($user->name, route('users.show', $user));
+});
 
-// // Home > Blog > [Category]
-// Breadcrumbs::for('category', function (BreadcrumbTrail $trail, $category) {
-//     $trail->parent('blog');
-//     $trail->push($category->title, route('category', $category));
-// });
+// Dashboard > Users > [User] > Edit
+Breadcrumbs::for('users.edit', function (BreadcrumbTrail $trail, $user) {
+    $trail->parent('users', $user);
+    $trail->push('Edit', route('users.edit', $user));
+});
+
+// Dashboard > Users > Create
+Breadcrumbs::for('users.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('users');
+    $trail->push('Create', route('users.create'));
+});
