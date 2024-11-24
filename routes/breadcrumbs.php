@@ -13,6 +13,24 @@ Breadcrumbs::for('dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('dashboard'));
 });
 
+// Dashboard > Roles
+Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Roles', route('roles.index'));
+});
+
+// Dashboard > Roles > [Role] > Edit
+Breadcrumbs::for('roles.edit', function (BreadcrumbTrail $trail, $role) {
+    $trail->parent('roles');
+    $trail->push('Edit', route('roles.edit', $role));
+});
+
+// Dashboard > Roles > Create
+Breadcrumbs::for('roles.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('roles');
+    $trail->push('Create', route('roles.create'));
+});
+
 // Dashboard > Users
 Breadcrumbs::for('users', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
@@ -20,10 +38,10 @@ Breadcrumbs::for('users', function (BreadcrumbTrail $trail) {
 });
 
 // Dashboard > Users > [User]
-Breadcrumbs::for('users.show', function (BreadcrumbTrail $trail, $user) {
-    $trail->parent('users');
-    $trail->push($user->name, route('users.show', $user));
-});
+// Breadcrumbs::for('users.show', function (BreadcrumbTrail $trail, $user) {
+//     $trail->parent('users');
+//     $trail->push($user->name, route('users.show', $user));
+// });
 
 // Dashboard > Users > [User] > Edit
 Breadcrumbs::for('users.edit', function (BreadcrumbTrail $trail, $user) {
