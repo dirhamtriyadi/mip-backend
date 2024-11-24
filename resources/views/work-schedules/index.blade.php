@@ -59,13 +59,15 @@
                                                     <td>{{ Carbon\Carbon::parse($value->work_start_time)->format('H:i') }}</td>
                                                     <td>{{ Carbon\Carbon::parse($value->work_end_time)->format('H:i') }}</td>
                                                     <td>{{ json_encode($value->working_days) }}</td>
-                                                    <td class="d-flex justify-content-center">
-                                                        <a href="{{ route('work-schedules.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                                                        {{-- <form action="{{ route('work-schedules.destroy', $value->id) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                                                        </form> --}}
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <a href="{{ route('work-schedules.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
+                                                            {{-- <form action="{{ route('work-schedules.destroy', $value->id) }}" method="post">
+                                                                @csrf
+                                                                @method('delete')
+                                                                <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                                                            </form> --}}
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @empty
