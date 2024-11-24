@@ -51,6 +51,25 @@ Breadcrumbs::for('annual-holidays.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('annual-holidays.create'));
 });
 
+// Dashboard > Master Data > Bank Accounts
+Breadcrumbs::for('bank-accounts', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Master Data');
+    $trail->push('Bank Accounts', route('bank-accounts.index'));
+});
+
+// Dashboard > Master Data > Bank Accounts > [Bank Account] > Edit
+Breadcrumbs::for('bank-accounts.edit', function (BreadcrumbTrail $trail, $bankAccount) {
+    $trail->parent('bank-accounts');
+    $trail->push('Edit', route('bank-accounts.edit', $bankAccount));
+});
+
+// Dashboard > Master Data > Bank Accounts > Create
+Breadcrumbs::for('bank-accounts.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('bank-accounts');
+    $trail->push('Create', route('bank-accounts.create'));
+});
+
 // Dashboard > Roles
 Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
