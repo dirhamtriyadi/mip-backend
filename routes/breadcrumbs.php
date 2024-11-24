@@ -96,6 +96,25 @@ Breadcrumbs::for('attendance-reports', function (BreadcrumbTrail $trail) {
     $trail->push('Attendance Reports', route('attendance-reports.index'));
 });
 
+// Dashboard > Absen > Leaves
+Breadcrumbs::for('leaves', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Absen');
+    $trail->push('Leaves', route('leaves.index'));
+});
+
+// Dashboard > Absen > Leaves > [Leave] > Edit
+Breadcrumbs::for('leaves.edit', function (BreadcrumbTrail $trail, $leaves) {
+    $trail->parent('leaves');
+    $trail->push('Edit', route('leaves.edit', $leaves));
+});
+
+// Dashboard > Absen > Leaves > Create
+Breadcrumbs::for('leaves.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('leaves');
+    $trail->push('Create', route('leaves.create'));
+});
+
 // Dashboard > Roles
 Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
