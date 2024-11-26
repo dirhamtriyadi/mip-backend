@@ -22,7 +22,6 @@ class UserController extends Controller
         ]);
     }
 
-
     // Fetch data for DataTable withouh using Yajra DataTable and serverside processing
     public function fetchDataTable(Request $request)
     {
@@ -43,7 +42,6 @@ class UserController extends Controller
             ->rawColumns(['action'])
             ->toJson();
     }
-
 
     /**
      * Show the form for creating a new resource.
