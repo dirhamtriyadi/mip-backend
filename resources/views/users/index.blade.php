@@ -132,7 +132,7 @@
                     { "orderable": false, "targets": [0, 5] }
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-                "dom": 'Blfrtip',
+                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
             });
         });
     </script>
