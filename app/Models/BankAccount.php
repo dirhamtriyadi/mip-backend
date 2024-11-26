@@ -14,7 +14,11 @@ class BankAccount extends Model
     protected $fillable = [
         'no',
         'name_customer',
+        'address',
         'name_bank',
+        'total_bill',
+        'installment',
+        'remaining_installment',
         'created_by',
         'updated_by',
         'deleted_by',

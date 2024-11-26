@@ -48,7 +48,11 @@
                                                 <th>No</th>
                                                 <th>Nomor Rekening</th>
                                                 <th>Nama Nasabah</th>
+                                                <th>Alamat</th>
                                                 <th>Nama Bank</th>
+                                                <th>Total Tagihan</th>
+                                                <th>Angsuran</th>
+                                                {{-- <th>Sisa Angsuran</th> --}}
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -58,7 +62,11 @@
                                                     <td>{{ $item + 1 }}</td>
                                                     <td>{{ $value->no }}</td>
                                                     <td>{{ $value->name_customer }}</td>
+                                                    <td>{{ $value->address }}</td>
                                                     <td>{{ $value->name_bank }}</td>
+                                                    <td class="total-bill">{{ $value->total_bill }}</td>
+                                                    <td class="installment">{{ $value->installment }}</td>
+                                                    {{-- <td>{{ $value->remaining_installment }}</td> --}}
                                                     <td>
                                                         <div class="d-flex justify-content-center">
                                                             <a href="{{ route('bank-accounts.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
@@ -72,7 +80,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td class="text-center" colspan="5">Data tidak ditemukan</td>
+                                                    <td class="text-center" colspan="9">Data tidak ditemukan</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
@@ -95,5 +103,21 @@
 @endsection
 
 @push('scripts')
+    <!-- InputMask -->
+    <script src="{{ asset('adminlte') }}/plugins/inputmask/jquery.inputmask.min.js"></script>
 
+    <script>
+        $(document).ready(function() {
+            // Format currency to Rupiah
+            $('.total-bill, .installment').each(function() {
+                var value = $(this).text();
+                var formattedValue = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                }).format(value);
+                $(this).text(formattedValue);
+            });
+        });
+    </script>
 @endpush

@@ -1,9 +1,5 @@
 @extends('templates.main')
 
-@push('styles')
-
-@endpush
-
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -61,14 +57,14 @@
                                 <div class="d-flex justify-content-start">
                                     <a href="{{ route('bank-accounts.index') }}" class="btn btn-warning mb-3"><i class="fas fa-arrow-left"></i> Kembali</a>
                                 </div>
-                                <form action="{{ route('bank-accounts.update', $data->id) }}" method="POST" enctype="multipart/form-data">
+                                <form id="bank-account-form" action="{{ route('bank-accounts.update', $data->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="no">No Rekening</label>
+                                        <label for="no">No Kontrak/Rekening</label>
                                         <input type="number" class="form-control" id="no" name="no"
-                                            placeholder="Masukkan No Rekening" value="{{ old('no', $data->no) }}">
+                                            placeholder="Masukkan Nama" value="{{ old('no', $data->no) }}">
                                         @error('no')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -76,19 +72,51 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="name_customer">Nama Nasabah</label>
                                         <input type="text" class="form-control" id="name_customer" name="name_customer"
-                                            placeholder="Masukkan Nama Nasabah" value="{{ old('name_customer', $data->name_customer) }}">
+                                            placeholder="Masukkan Nama" value="{{ old('name_customer', $data->name_customer) }}">
                                         @error('name_customer')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="address">Alamat</label>
+                                        <textarea class="form-control" id="address" name="address"
+                                            placeholder="Masukkan Nama">{{ old('address', $data->address) }}</textarea>
+                                        @error('address')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="name_bank">Nama Bank</label>
                                         <input type="text" class="form-control" id="name_bank" name="name_bank"
-                                            placeholder="Masukkan Nama Bank" value="{{ old('name_bank', $data->name_bank) }}">
+                                            placeholder="Masukkan Nama" value="{{ old('name_bank', $data->name_bank) }}">
                                         @error('name_bank')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="total_bill">Total Tagihan</label>
+                                        <input type="text" class="form-control text-left" id="total_bill" name="total_bill"
+                                            placeholder="Masukkan Total Tagihan" value="{{ old('total_bill', $data->total_bill) }}" data-mask>
+                                        @error('total_bill')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="installment">Angsuran Per Bulan</label>
+                                        <input type="text" class="form-control text-left" id="installment" name="installment"
+                                            placeholder="Masukkan Angsuran Per Bulan" value="{{ old('installment', $data->installment) }}" data-mask>
+                                        @error('installment')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    {{-- <div class="form-group" style="margin-top: 10px;">
+                                        <label for="remaining_installment">Sisa Angsuran</label>
+                                        <input type="text" class="form-control text-left" id="remaining_installment" name="remaining_installment"
+                                            placeholder="Masukkan Sisa Angsuran" value="{{ old('remaining_installment', $data->remaining_installment) }}" data-mask>
+                                        @error('remaining_installment')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div> --}}
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
@@ -111,6 +139,46 @@
     </div>
 @endsection
 
-@push('scripts')
+@push('styles')
 
+@endpush
+
+@push('scripts')
+    <!-- InputMask -->
+    <script src="{{ asset('adminlte') }}/plugins/moment/moment.min.js"></script>
+    <script src="{{ asset('adminlte') }}/plugins/inputmask/jquery.inputmask.min.js"></script>
+
+    <script>
+        $(function() {
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {
+                'placeholder': 'dd/mm/yyyy'
+            })
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {
+                'placeholder': 'mm/dd/yyyy'
+            })
+            // Input data-mask to currency Rupiah
+            $('[data-mask]').inputmask('numeric', {
+                'alias': 'numeric',
+                'groupSeparator': '.',
+                'autoGroup': true,
+                'digits': 0,
+                'digitsOptional': false,
+                'prefix': 'Rp ',
+                'placeholder': '0',
+                'rightAlign': false,
+                'allowMinus': false,
+                'allowPlus': false,
+                'autoUnmask': true,
+                'unmaskAsNumber': true,
+            });
+
+            // Remove format total_bill
+            $('#bank-account-form').submit(function() {
+                $('#total_bill').inputmask('remove');
+                $('#installment').inputmask('remove');
+            });
+        })
+    </script>
 @endpush

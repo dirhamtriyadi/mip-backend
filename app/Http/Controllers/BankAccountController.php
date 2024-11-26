@@ -35,7 +35,11 @@ class BankAccountController extends Controller
         $validatedData = $request->validate([
             'no' => 'required|numeric|unique:bank_accounts',
             'name_customer' => 'required',
+            'address' => 'required',
             'name_bank' => 'required',
+            'total_bill' => 'nullable|numeric',
+            'installment' => 'nullable|numeric',
+            // 'remaining_installment' => 'required|numeric',
         ]);
 
         $validatedData['created_by'] = auth()->id();
@@ -72,7 +76,11 @@ class BankAccountController extends Controller
         $validatedData = $request->validate([
             'no' => 'required|numeric|unique:bank_accounts,no,' . $id,
             'name_customer' => 'required',
+            'address' => 'required',
             'name_bank' => 'required',
+            'total_bill' => 'nullable|numeric',
+            'installment' => 'nullable|numeric',
+            // 'remaining_installment' => 'required|numeric',
         ]);
 
         $bankAccount = BankAccount::findOrFail($id);
