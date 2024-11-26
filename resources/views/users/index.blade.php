@@ -42,8 +42,8 @@
                                     <a href="{{ route('users.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped">
-                                        <thead class="table-dark">
+                                    <table id="table" class="table table-bordered table-striped">
+                                        <thead>
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama</th>
@@ -54,7 +54,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($data as $item => $value)
+                                            {{-- @forelse ($data as $item => $value)
                                                 <tr>
                                                     <td>{{ $item + 1 }}</td>
                                                     <td>{{ $value->name }}</td>
@@ -64,7 +64,7 @@
                                                     <td>
                                                         <div class="d-flex justify-content-center">
                                                             <a href="{{ route('users.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                                                            <form action="{{ route('users.destroy', $value->id) }}" class="ml-1" method="post">
+                                                            <form action="{{ route('users.destroy', $value->id) }}" class=" ml-1" method="post">
                                                                 @csrf
                                                                 @method('delete')
                                                                 <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
@@ -76,7 +76,7 @@
                                                 <tr>
                                                     <td class="text-center" colspan="6">Data tidak ditemukan</td>
                                                 </tr>
-                                            @endforelse
+                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -95,3 +95,45 @@
         <!-- /.content -->
     </div>
 @endsection
+
+@push('styles')
+
+@endpush
+
+@push('scripts')
+    <script>
+        $(function () {
+            $("#table").DataTable({
+                "processing":true,
+                "serverSide":true,
+                "ajax": {
+                    "url": "{{ route('users.index') }}/fetch-data-table",
+                    "type": "post",
+                    "data": {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                "responsive": true,
+                // "lengthChange": false,
+                "lengthMenu": [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+                "autoWidth": false,
+                "columns": [
+                    { "data": "DT_RowIndex" },
+                    { "data": "name" },
+                    { "data": "email" },
+                    { "data": "nik" },
+                    { "data": "role" },
+                    { "data": "action" }
+                ],
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 5] }
+                ],
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "dom": 'Blfrtip',
+            });
+        });
+    </script>
+@endpush

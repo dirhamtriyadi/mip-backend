@@ -87,7 +87,7 @@
                                         <label for="nik">NIK</label>
                                         <input type="text" class="form-control" id="nik" name="nik"
                                             placeholder="Masukkan NIK"
-                                            value="{{ old('nik', $user->detail_users->nik) }}">
+                                            value="{{ old('nik', $user->detail_users->nik ?? '') }}">
 
                                         @error('nik')
                                             <div class="alert alert-danger">{{ $message }}</div>

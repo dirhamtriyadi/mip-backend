@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -20,6 +21,29 @@ class UserController extends Controller
             "data" => $users,
         ]);
     }
+
+
+    // Fetch data for DataTable withouh using Yajra DataTable and serverside processing
+    public function fetchDataTable(Request $request)
+    {
+        // load all users with their detail_users and roles
+        $users = User::with('detail_users', 'roles')->get();
+
+        return DataTables::of($users)
+            ->addIndexColumn()
+            ->addColumn('nik', function ($user) {
+                return $user->detail_users->nik ?? '-';
+            })
+            ->addColumn('role', function ($user) {
+                return $user->roles->pluck('name')->implode(', ');
+            })
+            ->addColumn('action', function ($user) {
+                return view('users.action', ['value' => $user]);
+            })
+            ->rawColumns(['action'])
+            ->toJson();
+    }
+
 
     /**
      * Show the form for creating a new resource.

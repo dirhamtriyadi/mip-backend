@@ -74,7 +74,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped">
+                                    <table id="table" class="table table-bordered table-hover table-striped">
                                         <thead class="table-dark">
                                             <tr>
                                                 <th>No</th>
@@ -272,6 +272,18 @@
                 $('.modal-title').text('');
                 $('.modal-body').html('');
             });
+
+            // DataTables
+            $("#table").DataTable({
+                "responsive": true,
+                "lengthMenu": [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                // "lengthChange": false,
+                "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#table_wrapper .col-md-6:eq(0)');
         });
     </script>
 @endpush

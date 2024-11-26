@@ -36,5 +36,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('leaves', LeaveController::class);
     Route::post('leaves/{leave}/response', [LeaveController::class, 'response'])->name('leaves.response');
     Route::resource('users', UserController::class);
+    Route::post('users/fetch-data-table', [UserController::class, 'fetchDataTable'])->name('users.fetchDataTable');
     Route::resource('roles', RoleController::class);
 });
