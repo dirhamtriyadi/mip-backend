@@ -87,13 +87,14 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($id)->load('detail_users');
+        $detailUserId = $user->detail_users ?? null;
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8|confirmed',
-            'nik' => 'required|string|max:255|unique:detail_users,nik,' . $user->detail_users->id,
+            'nik' => 'required|string|max:255|unique:detail_users,nik,' . $detailUserId,
             'role' => 'nullable|array',
             'role.*' => 'exists:roles,name',
         ]);
