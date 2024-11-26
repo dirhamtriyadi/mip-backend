@@ -33,6 +33,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('bank-accounts', BankAccountController::class);
     Route::resource('attendances', AttendanceController::class);
     Route::get('attendance-reports', [AttendanceReportController::class, 'index'])->name('attendance-reports.index');
+    Route::post('attendance-reports/fetch-data-table', [AttendanceReportController::class, 'fetchDataTable'])->name('attendance-reports.fetchDataTable');
     Route::resource('leaves', LeaveController::class);
     Route::post('leaves/{leave}/response', [LeaveController::class, 'response'])->name('leaves.response');
     Route::resource('users', UserController::class);

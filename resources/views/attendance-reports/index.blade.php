@@ -89,55 +89,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($data as $item => $value)
-                                                <tr>
-                                                    <td>{{ $item + 1 }}</td>
-                                                    <td>{{ $value->name }}</td>
-                                                    <td>{{ $value->attendances->where('type', 'present')->count() }}</td>
-                                                    <td>{{ $value->attendances->where('type', 'present')->where('late_duration', '<', 0)->count() }}</td>
-                                                    <td>{{ $value->attendances->where('type', 'present')->where('early_leave_duration', '<', 0)->count() }}</td>
-                                                    <td>{{ $value->attendances->where('type', 'sick')->count() }}</td>
-                                                    <td>{{ $value->attendances->where('type', 'permit')->count() }}</td>
-                                                    {{-- <td>{{ $value->leaves }}</td> --}}
-                                                    {{-- map $value->leaves and return start_date and end_date --}}
-                                                    <td>
-                                                        <b>Total cuti: </b>{{ $value->leaves->where('status', 'approved')->count() }}<br>
-                                                        @forelse ($value->leaves->where('status', 'approved') as $item)
-                                                        {{-- if latest data not add comma --}}
-                                                            {{ Carbon\Carbon::parse($item->start_date )->format('d-m-Y') }} s/d {{ Carbon\Carbon::parse($item->start_date )->format('d-m-Y') }}{{ $loop->last ? '' : ', ' }}
-                                                        @empty
-                                                            0
-                                                        @endforelse
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <button id="btn-detail" type="button" class="btn btn-sm btn-info" data-toggle="modal"
-                                                                data-target="#modal-xl" data-attendance="{{ $value }}">
-                                                                <i class="fas fa-eye"></i>
-                                                            </button>
-                                                            <button class="btn btn-sm btn-primary ml-1">
-                                                                <i class="fas fa-download"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                    {{-- <td class="d-flex justify-content-center">
-                                                        <a href="{{ route('users.edit', $value->id) }}"
-                                                            class="btn btn-sm btn-warning"><i class="fas fa-edit"></i>
-                                                            Edit</a>
-                                                        <form action="{{ route('users.destroy', $value->id) }}"
-                                                            method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <button type="submit" class="btn btn-sm btn-danger"><i
-                                                                    class="fas fa-trash"></i> Delete</button>
-                                                        </form>
-                                                    </td> --}}
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td class="text-center" colspan="6">Data tidak ditemukan</td>
-                                                </tr>
-                                            @endforelse
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -275,13 +227,33 @@
 
             // DataTables
             $("#table").DataTable({
+                "processing":true,
+                "serverSide":true,
+                "ajax": {
+                    "url": "{{ route('attendance-reports.index') }}/fetch-data-table",
+                    "type": "post",
+                    "data": {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
                 "responsive": true,
-                "lengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ],
                 // "lengthChange": false,
+                "lengthMenu": [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
                 "autoWidth": false,
+                "columns": [
+                    { "data": "DT_RowIndex" },
+                    { "data": "name" },
+                    { "data": "present" },
+                    { "data": "present_late" },
+                    { "data": "present_early_leave" },
+                    { "data": "sick" },
+                    { "data": "permit" },
+                    { "data": "leave" },
+                    { "data": "action" }
+                ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
             }).buttons().container().appendTo('#table_wrapper .col-md-6:eq(0)');
         });
