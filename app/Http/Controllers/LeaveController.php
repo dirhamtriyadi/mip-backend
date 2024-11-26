@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Leave;
 use App\Models\User;
+use Yajra\DataTables\Facades\DataTables;
+use Carbon;
 
 class LeaveController extends Controller
 {
@@ -22,6 +24,36 @@ class LeaveController extends Controller
         return view('leaves.index', [
             'data' => $leaves,
         ]);
+    }
+
+    // Fetch data for DataTable withouh using Yajra DataTable and serverside processing
+    public function fetchDataTable(Request $request)
+    {
+        // load all leaves with their user
+        $leaves = Leave::with('user')
+            ->orderBy('status', 'asc')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return DataTables::of($leaves)
+            ->addIndexColumn()
+            ->addColumn('user', function ($leave) {
+                return $leave->user->name;
+            })
+            ->editColumn('start_date', function ($leave) {
+                return Carbon\Carbon::parse($leave->start_date)->format('d-m-Y');
+            })
+            ->editColumn('end_date', function ($leave) {
+                return Carbon\Carbon::parse($leave->end_date)->format('d-m-Y');
+            })
+            ->addColumn('status', function ($leave) {
+                return view('leaves.status', ['value' => $leave]);
+            })
+            ->addColumn('action', function ($leave) {
+                return view('leaves.action', ['value' => $leave]);
+            })
+            ->rawColumns(['status', 'action'])
+            ->toJson();
     }
 
     /**

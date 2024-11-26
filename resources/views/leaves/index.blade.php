@@ -42,8 +42,8 @@
                                     <a href="{{ route('leaves.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped">
-                                        <thead class="table-dark">
+                                    <table id="table" class="table table-bordered table-hover table-striped">
+                                        <thead>
                                             <tr>
                                                 <th>No</th>
                                                 <th>User</th>
@@ -55,7 +55,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($data as $item => $value)
+                                            {{-- @forelse ($data as $item => $value)
                                                 <tr>
                                                     <td>{{ $item + 1 }}</td>
                                                     <td>{{ $value->user->name }}</td>
@@ -93,7 +93,7 @@
                                                 <tr>
                                                     <td class="text-center" colspan="7">Data tidak ditemukan</td>
                                                 </tr>
-                                            @endforelse
+                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -165,6 +165,40 @@
                 var action = "{{ url('leaves') }}/" + leaveId + "/response";
                 $('#response-form').attr('action', action);
             })
+
+            // DataTables
+            $("#table").DataTable({
+                "processing":true,
+                "serverSide":true,
+                "ajax": {
+                    "url": "{{ route('leaves.index') }}/fetch-data-table",
+                    "type": "post",
+                    "data": {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                "responsive": true,
+                // "lengthChange": false,
+                "lengthMenu": [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+                "autoWidth": false,
+                "columns": [
+                    { "data": "DT_RowIndex" },
+                    { "data": "user" },
+                    { "data": "start_date" },
+                    { "data": "end_date" },
+                    { "data": "status" },
+                    { "data": "response" },
+                    { "data": "action" },
+                ],
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 6] },
+                ],
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+            }).buttons().container().appendTo('#table_wrapper .col-md-6:eq(0)');
         });
     </script>
 @endpush
