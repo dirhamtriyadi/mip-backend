@@ -42,7 +42,7 @@
                                     <a href="{{ route('users.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
-                                    <table id="table" class="table table-bordered table-striped">
+                                    <table id="table" class="table table-bordered table-hover table-striped">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
