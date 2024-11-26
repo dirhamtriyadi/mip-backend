@@ -17,16 +17,13 @@ class AttendanceReportController extends Controller
 
         // get all users with attendances between start_date and end_date with deleted_at and deteled_by is null
         // $attendanceReports = User::with(['attendances' => function ($query) use ($start_date, $end_date) {
-        //     $query->whereBetween('date', [$start_date, $end_date])->where('deleted_at', null)->where('deleted_by', null);
+        //     $query->whereBetween('date', [$start_date, $end_date]);
+        // }, 'leaves' => function ($query) use ($start_date, $end_date) {
+        //     $query->whereBetween('start_date', [$start_date, $end_date]);
         // }])->get();
-        $attendanceReports = User::with(['attendances' => function ($query) use ($start_date, $end_date) {
-            $query->whereBetween('date', [$start_date, $end_date]);
-        }, 'leaves' => function ($query) use ($start_date, $end_date) {
-            $query->whereBetween('start_date', [$start_date, $end_date]);
-        }])->get();
 
         return view('attendance-reports.index', [
-            'data' => $attendanceReports,
+            // 'data' => $attendanceReports,
             'start_date' => $start_date,
             'end_date' => $end_date,
         ]);
@@ -78,4 +75,66 @@ class AttendanceReportController extends Controller
             ->rawColumns(['leave', 'action'])
             ->toJson();
     }
+
+    // public function fetchDataTable(Request $request)
+    // {
+    //     $columns = [
+    //         0 => 'id',
+    //         1 => 'name',
+    //         2 => 'present',
+    //         3 => 'present_late',
+    //         4 => 'present_early_leave',
+    //         5 => 'sick',
+    //         6 => 'permit',
+    //         7 => 'leave',
+    //         8 => 'action',
+    //     ];
+
+    //     $orderBy = $columns[$request->input('order.0.column')];
+    //     $orderDirection = $request->input('order.0.dir');
+    //     $searchValue = $request->input('search.value');
+
+    //     $query = User::with('attendances')
+    //         ->where('name', 'like', '%' . $searchValue . '%')
+    //         ->orWhereHas('attendances', function ($query) use ($searchValue) {
+    //             $query->where('date', 'like', '%' . $searchValue . '%');
+    //         });
+
+    //     if ($request->has('start_date') && $request->has('end_date')) {
+    //         $startDate = $request->input('start_date');
+    //         $endDate = $request->input('end_date');
+    //         $query->whereHas('attendances', function ($query) use ($startDate, $endDate) {
+    //             $query->whereBetween('date', [$startDate, $endDate]);
+    //         });
+    //     }
+
+    //     $totalFiltered = $query->count();
+
+    //     $users = $query->orderBy($orderBy, $orderDirection)
+    //         ->offset($request->input('start'))
+    //         ->limit($request->input('length'))
+    //         ->get();
+
+    //     $data = [];
+    //     foreach ($users as $index => $user) {
+    //         $data[] = [
+    //             'DT_RowIndex' => $index + 1,
+    //             'name' => $user->name,
+    //             'present' => $user->attendances->where('type', 'present')->count(),
+    //             'present_late' => $user->attendances->where('type', 'present')->where('late_duration', '>', 0)->count(),
+    //             'present_early_leave' => $user->attendances->where('type', 'present')->where('early_leave_duration', '>', 0)->count(),
+    //             'sick' => $user->attendances->where('type', 'sick')->count(),
+    //             'permit' => $user->attendances->where('type', 'permit')->count(),
+    //             'leave' => $user->attendances->where('type', 'leave')->count(),
+    //             'action' => '<a href="' . route('attendance-reports.show', $user->id) . '" class="btn btn-primary btn-sm">Detail</a>',
+    //         ];
+    //     }
+
+    //     return response()->json([
+    //         'draw' => $request->input('draw'),
+    //         'recordsTotal' => User::count(),
+    //         'recordsFiltered' => $totalFiltered,
+    //         'data' => $data,
+    //     ]);
+    // }
 }

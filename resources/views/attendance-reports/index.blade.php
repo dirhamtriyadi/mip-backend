@@ -233,7 +233,9 @@
                     "url": "{{ route('attendance-reports.index') }}/fetch-data-table",
                     "type": "post",
                     "data": {
-                        "_token": "{{ csrf_token() }}"
+                        "_token": "{{ csrf_token() }}",
+                        "start_date": "{{ $start_date }}",
+                        "end_date": "{{ $end_date }}"
                     }
                 },
                 "responsive": true,
