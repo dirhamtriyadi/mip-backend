@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="table-responsive">
                                     <table id="table" class="table table-bordered table-hover table-striped">
-                                        <thead class="table-dark">
+                                        <thead>
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama</th>
@@ -256,7 +256,11 @@
                     { "data": "leave" },
                     { "data": "action" }
                 ],
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 8] }
+                ],
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
             }).buttons().container().appendTo('#table_wrapper .col-md-6:eq(0)');
         });
     </script>
