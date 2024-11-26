@@ -112,7 +112,7 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id)->load('detail_users');
-        $detailUserId = $user->detail_users ?? null;
+        $detailUserId = $user->detail_users->id ?? null;
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -129,9 +129,10 @@ class UserController extends Controller
             $user->password = Hash::make($validatedData['password']);
         }
         $user->save();
-        $user->detail_users()->update([
-            'nik' => $validatedData['nik'],
-        ]);
+        $user->detail_users()->updateOrCreate(
+            ['user_id' => $user->id],
+            ['nik' => $validatedData['nik']]
+        );
 
         if ($request->filled('role')) {
             $user->syncRoles($validatedData['role']);
