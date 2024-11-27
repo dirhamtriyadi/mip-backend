@@ -22,7 +22,7 @@ class UserController extends Controller
         ]);
     }
 
-    // Fetch data for DataTable withouh using Yajra DataTable and serverside processing
+    // Fetch data for DataTable
     public function fetchDataTable(Request $request)
     {
         // load all users with their detail_users and roles

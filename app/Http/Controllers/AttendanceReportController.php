@@ -29,6 +29,7 @@ class AttendanceReportController extends Controller
         ]);
     }
 
+    // Fetch data for DataTable
     public function fetchDataTable(Request $request)
     {
         // get request start_date and end_date or set default this month

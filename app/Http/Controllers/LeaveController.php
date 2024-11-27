@@ -26,7 +26,7 @@ class LeaveController extends Controller
         ]);
     }
 
-    // Fetch data for DataTable withouh using Yajra DataTable and serverside processing
+    // Fetch data for DataTable
     public function fetchDataTable(Request $request)
     {
         // load all leaves with their user
