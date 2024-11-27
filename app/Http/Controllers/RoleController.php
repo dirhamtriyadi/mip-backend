@@ -14,11 +14,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
-
-        return view("roles.index", [
-            "data" => $roles,
-        ]);
+        return view("roles.index");
     }
 
     // Fetch data for DataTable

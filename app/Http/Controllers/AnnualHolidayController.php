@@ -14,11 +14,7 @@ class AnnualHolidayController extends Controller
      */
     public function index()
     {
-        $annualHolidays = AnnualHoliday::latest()->get();
-
-        return view('annual-holidays.index', [
-            'data' => $annualHolidays
-        ]);
+        return view('annual-holidays.index');
     }
 
     // Fetch data for DataTable

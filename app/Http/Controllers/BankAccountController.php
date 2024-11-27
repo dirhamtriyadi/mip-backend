@@ -13,11 +13,7 @@ class BankAccountController extends Controller
      */
     public function index()
     {
-        $bankAccounts = BankAccount::all();
-
-        return view('bank-accounts.index', [
-            'data' => $bankAccounts,
-        ]);
+        return view('bank-accounts.index');
     }
 
     // Fetch data for DataTable

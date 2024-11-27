@@ -15,15 +15,7 @@ class LeaveController extends Controller
      */
     public function index()
     {
-        // Mengambil data semua cuti yang diajukan oleh user dan mengurutkan berdasarkan status pending dan terlama dibuat
-        $leaves = Leave::with('user')
-            ->orderBy('status', 'asc')
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        return view('leaves.index', [
-            'data' => $leaves,
-        ]);
+        return view('leaves.index');
     }
 
     // Fetch data for DataTable

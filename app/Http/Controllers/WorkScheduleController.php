@@ -14,11 +14,7 @@ class WorkScheduleController extends Controller
      */
     public function index()
     {
-        $workSchedules = WorkSchedule::all();
-
-        return view('work-schedules.index', [
-            'data' => $workSchedules
-        ]);
+        return view('work-schedules.index');
     }
 
     // Fetch data for DataTable
