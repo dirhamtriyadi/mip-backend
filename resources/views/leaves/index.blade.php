@@ -198,7 +198,7 @@
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
-            }).buttons().container().appendTo('#table_wrapper .col-md-6:eq(0)');
+            });
         });
     </script>
 @endpush
