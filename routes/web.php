@@ -43,4 +43,5 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::post('users/fetch-data-table', [UserController::class, 'fetchDataTable'])->name('users.fetchDataTable');
     Route::resource('roles', RoleController::class);
+    Route::post('roles/fetch-data-table', [RoleController::class, 'fetchDataTable'])->name('roles.fetchDataTable');
 });

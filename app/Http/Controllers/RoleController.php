@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Yajra\DataTables\Facades\DataTables;
 
 class RoleController extends Controller
 {
@@ -18,6 +19,24 @@ class RoleController extends Controller
         return view("roles.index", [
             "data" => $roles,
         ]);
+    }
+
+    // Fetch data for DataTable
+    public function fetchDataTable(Request $request)
+    {
+        // load all roles
+        $roles = Role::all();
+
+        return DataTables::of($roles)
+            ->addIndexColumn()
+            ->editColumn('permissions', function ($role) {
+                return $role->permissions->pluck('name')->implode(', ');
+            })
+            ->addColumn('action', function ($role) {
+                return view('roles.action', ['value' => $role]);
+            })
+            ->rawColumns(['action'])
+            ->toJson();
     }
 
     /**

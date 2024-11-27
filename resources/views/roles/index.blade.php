@@ -42,8 +42,8 @@
                                     <a href="{{ route('roles.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped">
-                                        <thead class="table-dark">
+                                    <table id="table" class="table table-bordered table-hover table-striped">
+                                        <thead>
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama</th>
@@ -52,14 +52,14 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($data as $item => $value)
+                                            {{-- @forelse ($data as $item => $value)
                                                 <tr>
                                                     <td>{{ $item + 1 }}</td>
                                                     <td>{{ $value->name }}</td>
                                                     <td>{{ $value->permissions->pluck('name') }}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <a href="{{ route('roles.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
+                                                            <a href="{{ route('ro   les.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
                                                             <form action="{{ route('roles.destroy', $value->id) }}" class="ml-1" method="post">
                                                                 @csrf
                                                                 @method('delete')
@@ -72,7 +72,7 @@
                                                 <tr>
                                                     <td class="text-center" colspan="4">Data tidak ditemukan</td>
                                                 </tr>
-                                            @endforelse
+                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -91,3 +91,43 @@
         <!-- /.content -->
     </div>
 @endsection
+
+@push('styles')
+
+@endpush
+
+@push('scripts')
+    <script>
+        $(function () {
+            $("#table").DataTable({
+                "processing":true,
+                "serverSide":true,
+                "ajax": {
+                    "url": "{{ route('roles.index') }}/fetch-data-table",
+                    "type": "post",
+                    "data": {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                "responsive": true,
+                // "lengthChange": false,
+                "lengthMenu": [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+                "autoWidth": false,
+                "columns": [
+                    { "data": "DT_RowIndex" },
+                    { "data": "name" },
+                    { "data": "permissions" },
+                    { "data": "action" }
+                ],
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 3] }
+                ],
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+            });
+        });
+    </script>
+@endpush
