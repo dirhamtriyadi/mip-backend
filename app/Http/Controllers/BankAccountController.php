@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\BankAccount;
+use Yajra\DataTables\Facades\DataTables;
 
 class BankAccountController extends Controller
 {
@@ -17,6 +18,22 @@ class BankAccountController extends Controller
         return view('bank-accounts.index', [
             'data' => $bankAccounts,
         ]);
+    }
+
+    // Fetch data for DataTable
+    public function fetchDataTable(Request $request)
+    {
+        // load all bank accounts
+        $bankAccounts = BankAccount::all();
+
+        return DataTables::of($bankAccounts)
+            ->addIndexColumn()
+            ->addColumn('action', function ($bankAccount) {
+                return view('bank-accounts.action', ['value' => $bankAccount]);
+            })
+            ->rawColumns(['action'])
+            ->toJson();
+
     }
 
     /**
