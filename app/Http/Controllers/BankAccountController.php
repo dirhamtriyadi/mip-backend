@@ -33,7 +33,6 @@ class BankAccountController extends Controller
             })
             ->rawColumns(['action'])
             ->toJson();
-
     }
 
     /**
