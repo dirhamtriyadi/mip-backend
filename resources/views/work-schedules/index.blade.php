@@ -42,8 +42,8 @@
                                     <a href="{{ route('work-schedules.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div> --}}
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped">
-                                        <thead class="table-dark">
+                                    <table id="table" class="table table-bordered table-hover table-striped">
+                                        <thead>
                                             <tr>
                                                 <th>No</th>
                                                 <th>Jam Mulai Kerja</th>
@@ -53,28 +53,21 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($data as $item => $value)
+                                            {{-- @forelse ($data as $item => $value)
                                                 <tr>
                                                     <td>{{ $item + 1 }}</td>
                                                     <td>{{ Carbon\Carbon::parse($value->work_start_time)->format('H:i') }}</td>
                                                     <td>{{ Carbon\Carbon::parse($value->work_end_time)->format('H:i') }}</td>
                                                     <td>{{ json_encode($value->working_days) }}</td>
                                                     <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <a href="{{ route('work-schedules.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                                                            {{-- <form action="{{ route('work-schedules.destroy', $value->id) }}" class="ml-1" method="post">
-                                                                @csrf
-                                                                @method('delete')
-                                                                <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                                                            </form> --}}
-                                                        </div>
+
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
                                                     <td class="text-center" colspan="5">Data tidak ditemukan</td>
                                                 </tr>
-                                            @endforelse
+                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -93,3 +86,45 @@
         <!-- /.content -->
     </div>
 @endsection
+
+@push('styles')
+
+@endpush
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            // DataTables
+            $("#table").DataTable({
+                "processing":true,
+                "serverSide":true,
+                "ajax": {
+                    "url": "{{ route('work-schedules.index') }}/fetch-data-table",
+                    "type": "post",
+                    "data": {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                "responsive": true,
+                // "lengthChange": false,
+                "lengthMenu": [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+                "autoWidth": false,
+                "columns": [
+                    { "data": "DT_RowIndex" },
+                    { "data": "work_start_time" },
+                    { "data": "work_end_time" },
+                    { "data": "working_days" },
+                    { "data": "action" },
+                ],
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 4] },
+                ],
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+            });
+        });
+    </script>
+@endpush

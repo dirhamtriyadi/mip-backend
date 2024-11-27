@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\WorkSchedule;
+use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
 
 class WorkScheduleController extends Controller
 {
@@ -17,6 +19,27 @@ class WorkScheduleController extends Controller
         return view('work-schedules.index', [
             'data' => $workSchedules
         ]);
+    }
+
+    // Fetch data for DataTable
+    public function fetchDataTable(Request $request)
+    {
+        // load all work schedules
+        $workSchedules = WorkSchedule::all();
+
+        return DataTables::of($workSchedules)
+            ->addIndexColumn()
+            ->editColumn('work_start_time', function ($workSchedule) {
+                return Carbon::parse($workSchedule->work_start_time)->format('H:i');
+            })
+            ->editColumn('work_end_time', function ($workSchedule) {
+                return Carbon::parse($workSchedule->work_end_time)->format('H:i');
+            })
+            ->addColumn('action', function ($workSchedule) {
+                return view('work-schedules.action', ['value' => $workSchedule]);
+            })
+            ->rawColumns(['action'])
+            ->toJson();
     }
 
     /**

@@ -31,6 +31,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('annual-holidays', AnnualHolidayController::class);
     Route::post('annual-holidays/fetch-data-table', [AnnualHolidayController::class, 'fetchDataTable'])->name('annual-holidays.fetchDataTable');
     Route::resource('work-schedules', WorkScheduleController::class);
+    Route::post('work-schedules/fetch-data-table', [WorkScheduleController::class, 'fetchDataTable'])->name('work-schedules.fetchDataTable');
     Route::resource('bank-accounts', BankAccountController::class);
     Route::post('bank-accounts/fetch-data-table', [BankAccountController::class, 'fetchDataTable'])->name('bank-accounts.fetchDataTable');
     Route::resource('attendances', AttendanceController::class);
