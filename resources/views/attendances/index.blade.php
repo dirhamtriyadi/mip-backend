@@ -42,8 +42,8 @@
                                     <a href="{{ route('attendances.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped">
-                                        <thead class="table-dark">
+                                    <table id="table" class="table table-bordered table-hover table-striped">
+                                        <thead>
                                             <tr>
                                                 <th>No</th>
                                                 <th>User</th>
@@ -62,16 +62,12 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($data as $item => $value)
+                                            {{-- @forelse ($data as $item => $value)
                                                 <tr>
                                                     <td>{{ $item + 1 }}</td>
                                                     <td>{{ $value->user->name }}</td>
                                                     <td>{{ $value->code }}</td>
-                                                    {{-- format date to Senin, 27 Oktober 2024 --}}
-                                                    {{-- <td>{{ $value->date->format('l, d F Y') }}</td> --}}
                                                     <td>{{ Carbon\Carbon::parse($value->date)->format('d-m-Y') }}</td>
-                                                    {{-- <td>{{ $value->date }}</td> --}}
-                                                    {{-- <td class="time-mask">{{ $value->time }}</td> --}}
                                                     <td>{{ Carbon\Carbon::parse($value->time_check_in)->format('H:i') }}</td>
                                                     <td>{{ $value->time_check_out ? Carbon\Carbon::parse($value->time_check_out)->format('H:i') : '-' }}</td>
                                                     <td>{{ $value->late_duration ?? '-'  }}</td>
@@ -89,9 +85,7 @@
                                                     </td>
                                                     <td>{{ $value->reason_late ?? '-' }}</td>
                                                     <td>{{ $value->reason_early_out ?? '-' }}</td>
-                                                    {{-- redirect to new tab see image --}}
                                                     <td><a href="{{ asset('images/attendances/' . $value->image_check_in) }}" target="_blank">Masuk</a> {!! $value->image_check_out ? '| <a href="' . asset('images/attendances/' . $value->image_check_out) . '" target="_blank">Pulang</a>' : '| -' !!}</td>
-                                                    {{-- redirect to gmpas with latitude and longititude and split string $value->image --}}
                                                     @php
                                                         if (isset($value->location_check_in)) {
                                                             $location_check_in = explode(',', $value->location_check_in);
@@ -125,7 +119,7 @@
                                                 <tr>
                                                     <td class="text-center" colspan="14">Data tidak ditemukan</td>
                                                 </tr>
-                                            @endforelse
+                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -144,3 +138,54 @@
         <!-- /.content -->
     </div>
 @endsection
+
+@push('styles')
+
+@endpush
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            // DataTables
+            $("#table").DataTable({
+                "processing":true,
+                "serverSide":true,
+                "ajax": {
+                    "url": "{{ route('attendances.index') }}/fetch-data-table",
+                    "type": "post",
+                    "data": {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                "responsive": true,
+                // "lengthChange": false,
+                "lengthMenu": [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+                "autoWidth": false,
+                "columns": [
+                    { "data": "DT_RowIndex", orderable: false, searchable: false },
+                    { "data": "user" },
+                    { "data": "code" },
+                    { "data": "date" },
+                    { "data": "time_check_in" },
+                    { "data": "time_check_out" },
+                    { "data": "late_duration" },
+                    { "data": "early_leave_duration" },
+                    { "data": "type" },
+                    { "data": "reason_late" },
+                    { "data": "reason_early_out" },
+                    { "data": "image" },
+                    { "data": "location" },
+                    { "data": "action" }
+                ],
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 13] }
+                ],
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+            });
+        });
+    </script>
+@endpush

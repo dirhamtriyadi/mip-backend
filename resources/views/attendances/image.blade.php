@@ -1,0 +1,1 @@
+{!! $value->image_check_in ? '<a href="' . asset('images/attendances/' . $value->image_check_in) . '" target="_blank">Masuk</a>' : '-' !!} {!! $value->image_check_out ? '| <a href="' . asset('images/attendances/' . $value->image_check_out) . '" target="_blank">Pulang</a>' : '| -' !!}

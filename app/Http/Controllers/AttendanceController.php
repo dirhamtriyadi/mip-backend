@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\User;
 use App\Models\AnnualHoliday;
 use App\Models\WorkSchedule;
+use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -21,6 +22,45 @@ class AttendanceController extends Controller
         return view('attendances.index', [
             'data' => $attendaces
         ]);
+    }
+
+    // Fetch data for DataTable
+    public function fetchDataTable(Request $request)
+    {
+        // load all attendances with their user
+        $attendaces = Attendance::with('user')
+            ->latest()
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return DataTables::of($attendaces)
+            ->addIndexColumn()
+            ->addColumn('user', function ($attendance) {
+                return $attendance->user->name;
+            })
+            ->editColumn('date', function ($attendance) {
+                return Carbon::parse($attendance->date)->format('d-m-Y');
+            })
+            ->editColumn('time_check_in', function ($attendance) {
+                return Carbon::parse($attendance->time_check_in)->format('H:i');
+            })
+            ->editColumn('time_check_out', function ($attendance) {
+                return $attendance->time_check_out ? Carbon::parse($attendance->time_check_out)->format('H:i') : '-';
+            })
+            ->editColumn('type', function ($attendance) {
+                return view('attendances.type', ['value' => $attendance]);
+            })
+            ->addColumn('image', function ($attendance) {
+                return view('attendances.image', ['value' => $attendance]);
+            })
+            ->addColumn('location', function ($attendance) {
+                return view('attendances.location', ['value' => $attendance]);
+            })
+            ->addColumn('action', function ($attendance) {
+                return view('attendances.action', ['value' => $attendance]);
+            })
+            ->rawColumns(['type', 'action'])
+            ->toJson();
     }
 
     /**
