@@ -165,7 +165,7 @@
                 ],
                 "autoWidth": false,
                 "columns": [
-                    { "data": "DT_RowIndex", orderable: false, searchable: false },
+                    { "data": "DT_RowIndex" },
                     { "data": "user" },
                     { "data": "code" },
                     { "data": "date" },
@@ -181,7 +181,7 @@
                     { "data": "action" }
                 ],
                 "columnDefs": [
-                    { "orderable": false, "targets": [0, 13] }
+                    { "orderable": false, "searchable": false, "targets": [0, 13] }
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,

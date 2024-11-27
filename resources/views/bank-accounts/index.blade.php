@@ -148,7 +148,7 @@
                     { "data": "action" },
                 ],
                 "columnDefs": [
-                    { "orderable": false, "targets": [0, 7] },
+                    { "orderable": false, "searchable": false, "targets": [0, 7] },
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
