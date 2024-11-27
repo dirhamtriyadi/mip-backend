@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AnnualHoliday;
+use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
 
 class AnnualHolidayController extends Controller
 {
@@ -17,6 +19,24 @@ class AnnualHolidayController extends Controller
         return view('annual-holidays.index', [
             'data' => $annualHolidays
         ]);
+    }
+
+    // Fetch data for DataTable
+    public function fetchDataTable(Request $request)
+    {
+        // load all annual holidays
+        $annualHolidays = AnnualHoliday::latest()->get();
+
+        return DataTables::of($annualHolidays)
+            ->addIndexColumn()
+            ->editColumn('holiday_date', function ($annualHoliday) {
+                return Carbon::parse($annualHoliday->holiday_date)->format('d-m-Y');
+            })
+            ->addColumn('action', function ($annualHoliday) {
+                return view('annual-holidays.action', ['value' => $annualHoliday]);
+            })
+            ->rawColumns(['action'])
+            ->toJson();
     }
 
     /**

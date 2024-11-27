@@ -42,8 +42,8 @@
                                     <a href="{{ route('annual-holidays.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped">
-                                        <thead class="table-dark">
+                                    <table id="table" class="table table-bordered table-hover table-striped">
+                                        <thead>
                                             <tr>
                                                 <th>No</th>
                                                 <th>Tanggal Libur</th>
@@ -52,7 +52,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($data as $item => $value)
+                                            {{-- @forelse ($data as $item => $value)
                                                 <tr>
                                                     <td>{{ $item + 1 }}</td>
                                                     <td>{{ $value->holiday_date }}</td>
@@ -72,7 +72,7 @@
                                                 <tr>
                                                     <td class="text-center" colspan="4">Data tidak ditemukan</td>
                                                 </tr>
-                                            @endforelse
+                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -91,3 +91,44 @@
         <!-- /.content -->
     </div>
 @endsection
+
+@push('styles')
+
+@endpush
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            // DataTables
+            $("#table").DataTable({
+                "processing":true,
+                "serverSide":true,
+                "ajax": {
+                    "url": "{{ route('annual-holidays.index') }}/fetch-data-table",
+                    "type": "post",
+                    "data": {
+                        "_token": "{{ csrf_token() }}"
+                    }
+                },
+                "responsive": true,
+                // "lengthChange": false,
+                "lengthMenu": [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+                "autoWidth": false,
+                "columns": [
+                    { "data": "DT_RowIndex" },
+                    { "data": "holiday_date" },
+                    { "data": "description" },
+                    { "data": "action" },
+                ],
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 3] },
+                ],
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+            });
+        });
+    </script>
+@endpush
