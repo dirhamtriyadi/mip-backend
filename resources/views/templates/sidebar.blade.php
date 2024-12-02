@@ -104,8 +104,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
+                <li class="nav-item {{ Route::is('billings.*') ? 'active' : '' }}">
+                    <a href="{{ route('billings.index') }}" class="nav-link {{ Route::is('billings.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-money-bill-wave"></i>
                         <p>
                             Penagihan

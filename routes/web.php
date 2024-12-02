@@ -8,6 +8,7 @@ use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 
@@ -41,6 +42,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('leaves', LeaveController::class);
     Route::post('leaves/fetch-data-table', [LeaveController::class, 'fetchDataTable'])->name('leaves.fetchDataTable');
     Route::post('leaves/{leave}/response', [LeaveController::class, 'response'])->name('leaves.response');
+    Route::resource('billings', BillingController::class);
+    Route::post('billings/fetch-data-table', [BillingController::class, 'fetchDataTable'])->name('billings.fetchDataTable');
     Route::resource('users', UserController::class);
     Route::post('users/fetch-data-table', [UserController::class, 'fetchDataTable'])->name('users.fetchDataTable');
     Route::resource('roles', RoleController::class);

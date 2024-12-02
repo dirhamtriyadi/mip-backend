@@ -115,6 +115,24 @@ Breadcrumbs::for('leaves.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('leaves.create'));
 });
 
+// Dashboard > Billings
+Breadcrumbs::for('billings', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Billings', route('billings.index'));
+});
+
+// Dashboard > Billings > [Billing] > Edit
+Breadcrumbs::for('billings.edit', function (BreadcrumbTrail $trail, $role) {
+    $trail->parent('billings');
+    $trail->push('Edit', route('billings.edit', $role));
+});
+
+// Dashboard > Billings > Create
+Breadcrumbs::for('billings.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('billings');
+    $trail->push('Create', route('billings.create'));
+});
+
 // Dashboard > Roles
 Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
