@@ -40,9 +40,16 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::all()->groupBy(function($item) {
-            return explode('.', $item->name)[0];
-        });
+        // group by guard_name and group by name
+        $permissions = Permission::all()
+            ->groupBy(function($item) {
+                return explode('.', $item->guard_name);
+            })
+            ->map(function($item) {
+                return $item->groupBy(function($item) {
+                    return explode('.', $item->name)[0];
+                });
+            });
 
         return view("roles.create", [
             "permissions" => $permissions,
@@ -84,9 +91,15 @@ class RoleController extends Controller
     public function edit(string $id)
     {
         $role = Role::findOrFail($id);
-        $permissions = Permission::all()->groupBy(function($item) {
-            return explode('.', $item->name)[0];
-        });
+        $permissions = Permission::all()
+            ->groupBy(function($item) {
+                return explode('.', $item->guard_name);
+            })
+            ->map(function($item) {
+                return $item->groupBy(function($item) {
+                    return explode('.', $item->name)[0];
+                });
+            });
         $rolePermissions = $role->permissions->pluck('id')->toArray();
 
         return view('roles.edit', compact('role', 'permissions', 'rolePermissions'));

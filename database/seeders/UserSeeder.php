@@ -28,10 +28,14 @@ class UserSeeder extends Seeder
             'updated_at' => now()
         ]);
 
-        $roleAdmin = Role::create(['name' => 'admin']);
-        $roleAdmin->givePermissionTo(Permission::all());
+        $roleAdminWeb = Role::create(['name' => 'Admin Web', 'guard_name' => 'web']);
+        $roleAdminWeb->givePermissionTo(Permission::where('guard_name', 'web')->get());
 
-        $admin->assignRole($roleAdmin);
+        $roleAdminWebApi = Role::create(['name' => 'Admin Api', 'guard_name' => 'api']);
+        $roleAdminWebApi->givePermissionTo(Permission::where('guard_name', 'api')->get());
+
+        $admin->assignRole($roleAdminWeb);
+        $admin->assignRole($roleAdminWebApi);
 
         $user = User::create([
             'name' => 'User',

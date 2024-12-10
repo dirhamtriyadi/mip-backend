@@ -58,13 +58,13 @@
                                         <label for="permissions">Permissions</label>
                                         <div id="permissions" class="row">
                                             @foreach ($permissions as $group => $groupPermissions)
-                                                <div class="permission-group col-md-3">
-                                                    <div class="permission-group card card-primary">
+                                                <div class="col-12">
+                                                    <div class="card card-primary">
                                                         <div class="card-header">
                                                             <h5 class="card-title">{{ $group }}</h5>
 
                                                             <div class="card-tools">
-                                                                <button type="button" class="btn btn-tool"
+                                                                <button type="button" class="btn btn-tool btn-{{ $group }}"
                                                                     onclick="toggleCheckAll(this)"
                                                                     title="Toggle Check All">
                                                                     <i class="fas fa-check-square"></i>
@@ -74,24 +74,45 @@
                                                         </div>
                                                         <!-- /.card-header -->
                                                         <div class="card-body">
-                                                            @foreach ($groupPermissions as $permission)
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        name="permissions[]"
-                                                                        value="{{ $permission->name }}"
-                                                                        id="permission{{ $permission->id }}"
-                                                                        {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}
-                                                                        onclick="updateToggleIcon(this)">
-                                                                    <label class="form-check-label"
-                                                                        for="permission{{ $permission->id }}">
-                                                                        {{ $permission->name }}
-                                                                    </label>
-                                                                </div>
-                                                            @endforeach
+                                                            <div class="row">
+                                                                @foreach ($groupPermissions as $item => $permission)
+                                                                    <div class="permission-group col-md-3">
+                                                                        <div class="card card-primary">
+                                                                            <div class="card-header">
+                                                                                <h5 class="card-title">{{ $item }}</h5>
+
+                                                                                <div class="card-tools">
+                                                                                    <button type="button" class="btn btn-tool"
+                                                                                        onclick="toggleCheckAll(this)"
+                                                                                        title="Toggle Check All">
+                                                                                        <i class="fas fa-check-square"></i>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <!-- /.card-tools -->
+                                                                            </div>
+                                                                            <!-- /.card-header -->
+                                                                            <div class="card-body">
+                                                                                @foreach ($permission as $item)
+                                                                                    <div class="form-check">
+                                                                                        <input class="form-check-input" type="checkbox"
+                                                                                            name="permissions[]"
+                                                                                            value="{{ $item->name }}"
+                                                                                            id="permission{{ $item->id }}"
+                                                                                            {{ in_array($item->id, $rolePermissions) ? 'checked' : '' }}
+                                                                                            onclick="updateToggleIcon(this)">
+                                                                                        <label class="form-check-label {{ $errors->has('permissions') ? 'is-invalid' : '' }}"
+                                                                                            for="permission{{ $item->id }}">
+                                                                                            {{ $item->name }}
+                                                                                        </label>
+                                                                                    </div>
+                                                                                @endforeach
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
                                                         </div>
-                                                        <!-- /.card-body -->
                                                     </div>
-                                                    <!-- /.card -->
                                                 </div>
                                             @endforeach
                                         </div>
@@ -103,7 +124,7 @@
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
-                                            style="margin-top: 10px;">Update</button>
+                                            style="margin-top: 10px;">Submit</button>
                                     </div>
                                 </form>
                             </div>
