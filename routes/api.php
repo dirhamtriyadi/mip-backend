@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AttendanceController;
 use App\Http\Controllers\Api\V1\LeaveController;
+use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\UserController;
 
 Route::get('/user', function (Request $request) {
@@ -22,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('attendances/sick', [AttendanceController::class, 'sick'])->name('attendances.sick');
         Route::post('attendances/permit', [AttendanceController::class, 'permit'])->name('attendances.permit');
         Route::post('leaves/submission', [LeaveController::class, 'submission'])->name('leaves.submission');
+        Route::apiResource('billings', BillingController::class);
         Route::apiResource('users', UserController::class);
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     });
