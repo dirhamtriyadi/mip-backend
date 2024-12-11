@@ -26,9 +26,9 @@ class BillingResource extends JsonResource
             'result' => $this->result,
             'promise_date' => $this->promise_date,
             'amount' => $this->amount,
-            'image_amount' => asset('images/billings/' . $this->image_amount),
-            'signature_officer' => asset('images/billings/' . $this->signature_officer),
-            'signature_customer' => asset('images/billings/' . $this->signature_customer)
+            'image_amount' => isset($this->image_amount) ? asset('images/billings/' . $this->image_amount) : null,
+            'signature_officer' => isset($this->signature_officer) ? asset('images/billings/' . $this->signature_officer) : null,
+            'signature_customer' => isset($this->signature_customer) ? asset('images/billings/' . $this->signature_customer) : null,
         ];
     }
 }
