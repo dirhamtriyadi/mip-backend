@@ -51,10 +51,14 @@
                                                 <th>Nama Petugas</th>
                                                 <th>Tanggal</th>
                                                 <th>Tujuan Penagihan</th>
-                                                <th>Hasil Penagihan (Kunjungan)</th>
+                                                <th>Bukti Kunjungan</th>
+                                                <th>Keterangan (Kunjungan)</th>
                                                 <th>Tanggal Janji Bayar</th>
+                                                <th>Bukti Janji Bayar</th>
+                                                <th>Keterangan (Janji Bayar)</th>
                                                 <th>Jumlah Setoran</th>
                                                 <th>Bukti Setoran</th>
+                                                <th>Keterangan (Setoran)</th>
                                                 <th>TTD Petugas</th>
                                                 <th>TTD Nasabah</th>
                                                 <th>Aksi</th>
@@ -170,16 +174,20 @@
                     { "data": "user" },
                     { "data": "date" },
                     { "data": "destination" },
-                    { "data": "result" },
+                    { "data": "image_visit" },
+                    { "data": "description_visit" },
                     { "data": "promise_date" },
+                    { "data": "image_promise" },
+                    { "data": "description_promise" },
                     { "data": "amount" },
                     { "data": "image_amount" },
+                    { "data": "description_amount" },
                     { "data": "signature_officer" },
                     { "data": "signature_customer" },
                     { "data": "action" }
                 ],
                 "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 12] }
+                    { "orderable": false, "searchable": false, "targets": [0, 16] }
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,

@@ -99,7 +99,7 @@ class BillingController extends Controller
             'bank_account_id' => 'required|exists:bank_accounts,id',
             'user_id' => 'required|exists:users,id',
             'destination' => 'required|in:visit,promise,pay',
-            'result' => 'nullable',
+            'description_visit' => 'nullable',
             'promise_date' => 'required_if:destination,promise',
             'amount' => 'required_if:destination,pay',
             'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -161,7 +161,7 @@ class BillingController extends Controller
 
         $validatedData['updated_by'] = auth()->id();
         if ($request->destination == 'visit') {
-            $validatedData['result'] = null;
+            $validatedData['description_visit'] = null;
             $validatedData['promise_date'] = null;
             $validatedData['amount'] = null;
             if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
