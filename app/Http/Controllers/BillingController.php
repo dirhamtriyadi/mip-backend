@@ -343,4 +343,45 @@ class BillingController extends Controller
 
         return redirect()->route('billings.index')->with('success', 'Data berhasil dihapus');
     }
+
+    public function reset(string $id)
+    {
+        $user = auth()->user();
+        $billing = Billing::findOrFail($id);
+
+        $billing->destination = 'visit';
+        $billing->description_visit = null;
+        $billing->promise_date = null;
+        $billing->description_promise = null;
+        $billing->amount = null;
+        $billing->description_amount = null;
+        $billing->updated_by = $user->id;
+        $billing->deleted_by = null;
+        $billing->deleted_at = null;
+        // remove image
+        if ($billing->image_visit != null && file_exists(public_path('images/billings/' . $billing->image_visit))) {
+            unlink(public_path('images/billings/' . $billing->image_visit));
+        }
+        $billing->image_visit = null;
+        if ($billing->image_promise != null && file_exists(public_path('images/billings/' . $billing->image_promise))) {
+            unlink(public_path('images/billings/' . $billing->image_promise));
+        }
+        $billing->image_promise = null;
+        if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
+            unlink(public_path('images/billings/' . $billing->image_amount));
+        }
+        $billing->image_amount = null;
+        if ($billing->signature_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
+            unlink(public_path('images/billings/' . $billing->signature_officer));
+        }
+        $billing->signature_officer = null;
+        if ($billing->signature_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
+            unlink(public_path('images/billings/' . $billing->signature_customer));
+        }
+        $billing->signature_customer = null;
+
+        $billing->save();
+
+        return redirect()->route('billings.index')->with('success', 'Data berhasil direset');
+    }
 }

@@ -44,6 +44,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('leaves/{leave}/response', [LeaveController::class, 'response'])->name('leaves.response');
     Route::resource('billings', BillingController::class);
     Route::post('billings/fetch-data-table', [BillingController::class, 'fetchDataTable'])->name('billings.fetchDataTable');
+    Route::put('billings/{billing}/reset', [BillingController::class, 'reset'])->name('billings.reset');
     Route::resource('users', UserController::class);
     Route::post('users/fetch-data-table', [UserController::class, 'fetchDataTable'])->name('users.fetchDataTable');
     Route::resource('roles', RoleController::class);
