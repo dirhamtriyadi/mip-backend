@@ -51,21 +51,26 @@ class WorkScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'work_start_time' => 'required|date_format:H:i',
-            'work_end_time' => 'required|date_format:H:i',
-            'working_days_json' => 'required|json',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'work_start_time' => 'required|date_format:H:i',
+                'work_end_time' => 'required|date_format:H:i',
+                'working_days_json' => 'required|json',
+            ]);
 
-        $tempData = [
-            'work_start_time' => $validatedData['work_start_time'],
-            'work_end_time' => $validatedData['work_end_time'],
-            'working_days' => $validatedData['working_days_json'],
-        ];
+            $tempData = [
+                'work_start_time' => $validatedData['work_start_time'],
+                'work_end_time' => $validatedData['work_end_time'],
+                'working_days' => $validatedData['working_days_json'],
+            ];
 
-        WorkSchedule::create($tempData);
+            WorkSchedule::create($tempData);
 
-        return redirect()->route('work-schedules.index')->with('success', 'Data berhasil ditambahkan');
+            return redirect()->route('work-schedules.index')->with('success', 'Data berhasil ditambahkan');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->route('work-schedules.index')->with('error', 'Data gagal ditambahkan');
+        }
     }
 
     /**
@@ -93,19 +98,24 @@ class WorkScheduleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'work_start_time' => 'required|date_format:H:i',
-            'work_end_time' => 'required|date_format:H:i',
-            'working_days_json' => 'required|json',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'work_start_time' => 'required|date_format:H:i',
+                'work_end_time' => 'required|date_format:H:i',
+                'working_days_json' => 'required|json',
+            ]);
 
-        $workSchedule = WorkSchedule::findOrFail($id);
-        $workSchedule->work_start_time = $validatedData['work_start_time'];
-        $workSchedule->work_end_time = $validatedData['work_end_time'];
-        $workSchedule->working_days = $validatedData['working_days_json'];
-        $workSchedule->save();
+            $workSchedule = WorkSchedule::findOrFail($id);
+            $workSchedule->work_start_time = $validatedData['work_start_time'];
+            $workSchedule->work_end_time = $validatedData['work_end_time'];
+            $workSchedule->working_days = $validatedData['working_days_json'];
+            $workSchedule->save();
 
-        return redirect()->route('work-schedules.index')->with('success', 'Work schedule updated successfully.');
+            return redirect()->route('work-schedules.index')->with('success', 'Work schedule updated successfully.');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->route('work-schedules.index')->with('error', 'Failed to update work schedule.');
+        }
     }
 
     /**
@@ -113,9 +123,14 @@ class WorkScheduleController extends Controller
      */
     public function destroy(string $id)
     {
-        $workSchedule = WorkSchedule::findOrFail($id);
-        $workSchedule->delete();
+        try {
+            $workSchedule = WorkSchedule::findOrFail($id);
+            $workSchedule->delete();
 
-        return redirect()->route('work-schedules.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('work-schedules.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->route('work-schedules.index')->with('error', 'Data gagal dihapus');
+        }
     }
 }

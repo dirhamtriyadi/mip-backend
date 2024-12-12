@@ -83,52 +83,67 @@ class BillingController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'no_billing' => 'required|unique:billings',
-            'date' => 'required|date',
-            'bank_account_id' => 'required|exists:bank_accounts,id',
-            'user_id' => 'required|exists:users,id',
-            'destination' => 'required|in:visit,promise,pay',
-            'result' => 'nullable',
-            'promise_date' => 'required_if:destination,promise',
-            'amount' => 'required_if:destination,pay',
-            'image_amount' => 'required_if:destination,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'signature_officer' => 'required_if:destination,promise,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'signature_customer' => 'required_if:destination,promise,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'no_billing' => 'required|unique:billings',
+                'date' => 'required|date',
+                'bank_account_id' => 'required|exists:bank_accounts,id',
+                'user_id' => 'required|exists:users,id',
+                'destination' => 'required|in:visit,promise,pay',
+                'result' => 'nullable',
+                'promise_date' => 'required_if:destination,promise',
+                'amount' => 'required_if:destination,pay',
+                'image_amount' => 'required_if:destination,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'signature_officer' => 'required_if:destination,promise,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'signature_customer' => 'required_if:destination,promise,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
 
-        $validatedData['created_by'] = auth()->id();
+            $validatedData['created_by'] = auth()->id();
 
-        // save image to public/images/billings and change name to timestamp
-        if ($request->hasFile('image_amount')) {
-            // save image to public/images/billings and change name file to name user-timestamp
-            $file = $request->file('image_amount');
-            $fileName = $validatedData['no_billing'] . '-' . 'amount' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/billings'), $fileName);
-            $validatedData['image_amount'] = $fileName;
+            // save image to public/images/billings and change name to timestamp
+            if ($request->hasFile('image_amount')) {
+                // save image to public/images/billings and change name file to name user-timestamp
+                $file = $request->file('image_amount');
+                $fileName = $validatedData['no_billing'] . '-' . 'amount' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/billings'), $fileName);
+                $validatedData['image_amount'] = $fileName;
+            }
+
+            // save image to public/images/billings and change name to timestamp
+            if ($request->hasFile('signature_officer')) {
+                // save image to public/images/billings and change name file to name user-timestamp
+                $file = $request->file('signature_officer');
+                $fileName = $validatedData['no_billing'] . '-' . 'signature_officer' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/billings'), $fileName);
+                $validatedData['signature_officer'] = $fileName;
+            }
+
+            // save image to public/images/billings and change name to timestamp
+            if ($request->hasFile('signature_customer')) {
+                // save image to public/images/billings and change name file to name user-timestamp
+                $file = $request->file('signature_customer');
+                $fileName = $validatedData['no_billing'] . '-' . 'signature_customer' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/billings'), $fileName);
+                $validatedData['signature_customer'] = $fileName;
+            }
+
+            Billing::create($validatedData);
+
+            return redirect()->route('billings.index')->with('success', 'Data berhasil disimpan');
+        } catch (\Throwable $th) {
+            //throw $th;
+            if ($request->hasFile('image_amount')) {
+                unlink(public_path('images/billings/' . $fileName));
+            }
+            if ($request->hasFile('signature_officer')) {
+                unlink(public_path('images/billings/' . $fileName));
+            }
+            if ($request->hasFile('signature_customer')) {
+                unlink(public_path('images/billings/' . $fileName));
+            }
+
+            return redirect()->route('billings.index')->with('error', 'Data gagal disimpan');
         }
-
-        // save image to public/images/billings and change name to timestamp
-        if ($request->hasFile('signature_officer')) {
-            // save image to public/images/billings and change name file to name user-timestamp
-            $file = $request->file('signature_officer');
-            $fileName = $validatedData['no_billing'] . '-' . 'signature_officer' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/billings'), $fileName);
-            $validatedData['signature_officer'] = $fileName;
-        }
-
-        // save image to public/images/billings and change name to timestamp
-        if ($request->hasFile('signature_customer')) {
-            // save image to public/images/billings and change name file to name user-timestamp
-            $file = $request->file('signature_customer');
-            $fileName = $validatedData['no_billing'] . '-' . 'signature_customer' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/billings'), $fileName);
-            $validatedData['signature_customer'] = $fileName;
-        }
-
-        Billing::create($validatedData);
-
-        return redirect()->route('billings.index')->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -160,86 +175,101 @@ class BillingController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'no_billing' => 'required|unique:billings,no_billing,' . $id,
-            'date' => 'required|date',
-            'bank_account_id' => 'required|exists:bank_accounts,id',
-            'user_id' => 'required|exists:users,id',
-            'destination' => 'required|in:visit,promise,pay',
-            'result' => 'nullable',
-            'promise_date' => 'required_if:destination,promise',
-            'amount' => 'required_if:destination,pay',
-            'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'no_billing' => 'required|unique:billings,no_billing,' . $id,
+                'date' => 'required|date',
+                'bank_account_id' => 'required|exists:bank_accounts,id',
+                'user_id' => 'required|exists:users,id',
+                'destination' => 'required|in:visit,promise,pay',
+                'result' => 'nullable',
+                'promise_date' => 'required_if:destination,promise',
+                'amount' => 'required_if:destination,pay',
+                'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
 
-        $billing = Billing::findOrFail($id);
+            $billing = Billing::findOrFail($id);
 
-        // save image to public/images/billings and change name to timestamp
-        if ($request->hasFile('image_amount')) {
-            // remove old image
-            if (file_exists(public_path('images/billings/' . $billing->image_amount))) {
-                unlink(public_path('images/billings/' . $billing->image_amount));
+            // save image to public/images/billings and change name to timestamp
+            if ($request->hasFile('image_amount')) {
+                // remove old image
+                if (file_exists(public_path('images/billings/' . $billing->image_amount))) {
+                    unlink(public_path('images/billings/' . $billing->image_amount));
+                }
+
+                // save image to public/images/billings and change name file to name user-timestamp
+                $file = $request->file('image_amount');
+                $fileName = $validatedData['no_billing'] . '-' . 'amount' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/billings'), $fileName);
+                $validatedData['image_amount'] = $fileName;
             }
 
-            // save image to public/images/billings and change name file to name user-timestamp
-            $file = $request->file('image_amount');
-            $fileName = $validatedData['no_billing'] . '-' . 'amount' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/billings'), $fileName);
-            $validatedData['image_amount'] = $fileName;
+            // save image to public/images/billings and change name to timestamp
+            if ($request->hasFile('signature_officer')) {
+                // remove old image
+                if (file_exists(public_path('images/billings/' . $billing->signature_officer))) {
+                    unlink(public_path('images/billings/' . $billing->signature_officer));
+                }
+
+                // save image to public/images/billings and change name file to name user-timestamp
+                $file = $request->file('signature_officer');
+                $fileName = $validatedData['no_billing'] . '-' . 'signature_officer' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/billings'), $fileName);
+                $validatedData['signature_officer'] = $fileName;
+            }
+
+            // save image to public/images/billings and change name to timestamp
+            if ($request->hasFile('signature_customer')) {
+                // remove old image
+                if (file_exists(public_path('images/billings/' . $billing->signature_customer))) {
+                    unlink(public_path('images/billings/' . $billing->signature_customer));
+                }
+
+                // save image to public/images/billings and change name file to name user-timestamp
+                $file = $request->file('signature_customer');
+                $fileName = $validatedData['no_billing'] . '-' . 'signature_customer' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/billings'), $fileName);
+                $validatedData['signature_customer'] = $fileName;
+            }
+
+            $validatedData['updated_by'] = auth()->id();
+            if ($request->destination == 'visit') {
+                $validatedData['result'] = null;
+                $validatedData['promise_date'] = null;
+                $validatedData['amount'] = null;
+                if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
+                    unlink(public_path('images/billings/' . $billing->image_amount));
+                }
+                $validatedData['image_amount'] = null;
+                if ($billing->siganture_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
+                    unlink(public_path('images/billings/' . $billing->signature_officer));
+                }
+                $validatedData['signature_officer'] = null;
+                if ($billing->siganture_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
+                    unlink(public_path('images/billings/' . $billing->signature_customer));
+                }
+                $validatedData['signature_customer'] = null;
+            }
+
+            $billing->update($validatedData);
+
+            return redirect()->route('billings.index')->with('success', 'Data berhasil diperbarui');
+        } catch (\Throwable $th) {
+            //throw $th;
+            if ($request->hasFile('image_amount')) {
+                unlink(public_path('images/billings/' . $fileName));
+            }
+            if ($request->hasFile('signature_officer')) {
+                unlink(public_path('images/billings/' . $fileName));
+            }
+            if ($request->hasFile('signature_customer')) {
+                unlink(public_path('images/billings/' . $fileName));
+            }
+
+            return redirect()->route('billings.index')->with('error', 'Data gagal diperbarui');
         }
-
-        // save image to public/images/billings and change name to timestamp
-        if ($request->hasFile('signature_officer')) {
-            // remove old image
-            if (file_exists(public_path('images/billings/' . $billing->signature_officer))) {
-                unlink(public_path('images/billings/' . $billing->signature_officer));
-            }
-
-            // save image to public/images/billings and change name file to name user-timestamp
-            $file = $request->file('signature_officer');
-            $fileName = $validatedData['no_billing'] . '-' . 'signature_officer' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/billings'), $fileName);
-            $validatedData['signature_officer'] = $fileName;
-        }
-
-        // save image to public/images/billings and change name to timestamp
-        if ($request->hasFile('signature_customer')) {
-            // remove old image
-            if (file_exists(public_path('images/billings/' . $billing->signature_customer))) {
-                unlink(public_path('images/billings/' . $billing->signature_customer));
-            }
-
-            // save image to public/images/billings and change name file to name user-timestamp
-            $file = $request->file('signature_customer');
-            $fileName = $validatedData['no_billing'] . '-' . 'signature_customer' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/billings'), $fileName);
-            $validatedData['signature_customer'] = $fileName;
-        }
-
-        $validatedData['updated_by'] = auth()->id();
-        if ($request->destination == 'visit') {
-            $validatedData['result'] = null;
-            $validatedData['promise_date'] = null;
-            $validatedData['amount'] = null;
-            if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
-                unlink(public_path('images/billings/' . $billing->image_amount));
-            }
-            $validatedData['image_amount'] = null;
-            if ($billing->siganture_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
-                unlink(public_path('images/billings/' . $billing->signature_officer));
-            }
-            $validatedData['signature_officer'] = null;
-            if ($billing->siganture_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
-                unlink(public_path('images/billings/' . $billing->signature_customer));
-            }
-            $validatedData['signature_customer'] = null;
-        }
-
-        $billing->update($validatedData);
-
-        return redirect()->route('billings.index')->with('success', 'Data berhasil diperbarui');
     }
 
     /**
@@ -247,25 +277,30 @@ class BillingController extends Controller
      */
     public function destroy(string $id)
     {
-        $billing = Billing::findOrFail($id);
+        try {
+            $billing = Billing::findOrFail($id);
 
-        // remove image
-        // if (file_exists(public_path('images/billings/' . $billing->image_amount))) {
-        //     unlink(public_path('_amounts/billings/' . $billing->image_amount));
-        // }
+            // remove image
+            // if (file_exists(public_path('images/billings/' . $billing->image_amount))) {
+            //     unlink(public_path('_amounts/billings/' . $billing->image_amount));
+            // }
 
-        // if (file_exists(public_path('images/billings/' . $billing->signature_officer))) {
-        //     unlink(public_path('_amounts/billings/' . $billing->signature_officer))) {;
-        // }
+            // if (file_exists(public_path('images/billings/' . $billing->signature_officer))) {
+            //     unlink(public_path('_amounts/billings/' . $billing->signature_officer))) {;
+            // }
 
-        // if (file_exists(public_path('images/billings/' . $billing->signature_customer))) {
-        //     unlink(public_path('_amounts/billings/' . $billing->signature_customer))) {;
-        // }
+            // if (file_exists(public_path('images/billings/' . $billing->signature_customer))) {
+            //     unlink(public_path('_amounts/billings/' . $billing->signature_customer))) {;
+            // }
 
-        $billing->deleted_by = auth()->id();
-        $billing->save();
-        $billing->delete();
+            $billing->deleted_by = auth()->id();
+            $billing->save();
+            $billing->delete();
 
-        return redirect()->route('billings.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('billings.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->route('billings.index')->with('error', 'Data gagal dihapus');
+        }
     }
 }

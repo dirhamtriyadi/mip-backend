@@ -65,17 +65,22 @@ class LeaveController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'status' => 'required|in:pending,approved,rejected',
-            'response' => 'nullable',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date',
+                'status' => 'required|in:pending,approved,rejected',
+                'response' => 'nullable',
+            ]);
 
-        Leave::create($validatedData);
+            Leave::create($validatedData);
 
-        return redirect()->route('leaves.index')->with('success', 'Cuti berhasil diajukan');
+            return redirect()->route('leaves.index')->with('success', 'Cuti berhasil diajukan');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->route('leaves.index')->with('error', 'Cuti gagal diajukan');
+        }
     }
 
     /**
@@ -105,18 +110,23 @@ class LeaveController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'status' => 'required|in:pending,approved,rejected',
-            'response' => 'nullable',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date',
+                'status' => 'required|in:pending,approved,rejected',
+                'response' => 'nullable',
+            ]);
 
-        $leave = Leave::findOrFail($id);
-        $leave->update($validatedData);
+            $leave = Leave::findOrFail($id);
+            $leave->update($validatedData);
 
-        return redirect()->route('leaves.index')->with('success', 'Data berhasil diubah');
+            return redirect()->route('leaves.index')->with('success', 'Data berhasil diubah');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->route('leaves.index')->with('error', 'Data gagal diubah');
+        }
     }
 
     /**
@@ -124,22 +134,32 @@ class LeaveController extends Controller
      */
     public function destroy(string $id)
     {
-        $leave = Leave::findOrFail($id);
-        $leave->delete();
+        try {
+            $leave = Leave::findOrFail($id);
+            $leave->delete();
 
-        return redirect()->route('leaves.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('leaves.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->route('leaves.index')->with('error', 'Data gagal dihapus');
+        }
     }
 
     public function response(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'status' => 'required|in:approved,rejected',
-            'response' => 'nullable',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'status' => 'required|in:approved,rejected',
+                'response' => 'nullable',
+            ]);
 
-        $leave = Leave::findOrFail($id);
-        $leave->update($validatedData);
+            $leave = Leave::findOrFail($id);
+            $leave->update($validatedData);
 
-        return redirect()->route('leaves.index')->with('success', 'Data berhasil diubah');
+            return redirect()->route('leaves.index')->with('success', 'Data berhasil diubah');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->route('leaves.index')->with('error', 'Data gagal diubah');
+        }
     }
 }
