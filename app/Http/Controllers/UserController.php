@@ -56,33 +56,28 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:8|confirmed',
-                'nik' => 'required|string|max:255|unique:detail_users,nik',
-                'role' => 'nullable|exists:roles,name',
-            ]);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'nik' => 'required|string|max:255|unique:detail_users,nik',
+            'role' => 'nullable|exists:roles,name',
+        ]);
 
-            $user = new User();
-            $user->name = $validatedData['name'];
-            $user->email = $validatedData['email'];
-            $user->password = Hash::make($validatedData['password']);
-            $user->save();
-            $user->detail_users()->create([
-                'nik' => $validatedData['nik'],
-            ]);
+        $user = new User();
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+        $user->password = Hash::make($validatedData['password']);
+        $user->save();
+        $user->detail_users()->create([
+            'nik' => $validatedData['nik'],
+        ]);
 
-            if ($request->filled('role')) {
-                $user->assignRole($validatedData['role']);
-            }
-
-            return redirect()->route('users.index')->with('success', 'User created successfully.');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('users.index')->with('error', 'User failed to create.');
+        if ($request->filled('role')) {
+            $user->assignRole($validatedData['role']);
         }
+
+        return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
     /**
@@ -110,8 +105,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try {
-            $user = User::findOrFail($id)->load('detail_users');
+        $user = User::findOrFail($id)->load('detail_users');
         $detailUserId = $user->detail_users->id ?? null;
 
         $validatedData = $request->validate([
@@ -141,10 +135,6 @@ class UserController extends Controller
         }
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('users.index')->with('error', 'User failed to update.');
-        }
     }
 
     /**
@@ -152,14 +142,9 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            $user = User::findOrFail($id);
+        $user = User::findOrFail($id);
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('users.index')->with('error', 'User failed to delete.');
-        }
     }
 }

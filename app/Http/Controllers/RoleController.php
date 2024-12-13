@@ -54,25 +54,20 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255|unique:roles,name',
-                'permissions' => 'nullable|array',
-            ]);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name',
+            'permissions' => 'nullable|array',
+        ]);
 
-            $role = new Role();
-            $role->name = $validatedData['name'];
-            $role->save();
+        $role = new Role();
+        $role->name = $validatedData['name'];
+        $role->save();
 
-            if ($request->filled('permissions')) {
-                $role->syncPermissions($validatedData['permissions']);
-            }
-
-            return redirect()->route('roles.index');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('roles.index')->with('error', 'Data gagal disimpan');
+        if ($request->filled('permissions')) {
+            $role->syncPermissions($validatedData['permissions']);
         }
+
+        return redirect()->route('roles.index')->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -102,27 +97,22 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try {
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255|unique:roles,name,' . $id,
-                'permissions' => 'nullable|array',
-            ]);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name,' . $id,
+            'permissions' => 'nullable|array',
+        ]);
 
-            $role = Role::findOrFail($id);
-            $role->name = $validatedData['name'];
-            $role->save();
+        $role = Role::findOrFail($id);
+        $role->name = $validatedData['name'];
+        $role->save();
 
-            if ($request->filled('permissions')) {
-                $role->syncPermissions($validatedData['permissions']);
-            } else {
-                $role->syncPermissions([]);
-            }
-
-            return redirect()->route('roles.index');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('roles.index')->with('error', 'Data gagal diubah');
+        if ($request->filled('permissions')) {
+            $role->syncPermissions($validatedData['permissions']);
+        } else {
+            $role->syncPermissions([]);
         }
+
+        return redirect()->route('roles.index')->with('success', 'Data berhasil diubah');
     }
 
     /**
@@ -130,14 +120,9 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            $role = Role::findOrFail($id);
-            $role->delete();
+        $role = Role::findOrFail($id);
+        $role->delete();
 
-            return redirect()->route('roles.index');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('roles.index')->with('error', 'Data gagal dihapus');
-        }
+        return redirect()->route('roles.index')->with('success', 'Data berhasil dihapus');
     }
 }

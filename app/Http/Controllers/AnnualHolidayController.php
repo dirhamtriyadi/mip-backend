@@ -48,19 +48,14 @@ class AnnualHolidayController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'holiday_date' => 'required|date',
-                'description' => 'required|string'
-            ]);
+        $validatedData = $request->validate([
+            'holiday_date' => 'required|date',
+            'description' => 'required|string'
+        ]);
 
-            AnnualHoliday::create($validatedData);
+        AnnualHoliday::create($validatedData);
 
-            return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil disimpan');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('annual-holidays.index')->with('error', 'Data gagal disimpan');
-        }
+        return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -88,20 +83,15 @@ class AnnualHolidayController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try {
-            $validatedData = $request->validate([
-                'holiday_date' => 'required|date',
-                'description' => 'required|string'
-            ]);
+        $validatedData = $request->validate([
+            'holiday_date' => 'required|date',
+            'description' => 'required|string'
+        ]);
 
-            $annualHoliday = AnnualHoliday::findOrFail($id);
-            $annualHoliday->update($validatedData);
+        $annualHoliday = AnnualHoliday::findOrFail($id);
+        $annualHoliday->update($validatedData);
 
-            return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil diubah');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('annual-holidays.index')->with('error', 'Data gagal diubah');
-        }
+        return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil diubah');
     }
 
     /**
@@ -109,15 +99,10 @@ class AnnualHolidayController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            $annualHoliday = AnnualHoliday::findOrFail($id);
-            $annualHoliday->delete();
+        $annualHoliday = AnnualHoliday::findOrFail($id);
+        $annualHoliday->delete();
 
-            return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil dihapus');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('annual-holidays.index')->with('error', 'Data gagal dihapus');
-        }
+        return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil dihapus');
 
     }
 }

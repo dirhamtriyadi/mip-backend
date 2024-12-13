@@ -44,25 +44,20 @@ class BankAccountController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'no' => 'required|numeric|unique:bank_accounts',
-                'name_customer' => 'required',
-                'address' => 'required',
-                'name_bank' => 'required',
-                'total_bill' => 'nullable|numeric',
-                'installment' => 'nullable|numeric',
-                // 'remaining_installment' => 'required|numeric',
-            ]);
+        $validatedData = $request->validate([
+            'no' => 'required|numeric|unique:bank_accounts',
+            'name_customer' => 'required',
+            'address' => 'required',
+            'name_bank' => 'required',
+            'total_bill' => 'nullable|numeric',
+            'installment' => 'nullable|numeric',
+            // 'remaining_installment' => 'required|numeric',
+        ]);
 
-            $validatedData['created_by'] = auth()->id();
-            BankAccount::create($validatedData);
+        $validatedData['created_by'] = auth()->id();
+        BankAccount::create($validatedData);
 
-            return redirect()->route('bank-accounts.index')->with('success', 'Data berhasil disimpan');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('bank-accounts.index')->with('error', 'Data gagal disimpan');
-        }
+        return redirect()->route('bank-accounts.index')->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -90,27 +85,22 @@ class BankAccountController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try {
-            $validatedData = $request->validate([
-                'no' => 'required|numeric|unique:bank_accounts,no,' . $id,
-                'name_customer' => 'required',
-                'address' => 'required',
-                'name_bank' => 'required',
-                'total_bill' => 'nullable|numeric',
-                'installment' => 'nullable|numeric',
-                // 'remaining_installment' => 'required|numeric',
-            ]);
+        $validatedData = $request->validate([
+            'no' => 'required|numeric|unique:bank_accounts,no,' . $id,
+            'name_customer' => 'required',
+            'address' => 'required',
+            'name_bank' => 'required',
+            'total_bill' => 'nullable|numeric',
+            'installment' => 'nullable|numeric',
+            // 'remaining_installment' => 'required|numeric',
+        ]);
 
-            $bankAccount = BankAccount::findOrFail($id);
-            $bankAccount->fill($validatedData);
-            $bankAccount->updated_by = auth()->id();
-            $bankAccount->save();
+        $bankAccount = BankAccount::findOrFail($id);
+        $bankAccount->fill($validatedData);
+        $bankAccount->updated_by = auth()->id();
+        $bankAccount->save();
 
-            return redirect()->route('bank-accounts.index')->with('success', 'Data berhasil diperbarui');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('bank-accounts.index')->with('error', 'Data gagal diperbarui');
-        }
+        return redirect()->route('bank-accounts.index')->with('success', 'Data berhasil diperbarui');
     }
 
     /**
@@ -118,16 +108,11 @@ class BankAccountController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            $bankAccount = BankAccount::findOrFail($id);
-            $bankAccount->deleted_by = auth()->id();
-            $bankAccount->save();
-            $bankAccount->delete();
+        $bankAccount = BankAccount::findOrFail($id);
+        $bankAccount->deleted_by = auth()->id();
+        $bankAccount->save();
+        $bankAccount->delete();
 
-            return redirect()->route('bank-accounts.index')->with('success', 'Data berhasil dihapus');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route('bank-accounts.index')->with('error', 'Data gagal dihapus');
-        }
+        return redirect()->route('bank-accounts.index')->with('success', 'Data berhasil dihapus');
     }
 }
