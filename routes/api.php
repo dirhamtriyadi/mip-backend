@@ -12,11 +12,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/v1/register', [AuthController::class, 'register'])->name('register');
-Route::post('/v1/login', [AuthController::class, 'login'])->name('login');
+Route::prefix('v1')->group(function () {
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::prefix('v1')->group(function () {
+    Route::middleware('auth:sanctum')->group(function () {
         Route::get('attendances/work-schedules', [AttendanceController::class, 'workSchedules'])->name('attendances.work-schedules');
         Route::post('attendances/check-in', [AttendanceController::class, 'checkIn'])->name('attendances.check-in');
         Route::post('attendances/check-out', [AttendanceController::class, 'checkOut'])->name('attendances.check-out');
