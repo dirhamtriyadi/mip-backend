@@ -7,10 +7,10 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Edit Akun Bank</h1>
+                        <h1>Edit Nasabah</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{ Breadcrumbs::render('bank-accounts.edit', $data->id) }}
+                        {{ Breadcrumbs::render('customers.edit', $data->id) }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -41,7 +41,7 @@
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Edit Akun Bank</h3>
+                                <h3 class="card-title">Edit Nasabah</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"
@@ -55,9 +55,9 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-start">
-                                    <a href="{{ route('bank-accounts.index') }}" class="btn btn-warning mb-3"><i class="fas fa-arrow-left"></i> Kembali</a>
+                                    <a href="{{ route('customers.index') }}" class="btn btn-warning mb-3"><i class="fas fa-arrow-left"></i> Kembali</a>
                                 </div>
-                                <form id="bank-account-form" action="{{ route('bank-accounts.update', $data->id) }}" method="POST">
+                                <form id="bank-account-form" action="{{ route('customers.update', $data->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
 

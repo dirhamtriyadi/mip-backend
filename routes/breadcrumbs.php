@@ -51,23 +51,23 @@ Breadcrumbs::for('annual-holidays.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('annual-holidays.create'));
 });
 
-// Dashboard > Master Data > Bank Accounts
-Breadcrumbs::for('bank-accounts', function (BreadcrumbTrail $trail) {
+// Dashboard > Master Data > Customers
+Breadcrumbs::for('customers', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
     $trail->push('Master Data');
-    $trail->push('Bank Accounts', route('bank-accounts.index'));
+    $trail->push('Customers', route('customers.index'));
 });
 
-// Dashboard > Master Data > Bank Accounts > [Bank Account] > Edit
-Breadcrumbs::for('bank-accounts.edit', function (BreadcrumbTrail $trail, $bankAccount) {
-    $trail->parent('bank-accounts');
-    $trail->push('Edit', route('bank-accounts.edit', $bankAccount));
+// Dashboard > Master Data > Customers > [Customer] > Edit
+Breadcrumbs::for('customers.edit', function (BreadcrumbTrail $trail, $bankAccount) {
+    $trail->parent('customers');
+    $trail->push('Edit', route('customers.edit', $bankAccount));
 });
 
-// Dashboard > Master Data > Bank Accounts > Create
-Breadcrumbs::for('bank-accounts.create', function (BreadcrumbTrail $trail) {
-    $trail->parent('bank-accounts');
-    $trail->push('Create', route('bank-accounts.create'));
+// Dashboard > Master Data > Customers > Create
+Breadcrumbs::for('customers.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('customers');
+    $trail->push('Create', route('customers.create'));
 });
 
 // Dashboard > Absen > Attendances

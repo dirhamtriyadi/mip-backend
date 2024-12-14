@@ -170,7 +170,7 @@
                 "columns": [
                     { "data": "DT_RowIndex" },
                     { "data": "no_billing" },
-                    { "data": "bank_account" },
+                    { "data": "customer" },
                     { "data": "user" },
                     { "data": "date" },
                     { "data": "destination" },

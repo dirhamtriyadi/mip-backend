@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Billing;
 use App\Models\User;
-use App\Models\BankAccount;
+use App\Models\Customer;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 
@@ -27,8 +27,8 @@ class BillingController extends Controller
 
         return DataTables::of($billings)
             ->addIndexColumn()
-            ->addColumn('bank_account', function ($billing) {
-                return $billing->bankAccount->name_customer;
+            ->addColumn('customer', function ($billing) {
+                return $billing->customer->name_customer;
             })
             ->addColumn('user', function ($billing) {
                 return $billing->user->name;
@@ -82,11 +82,11 @@ class BillingController extends Controller
     public function create()
     {
         $users = User::all();
-        $bankAccounts = BankAccount::all();
+        $customers = Customer::all();
 
         return view('billings.create', [
             'users' => $users,
-            'bankAccounts' => $bankAccounts,
+            'customers' => $customers,
         ]);
     }
 
@@ -98,19 +98,21 @@ class BillingController extends Controller
         $validatedData = $request->validate([
             'no_billing' => 'required|unique:billings',
             'date' => 'required|date',
-            'bank_account_id' => 'required|exists:bank_accounts,id',
+            'customer_id' => 'required|exists:customers,id',
             'user_id' => 'required|exists:users,id',
             'destination' => 'required|in:visit,promise,pay',
-            'image_visit' => 'required_if:destination,visit|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_visit' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description_visit' => 'nullable',
-            'promise_date' => 'required_if:destination,promise',
-            'image_promise' => 'required_if:destination,promise|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'promise_date' => 'required_if:destination,promise',
+            'promise_date' => 'nullable',
+            'image_promise' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description_promise' => 'nullable',
-            'amount' => 'required_if:destination,pay',
-            'image_amount' => 'required_if:destination,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'amount' => 'required_if:destination,pay',
+            'amount' => 'nullable',
+            'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description_amount' => 'nullable',
-            'signature_officer' => 'required_if:destination,promise,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'signature_customer' => 'required_if:destination,promise,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $validatedData['created_by'] = auth()->id();
@@ -180,12 +182,12 @@ class BillingController extends Controller
     {
         $billing = Billing::findOrFail($id);
         $users = User::all();
-        $bankAccounts = BankAccount::all();
+        $customers = Customer::all();
 
         return view('billings.edit', [
             'data' => $billing,
             'users' => $users,
-            'bankAccounts' => $bankAccounts,
+            'customers' => $customers,
         ]);
     }
 
@@ -197,16 +199,18 @@ class BillingController extends Controller
         $validatedData = $request->validate([
             'no_billing' => 'required|unique:billings,no_billing,' . $id,
             'date' => 'required|date',
-            'bank_account_id' => 'required|exists:bank_accounts,id',
+            'customer_id' => 'required|exists:customers,id',
             'user_id' => 'required|exists:users,id',
             'destination' => 'required|in:visit,promise,pay',
-            'image_visit' => 'required_if:destination,visit|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_visit' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description_visit' => 'nullable',
-            'promise_date' => 'required_if:destination,promise',
-            'image_promise' => 'required_if:destination,promise|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'promise_date' => 'required_if:destination,promise',
+            'promise_date' => 'nullable',
+            'image_promise' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description_promise' => 'nullable',
-            'amount' => 'required_if:destination,pay',
-            'image_amount' => 'required_if:destination,pay|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'amount' => 'required_if:destination,pay',
+            'amount' => 'nullable',
+            'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description_amount' => 'nullable',
             'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',

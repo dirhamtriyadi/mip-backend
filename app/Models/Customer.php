@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BankAccount extends Model
+class Customer extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'bank_accounts';
+    protected $table = 'customers';
 
     protected $fillable = [
         'no',

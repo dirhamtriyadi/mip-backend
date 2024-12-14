@@ -93,14 +93,14 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="bank_account_id">Nasabah</label>
-                                        <select class="form-control select2" style="width: 100%;" id="bank_account_id" name="bank_account_id">
+                                        <label for="customer_id">Nasabah</label>
+                                        <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id">
                                             <option value="" selected>Pilih Nasabah</option>
-                                            @foreach ($bankAccounts as $bankAccount)
-                                                <option value="{{ $bankAccount->id }}" {{ old('bank_account_id') == $bankAccount->id ? 'selected' : '' }}>{{ $bankAccount->name_customer }}</option>
+                                            @foreach ($customers as $customer)
+                                                <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>{{ $customer->name_customer }}</option>
                                             @endforeach
                                         </select>
-                                        @error('bank_account_id')
+                                        @error('customer_id')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>

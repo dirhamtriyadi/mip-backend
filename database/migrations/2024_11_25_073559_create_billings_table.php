@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('no_billing')->unique()->comment('Nomor tagihan');
             $table->date('date')->comment('Tanggal penagihan');
-            $table->foreignId('bank_account_id')->constrained('bank_accounts')->onDelete('cascade')->comment('ID Rekening Bank');
+            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade')->comment('ID Customer');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->comment('ID Petugas');
             $table->enum('destination', ['visit', 'promise', 'pay'])->default('visit')->comment('Tujuan penagihan');
             $table->string('image_visit')->nullable()->comment('Bukti kunjungan');

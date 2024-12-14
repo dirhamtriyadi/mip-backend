@@ -3,29 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\BankAccount;
+use App\Models\Customer;
 use Yajra\DataTables\Facades\DataTables;
 
-class BankAccountController extends Controller
+class CustomerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('bank-accounts.index');
+        return view('customers.index');
     }
 
     // Fetch data for DataTable
     public function fetchDataTable(Request $request)
     {
         // load all bank accounts
-        $bankAccounts = BankAccount::all();
+        $customers = Customer::all();
 
-        return DataTables::of($bankAccounts)
+        return DataTables::of($customers)
             ->addIndexColumn()
-            ->addColumn('action', function ($bankAccount) {
-                return view('bank-accounts.action', ['value' => $bankAccount]);
+            ->addColumn('action', function ($customer) {
+                return view('customers.action', ['value' => $customer]);
             })
             ->rawColumns(['action'])
             ->toJson();
@@ -36,7 +36,7 @@ class BankAccountController extends Controller
      */
     public function create()
     {
-        return view('bank-accounts.create');
+        return view('customers.create');
     }
 
     /**
@@ -45,7 +45,7 @@ class BankAccountController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'no' => 'required|numeric|unique:bank_accounts',
+            'no' => 'required|numeric|unique:customers',
             'name_customer' => 'required',
             'address' => 'required',
             'name_bank' => 'required',
@@ -55,9 +55,9 @@ class BankAccountController extends Controller
         ]);
 
         $validatedData['created_by'] = auth()->id();
-        BankAccount::create($validatedData);
+        Customer::create($validatedData);
 
-        return redirect()->route('bank-accounts.index')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('customers.index')->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -73,10 +73,10 @@ class BankAccountController extends Controller
      */
     public function edit(string $id)
     {
-        $bankAccount = BankAccount::findOrFail($id);
+        $customer = Customer::findOrFail($id);
 
-        return view('bank-accounts.edit', [
-            'data' => $bankAccount,
+        return view('customers.edit', [
+            'data' => $customer,
         ]);
     }
 
@@ -86,7 +86,7 @@ class BankAccountController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'no' => 'required|numeric|unique:bank_accounts,no,' . $id,
+            'no' => 'required|numeric|unique:customers,no,' . $id,
             'name_customer' => 'required',
             'address' => 'required',
             'name_bank' => 'required',
@@ -95,12 +95,12 @@ class BankAccountController extends Controller
             // 'remaining_installment' => 'required|numeric',
         ]);
 
-        $bankAccount = BankAccount::findOrFail($id);
-        $bankAccount->fill($validatedData);
-        $bankAccount->updated_by = auth()->id();
-        $bankAccount->save();
+        $customer = Customer::findOrFail($id);
+        $customer->fill($validatedData);
+        $customer->updated_by = auth()->id();
+        $customer->save();
 
-        return redirect()->route('bank-accounts.index')->with('success', 'Data berhasil diperbarui');
+        return redirect()->route('customers.index')->with('success', 'Data berhasil diperbarui');
     }
 
     /**
@@ -108,11 +108,11 @@ class BankAccountController extends Controller
      */
     public function destroy(string $id)
     {
-        $bankAccount = BankAccount::findOrFail($id);
-        $bankAccount->deleted_by = auth()->id();
-        $bankAccount->save();
-        $bankAccount->delete();
+        $customer = Customer::findOrFail($id);
+        $customer->deleted_by = auth()->id();
+        $customer->save();
+        $customer->delete();
 
-        return redirect()->route('bank-accounts.index')->with('success', 'Data berhasil dihapus');
+        return redirect()->route('customers.index')->with('success', 'Data berhasil dihapus');
     }
 }
