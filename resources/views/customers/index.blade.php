@@ -51,6 +51,7 @@
                                                 <th>No HP</th>
                                                 <th>Alamat</th>
                                                 <th>Nama Bank</th>
+                                                <th>Tanggal</th>
                                                 <th>Total Tagihan</th>
                                                 <th>Angsuran</th>
                                                 {{-- <th>Sisa Angsuran</th> --}}
@@ -145,12 +146,13 @@
                     { "data": "phone_number" },
                     { "data": "address" },
                     { "data": "name_bank" },
+                    { "data": "date" },
                     { "data": "total_bill", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp ') },
                     { "data": "installment", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp ') },
                     { "data": "action" },
                 ],
                 "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 8] },
+                    { "orderable": false, "searchable": false, "targets": [0, 9] },
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,

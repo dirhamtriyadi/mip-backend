@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
 
 class CustomerController extends Controller
 {
@@ -24,6 +25,9 @@ class CustomerController extends Controller
 
         return DataTables::of($customers)
             ->addIndexColumn()
+            ->editColumn('date', function ($billing) {
+                return Carbon::parse($billing->date)->format('d-m-Y');
+            })
             ->addColumn('action', function ($customer) {
                 return view('customers.action', ['value' => $customer]);
             })
