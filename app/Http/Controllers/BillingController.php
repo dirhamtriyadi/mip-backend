@@ -18,22 +18,32 @@ class BillingController extends Controller
      */
     public function index()
     {
-        return view('billings.index');
+        $users = User::all();
+
+        return view('billings.index', [
+            'users' => $users,
+        ]);
     }
 
     // Fetch data for DataTable
     public function fetchDataTable(Request $request)
     {
-        // load all billings
-        $billings = Billing::all();
+        // load all billings priority user_id is null and destination is visit
+        $billings = Billing::with(['customer', 'user'])
+            ->orWhere('user_id', null)
+            ->orWhere('destination', 'visit')
+            ->get();
 
         return DataTables::of($billings)
+            ->addColumn('select', function ($billing) {
+                return '<input type="checkbox" class="checkbox" id="select-' . $billing->id . '" name="checkbox[]" value="' . $billing->id . '">';
+            })
             ->addIndexColumn()
             ->addColumn('customer', function ($billing) {
                 return $billing->customer->name_customer;
             })
             ->addColumn('user', function ($billing) {
-                return $billing->user->name;
+                return $billing->user->name ?? '-';
             })
             ->editColumn('date', function ($billing) {
                 return Carbon::parse($billing->date)->format('d-m-Y');
@@ -74,7 +84,10 @@ class BillingController extends Controller
             ->addColumn('action', function ($billing) {
                 return view('billings.action', ['value' => $billing]);
             })
-            ->rawColumns(['destination', 'image_visit', 'image_promise', 'image_amount', 'signature_officer', 'signature_customer', 'action'])
+            ->addColumn('details', function ($billing) {
+                return;
+            })
+            ->rawColumns(['select', 'destination', 'image_visit', 'image_promise', 'image_amount', 'signature_officer', 'signature_customer', 'action'])
             ->toJson();
     }
 
@@ -401,5 +414,94 @@ class BillingController extends Controller
         Excel::import(new BillingImport, $file);
 
         return redirect()->route('billings.index')->with('success', 'Data berhasil diimport');
+    }
+
+    public function massDelete(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|exists:billings,id',
+        ]);
+
+        $ids = $request->input('ids', []);
+        $user = auth()->user();
+
+        foreach ($ids as $id) {
+            $billing = Billing::findOrFail($id);
+            $billing->deleted_by = $user->id;
+            $billing->save();
+            $billing->delete();
+        }
+
+        return redirect()->route('billings.index')->with('success', 'Data berhasil dihapus');
+    }
+
+    public function massReset(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|exists:billings,id',
+        ]);
+
+        $ids = $request->input('ids', []);
+        $user = auth()->user();
+
+        foreach ($ids as $id) {
+            $billing = Billing::findOrFail($id);
+            $billing->destination = 'visit';
+            $billing->description_visit = null;
+            $billing->promise_date = null;
+            $billing->description_promise = null;
+            $billing->amount = null;
+            $billing->description_amount = null;
+            $billing->updated_by = $user->id;
+            $billing->deleted_by = null;
+            $billing->deleted_at = null;
+            // remove image
+            if ($billing->image_visit != null && file_exists(public_path('images/billings/' . $billing->image_visit))) {
+                unlink(public_path('images/billings/' . $billing->image_visit));
+            }
+            $billing->image_visit = null;
+            if ($billing->image_promise != null && file_exists(public_path('images/billings/' . $billing->image_promise))) {
+                unlink(public_path('images/billings/' . $billing->image_promise));
+            }
+            $billing->image_promise = null;
+            if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
+                unlink(public_path('images/billings/' . $billing->image_amount));
+            }
+            $billing->image_amount = null;
+            if ($billing->signature_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
+                unlink(public_path('images/billings/' . $billing->signature_officer));
+            }
+            $billing->signature_officer = null;
+            if ($billing->signature_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
+                unlink(public_path('images/billings/' . $billing->signature_customer));
+            }
+            $billing->signature_customer = null;
+
+            $billing->save();
+        }
+
+        return redirect()->route('billings.index')->with('success', 'Data berhasil direset');
+    }
+
+    public function massSelectOfficer(Request $request)
+    {
+        $validatedData = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|exists:billings,id',
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $ids = $request->input('ids', []);
+        $user = auth()->user();
+
+        foreach ($ids as $id) {
+            $billing = Billing::findOrFail($id);
+            $billing->user_id = $validatedData['user_id'];
+            $billing->save();
+        }
+
+        return redirect()->route('billings.index')->with('success', 'Data berhasil ditandatangani');
     }
 }

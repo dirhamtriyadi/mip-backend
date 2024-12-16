@@ -46,6 +46,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('billings/fetch-data-table', [BillingController::class, 'fetchDataTable'])->name('billings.fetchDataTable');
     Route::put('billings/{billing}/reset', [BillingController::class, 'reset'])->name('billings.reset');
     Route::post('billings/import', [BillingController::class, 'import'])->name('billings.import');
+    Route::post('billings/mass-delete', [BillingController::class, 'massDelete'])->name('billings.massDelete');
+    Route::post('billings/mass-reset', [BillingController::class, 'massReset'])->name('billings.massReset');
+    Route::post('billings/mass-select-offficer', [BillingController::class, 'massSelectOfficer'])->name('billings.massSelectOfficer');
     Route::resource('users', UserController::class);
     Route::post('users/fetch-data-table', [UserController::class, 'fetchDataTable'])->name('users.fetchDataTable');
     Route::resource('roles', RoleController::class);

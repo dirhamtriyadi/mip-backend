@@ -37,7 +37,7 @@ class BillingImport implements ToModel, WithHeadingRow
             'no_billing' => Carbon::now()->format('YmdHis') . $customer->no,
             'date' => Carbon::now(),
             'customer_id' => $customer->id,
-            'user_id' => $user->id,
+            'user_id' => $row['user_id'] ?? $row['officer_id'] ?? null,
             'destination' => 'visit',
             'created_by' => $user->id,
         ]);
