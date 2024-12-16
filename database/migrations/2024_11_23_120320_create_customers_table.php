@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('no')->comment('Nomor kontrak/rekening');
             $table->string('name_customer')->comment('Nama pelanggan');
-            $table->string('phone_number')->comment('Nomor telepon');
+            $table->string('phone_number')->nullable()->comment('Nomor telepon');
             $table->string('address')->comment('Alamat');
             $table->string('name_bank')->comment('Nama bank');
             $table->date('date')->comment('Tanggal membuat kontrak');
