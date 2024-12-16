@@ -77,10 +77,32 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
+                                        <label for="phone_number">Nomor HP</label>
+                                        <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                            placeholder="Masukkan Nomor HP" value="{{ old('phone_number') }}" data-inputmask='"mask": "9999-9999-99999"' data-mask>
+                                        @error('phone_number')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
                                         <label for="address">Alamat</label>
                                         <textarea class="form-control" id="address" name="address"
                                             placeholder="Masukkan Nama">{{ old('address') }}</textarea>
                                         @error('address')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="date">Tanggal</label>
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input type="text" class="form-control datetimepicker-input"
+                                                data-target="#reservationdate" name="date" placeholder="Masukan Tanggal" value="{{ old('date') }}">
+                                            <div class="input-group-append" data-target="#reservationdate"
+                                                data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                        @error('date')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -139,13 +161,16 @@
 @endsection
 
 @push('styles')
-
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
 @endpush
 
 @push('scripts')
     <!-- InputMask -->
     <script src="{{ asset('adminlte') }}/plugins/moment/moment.min.js"></script>
     <script src="{{ asset('adminlte') }}/plugins/inputmask/jquery.inputmask.min.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ asset('adminlte') }}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <script>
         $(function() {
@@ -157,8 +182,18 @@
             $('#datemask2').inputmask('mm/dd/yyyy', {
                 'placeholder': 'mm/dd/yyyy'
             })
+            // Date picker
+            $('#reservationdate').datetimepicker({
+                // format date YYYY-MM-DD
+                format: 'YYYY-MM-DD'
+                // format: 'L'
+            });
             // Input data-mask to currency Rupiah
-            $('[data-mask]').inputmask('numeric', {
+            $('[data-mask]').inputmask({
+                'removeMaskOnSubmit': true
+            });
+            // Input total_bill to currency Rupiah
+            $('#total_bill').inputmask('numeric', {
                 'alias': 'numeric',
                 'groupSeparator': '.',
                 'autoGroup': true,
@@ -169,14 +204,25 @@
                 'rightAlign': false,
                 'allowMinus': false,
                 'allowPlus': false,
-                'autoUnmask': true,
-                'unmaskAsNumber': true,
+                // 'autoUnmask': true,
+                // 'unmaskAsNumber': true,
+                'removeMaskOnSubmit': true
             });
-
-            // Remove format total_bill
-            $('#bank-account-form').submit(function() {
-                $('#total_bill').inputmask('remove');
-                $('#installment').inputmask('remove');
+            // Input installment to currency Rupiah
+            $('#installment').inputmask('numeric', {
+                'alias': 'numeric',
+                'groupSeparator': '.',
+                'autoGroup': true,
+                'digits': 0,
+                'digitsOptional': false,
+                'prefix': 'Rp ',
+                'placeholder': '0',
+                'rightAlign': false,
+                'allowMinus': false,
+                'allowPlus': false,
+                // 'autoUnmask': true,
+                // 'unmaskAsNumber': true,
+                'removeMaskOnSubmit': true
             });
         })
     </script>

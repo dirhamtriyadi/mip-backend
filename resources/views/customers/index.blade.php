@@ -48,6 +48,7 @@
                                                 <th>No</th>
                                                 <th>Nomor Kontrak/Rekening</th>
                                                 <th>Nama Nasabah</th>
+                                                <th>No HP</th>
                                                 <th>Alamat</th>
                                                 <th>Nama Bank</th>
                                                 <th>Total Tagihan</th>
@@ -141,6 +142,7 @@
                     { "data": "DT_RowIndex" },
                     { "data": "no" },
                     { "data": "name_customer" },
+                    { "data": "phone_number" },
                     { "data": "address" },
                     { "data": "name_bank" },
                     { "data": "total_bill", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp ') },
@@ -148,7 +150,7 @@
                     { "data": "action" },
                 ],
                 "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 7] },
+                    { "orderable": false, "searchable": false, "targets": [0, 8] },
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,

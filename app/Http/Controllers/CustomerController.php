@@ -47,8 +47,10 @@ class CustomerController extends Controller
         $validatedData = $request->validate([
             'no' => 'required|numeric|unique:customers',
             'name_customer' => 'required',
+            'phone_number' => 'required',
             'address' => 'required',
             'name_bank' => 'required',
+            'date' => 'required|date',
             'total_bill' => 'nullable|numeric',
             'installment' => 'nullable|numeric',
             // 'remaining_installment' => 'required|numeric',
@@ -88,8 +90,10 @@ class CustomerController extends Controller
         $validatedData = $request->validate([
             'no' => 'required|numeric|unique:customers,no,' . $id,
             'name_customer' => 'required',
+            'phone_number' => 'required',
             'address' => 'required',
             'name_bank' => 'required',
+            'date' => 'required|date',
             'total_bill' => 'nullable|numeric',
             'installment' => 'nullable|numeric',
             // 'remaining_installment' => 'required|numeric',
