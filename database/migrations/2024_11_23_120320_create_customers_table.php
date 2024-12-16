@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name_customer')->comment('Nama pelanggan');
             $table->string('phone_number')->nullable()->comment('Nomor telepon');
             $table->string('address')->comment('Alamat');
-            $table->string('name_bank')->comment('Nama bank');
+            $table->string('name_bank')->nullable()->comment('Nama bank');
             $table->date('date')->comment('Tanggal membuat kontrak');
             $table->bigInteger('total_bill')->default(0)->comment('Total tagihan');
             $table->bigInteger('installment')->default(0)->comment('Angsuran per bulan');
