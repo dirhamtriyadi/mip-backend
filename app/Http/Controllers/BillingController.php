@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\Customer;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\BillingImport;
 
 class BillingController extends Controller
 {
@@ -387,5 +389,17 @@ class BillingController extends Controller
         $billing->save();
 
         return redirect()->route('billings.index')->with('success', 'Data berhasil direset');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls',
+        ]);
+
+        $file = $request->file('file');
+        Excel::import(new BillingImport, $file);
+
+        return redirect()->route('billings.index')->with('success', 'Data berhasil diimport');
     }
 }

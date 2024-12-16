@@ -39,6 +39,11 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-end">
+                                    {{-- Create to import data from excel --}}
+                                    <button type="button" class="btn btn-success mb-3 mr-1" data-toggle="modal" data-target="#modal-xl">
+                                        <i class="fas fa-file-excel"></i> Import
+                                    </button>
+                                    {{-- Create to add new data --}}
                                     <a href="{{ route('billings.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
@@ -140,6 +145,43 @@
         </section>
         <!-- /.content -->
     </div>
+
+    <!-- Modal Import -->
+    <div class="modal fade" id="modal-xl">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Extra Large Modal</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('billings.import') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group" id="form-import">
+                        <label for="file">File Excel</label>
+                        <input type="file" name="file" id="file" class="form-control">
+
+                        @error('file')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+
+                        <button type="submit" class="btn btn-primary mt-3">Import</button>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
 @endsection
 
 @push('styles')
