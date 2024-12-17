@@ -26,6 +26,11 @@ class Customer extends Model
         'deleted_by',
     ];
 
+    public function billing()
+    {
+        return $this->hasMany(Billing::class);
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

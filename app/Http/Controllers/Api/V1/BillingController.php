@@ -13,18 +13,35 @@ class BillingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->search ?? null;
+
         $user = auth()->user();
         // $billings = Billing::where('user_id', $user->id)->get();
         // list billing by user_id and destination ordered from visit, promise, pay
         $billings = Billing::where('destination', 'visit')
+            ->where('user_id', $user->id)
             ->orWhere('destination', 'promise')
             ->orWhere('destination', 'pay')
-            ->where('user_id', $user->id)
             ->orderBy('destination', 'asc')
             ->orderBy('date', 'asc')
             ->get();
+
+        if ($search) {
+            $billings = Billing::with('customer', 'user')
+            ->where('user_id', $user->id)
+            ->where('destination', 'like', '%' . $search . '%')
+            ->orWhereHas('customer', function($q) use($search, $user) {
+                $q->where('name_customer', 'like', '%' . $search . '%')->whereHas('billing', function($q) use($user) {
+                    $q->where('user_id', $user->id);
+                });
+            })
+            ->orWhere('destination', 'like', '%' . $search . '%')
+            ->orderBy('destination', 'asc')
+            ->orderBy('date', 'asc')
+            ->get();
+        }
 
         return response()->json([
             'status' => 'success',
