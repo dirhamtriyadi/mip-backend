@@ -58,6 +58,9 @@
                                             data-target="#modal-import">
                                             <i class="fas fa-file-excel"></i> Import
                                         </button>
+                                        {{-- Create to download template import excel --}}
+                                        <a href="{{ route('billings.templateImport') }}" class="btn btn-info mb-3 mr-1"><i
+                                                class="fas fa-download"></i> Template Import</a>
                                         {{-- Create to add new data --}}
                                         <a href="{{ route('billings.create') }}" class="btn btn-primary mb-3 mr-1"><i
                                                 class="fas fa-plus"></i> Tambah</a>

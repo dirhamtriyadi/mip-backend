@@ -416,6 +416,13 @@ class BillingController extends Controller
         return redirect()->route('billings.index')->with('success', 'Data berhasil diimport');
     }
 
+    public function templateImport()
+    {
+        $template = public_path('templates/billings.xlsx');
+
+        return response()->download($template);
+    }
+
     public function massDelete(Request $request)
     {
         $request->validate([

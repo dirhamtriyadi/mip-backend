@@ -49,6 +49,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('billings/mass-delete', [BillingController::class, 'massDelete'])->name('billings.massDelete');
     Route::post('billings/mass-reset', [BillingController::class, 'massReset'])->name('billings.massReset');
     Route::post('billings/mass-select-offficer', [BillingController::class, 'massSelectOfficer'])->name('billings.massSelectOfficer');
+    Route::get('billings/template-import', [BillingController::class, 'templateImport'])->name('billings.templateImport');
     Route::resource('users', UserController::class);
     Route::post('users/fetch-data-table', [UserController::class, 'fetchDataTable'])->name('users.fetchDataTable');
     Route::resource('roles', RoleController::class);
