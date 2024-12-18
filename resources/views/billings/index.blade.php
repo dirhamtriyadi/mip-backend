@@ -365,6 +365,33 @@
                 }
             });
 
+            // Reset selected items
+            $('#reset-selected').click(function() {
+                var selected = [];
+                $('.checkbox:checked').each(function() {
+                    selected.push($(this).val());
+                });
+
+                if (selected.length > 0) {
+                    if (confirm('Are you sure you want to reset the selected items?')) {
+                        $.ajax({
+                            url: '{{ route('billings.massReset') }}',
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                ids: selected
+                            },
+                            success: function(response) {
+                                // table.ajax.reload();
+                                location.reload();
+                            }
+                        });
+                    }
+                } else {
+                    alert('Please select at least one item to reset.');
+                }
+            })
+
             // Delete selected items
             $('#delete-selected').click(function() {
                 var selected = [];
