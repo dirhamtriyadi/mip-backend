@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Billing;
 use App\Http\Resources\Api\V1\BillingResource;
 use Validator;
+use Carbon\Carbon;
 
 class BillingController extends Controller
 {
@@ -16,12 +17,19 @@ class BillingController extends Controller
     public function index(Request $request)
     {
         $search = $request->search ?? null;
+        $start_date = $request->start_date ?? Carbon::now()->startOfMonth();
+        $end_date = $request->end_date ?? Carbon::now();
 
         $user = auth()->user();
-        // $billings = Billing::where('user_id', $user->id)->get();
-        // list billing by user_id and destination ordered from visit, promise, pay
-        $billings = Billing::where('destination', 'visit')
+
+        if ($request->start_date && $request->end_date) {
+            $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
+            $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
+        }
+
+        $billings = Billing::whereBetween('date', [$start_date, $end_date])
             ->where('user_id', $user->id)
+            ->where('destination', 'visit')
             ->orWhere('destination', 'promise')
             ->orWhere('destination', 'pay')
             ->orderBy('destination', 'asc')
@@ -30,11 +38,13 @@ class BillingController extends Controller
 
         if ($search) {
             $billings = Billing::with('customer', 'user')
+            ->whereBetween('date', [$start_date, $end_date])
             ->where('user_id', $user->id)
             ->where('destination', 'like', '%' . $search . '%')
-            ->orWhereHas('customer', function($q) use($search, $user) {
-                $q->where('name_customer', 'like', '%' . $search . '%')->whereHas('billing', function($q) use($user) {
-                    $q->where('user_id', $user->id);
+            ->orWhereHas('customer', function($q) use($search, $user, $start_date, $end_date) {
+                $q->where('name_customer', 'like', '%' . $search . '%')->whereHas('billing', function($q) use($user, $start_date, $end_date) {
+                    $q->whereBetween('date', [$start_date, $end_date])
+                        ->where('user_id', $user->id);
                 });
             })
             ->orWhere('destination', 'like', '%' . $search . '%')
@@ -101,7 +111,8 @@ class BillingController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $billing = Billing::find($id);
+        $user = auth()->user();
+        $billing = Billing::where('user_id', $user->id)->where('id', $id)->first();
 
         if (!$billing) {
             return response()->json([
@@ -111,15 +122,19 @@ class BillingController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'no_billing' => 'required|unique:billings,no_billing,' . $id,
+            // 'no_billing' => 'required|unique:billings,no_billing,' . $id,
             'date' => 'required|date',
-            'bank_account_id' => 'required|exists:bank_accounts,id',
-            'user_id' => 'required|exists:users,id',
+            // 'bank_account_id' => 'required|exists:bank_accounts,id',
+            // 'user_id' => 'required|exists:users,id',
             'destination' => 'required|in:visit,promise,pay',
+            'image_visit' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description_visit' => 'nullable',
-            'promise_date' => 'required_if:destination,promise',
-            'amount' => 'required_if:destination,pay',
+            'promise_date' => 'nullable',
+            'image_promise' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'description_promise' => 'nullable',
+            'amount' => 'nullable',
             'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'description_amount' => 'nullable',
             'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -133,6 +148,7 @@ class BillingController extends Controller
         }
 
         $validatedData = $validator->validated();
+        $validatedData['updated_by'] = $user->id;
 
         // save image to public/images/billings and change name to timestamp
         if ($request->hasFile('image_amount')) {
