@@ -24,7 +24,7 @@ class BillingResource extends JsonResource
             'user' => $this->user,
             'destination' => $this->destination,
             'image_visit' => isset($this->image_visit) ? asset('images/billings/' . $this->image_visit) : null,
-            'description_visit' => $this->result,
+            'description_visit' => $this->description_visit,
             'promise_date' => $this->promise_date,
             'image_promise' => isset($this->image_promise) ? asset('images/billings/' . $this->image_promise) : null,
             'description_promise' => $this->description_promise,
