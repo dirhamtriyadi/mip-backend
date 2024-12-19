@@ -122,21 +122,26 @@ class BillingController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            // 'no_billing' => 'required|unique:billings,no_billing,' . $id,
+            'no_billing' => 'required|unique:billings,no_billing,' . $id,
             'date' => 'required|date',
             // 'bank_account_id' => 'required|exists:bank_accounts,id',
             // 'user_id' => 'required|exists:users,id',
             'destination' => 'required|in:visit,promise,pay',
-            'image_visit' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'image_visit' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_visit' => 'nullable',
             'description_visit' => 'nullable',
             'promise_date' => 'nullable',
-            'image_promise' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'image_promise' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_promise' => 'nullable',
             'description_promise' => 'nullable',
             'amount' => 'nullable',
-            'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image_amount' => 'nullable',
             'description_amount' => 'nullable',
-            'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'signature_officer' => 'nullable',
+            'signature_customer' => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -151,9 +156,37 @@ class BillingController extends Controller
         $validatedData['updated_by'] = $user->id;
 
         // save image to public/images/billings and change name to timestamp
+        if ($request->hasFile('image_visit')) {
+            // remove old image
+            if ($billing->image_visit != null && file_exists(public_path('images/billings/' . $billing->image_visit))) {
+                unlink(public_path('images/billings/' . $billing->image_visit));
+            }
+
+            // save image to public/images/billings and change name file to name user-timestamp
+            $file = $request->file('image_visit');
+            $fileName = $validatedData['no_billing'] . '-' . 'visit' . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/billings'), $fileName);
+            $validatedData['image_visit'] = $fileName;
+        }
+
+        // save image to public/images/billings and change name to timestamp
+        if ($request->hasFile('image_promise')) {
+            // remove old image
+            if ($billing->image_promise != null && file_exists(public_path('images/billings/' . $billing->image_promise))) {
+                unlink(public_path('images/billings/' . $billing->image_promise));
+            }
+
+            // save image to public/images/billings and change name file to name user-timestamp
+            $file = $request->file('image_promise');
+            $fileName = $validatedData['no_billing'] . '-' . 'promise' . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/billings'), $fileName);
+            $validatedData['image_promise'] = $fileName;
+        }
+
+        // save image to public/images/billings and change name to timestamp
         if ($request->hasFile('image_amount')) {
             // remove old image
-            if (file_exists(public_path('images/billings/' . $billing->image_amount))) {
+            if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
                 unlink(public_path('images/billings/' . $billing->image_amount));
             }
 
@@ -167,7 +200,7 @@ class BillingController extends Controller
         // save image to public/images/billings and change name to timestamp
         if ($request->hasFile('signature_officer')) {
             // remove old image
-            if (file_exists(public_path('images/billings/' . $billing->signature_officer))) {
+            if ($billing->signature_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
                 unlink(public_path('images/billings/' . $billing->signature_officer));
             }
 
@@ -181,7 +214,7 @@ class BillingController extends Controller
         // save image to public/images/billings and change name to timestamp
         if ($request->hasFile('signature_customer')) {
             // remove old image
-            if (file_exists(public_path('images/billings/' . $billing->signature_customer))) {
+            if ($billing->signature_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
                 unlink(public_path('images/billings/' . $billing->signature_customer));
             }
 
@@ -193,23 +226,23 @@ class BillingController extends Controller
         }
 
         $validatedData['updated_by'] = auth()->id();
-        if ($request->destination == 'visit') {
-            $validatedData['description_visit'] = null;
-            $validatedData['promise_date'] = null;
-            $validatedData['amount'] = null;
-            if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
-                unlink(public_path('images/billings/' . $billing->image_amount));
-            }
-            $validatedData['image_amount'] = null;
-            if ($billing->siganture_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
-                unlink(public_path('images/billings/' . $billing->signature_officer));
-            }
-            $validatedData['signature_officer'] = null;
-            if ($billing->siganture_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
-                unlink(public_path('images/billings/' . $billing->signature_customer));
-            }
-            $validatedData['signature_customer'] = null;
-        }
+        // if ($request->destination == 'visit') {
+        //     $validatedData['description_visit'] = null;
+        //     $validatedData['promise_date'] = null;
+        //     $validatedData['amount'] = null;
+        //     if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
+        //         unlink(public_path('images/billings/' . $billing->image_amount));
+        //     }
+        //     $validatedData['image_amount'] = null;
+        //     if ($billing->siganture_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
+        //         unlink(public_path('images/billings/' . $billing->signature_officer));
+        //     }
+        //     $validatedData['signature_officer'] = null;
+        //     if ($billing->siganture_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
+        //         unlink(public_path('images/billings/' . $billing->signature_customer));
+        //     }
+        //     $validatedData['signature_customer'] = null;
+        // }
 
         $billing->update($validatedData);
 

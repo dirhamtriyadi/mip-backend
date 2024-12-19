@@ -265,7 +265,6 @@ class BillingController extends Controller
         if ($request->hasFile('image_amount')) {
             // remove old image
             if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
-                dd(public_path('images/billings/' . $billing->image_amount));
                 unlink(public_path('images/billings/' . $billing->image_amount));
             }
 
