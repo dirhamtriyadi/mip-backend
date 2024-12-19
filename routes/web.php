@@ -42,6 +42,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('leaves', LeaveController::class);
     Route::post('leaves/fetch-data-table', [LeaveController::class, 'fetchDataTable'])->name('leaves.fetchDataTable');
     Route::post('leaves/{leave}/response', [LeaveController::class, 'response'])->name('leaves.response');
+    Route::get('billings/template-import', [BillingController::class, 'templateImport'])->name('billings.templateImport');
     Route::resource('billings', BillingController::class);
     Route::post('billings/fetch-data-table', [BillingController::class, 'fetchDataTable'])->name('billings.fetchDataTable');
     Route::put('billings/{billing}/reset', [BillingController::class, 'reset'])->name('billings.reset');
@@ -49,7 +50,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('billings/mass-delete', [BillingController::class, 'massDelete'])->name('billings.massDelete');
     Route::post('billings/mass-reset', [BillingController::class, 'massReset'])->name('billings.massReset');
     Route::post('billings/mass-select-offficer', [BillingController::class, 'massSelectOfficer'])->name('billings.massSelectOfficer');
-    Route::get('billings/template-import', [BillingController::class, 'templateImport'])->name('billings.templateImport');
     Route::resource('users', UserController::class);
     Route::post('users/fetch-data-table', [UserController::class, 'fetchDataTable'])->name('users.fetchDataTable');
     Route::resource('roles', RoleController::class);

@@ -417,7 +417,7 @@ class BillingController extends Controller
 
     public function templateImport()
     {
-        $template = public_path('templates/billings.xlsx');
+        $template = public_path('templates/billings.xls');
 
         return response()->download($template);
     }
