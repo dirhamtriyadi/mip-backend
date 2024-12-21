@@ -9,6 +9,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\BillingReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 
@@ -50,6 +51,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('billings/mass-delete', [BillingController::class, 'massDelete'])->name('billings.massDelete');
     Route::post('billings/mass-reset', [BillingController::class, 'massReset'])->name('billings.massReset');
     Route::post('billings/mass-select-offficer', [BillingController::class, 'massSelectOfficer'])->name('billings.massSelectOfficer');
+    Route::get('billing-reports', [BillingReportController::class, 'index'])->name('billing-reports.index');
+    Route::post('billing-reports/fetch-data-table', [BillingReportController::class, 'fetchDataTable'])->name('billing-reports.fetchDataTable');
+    Route::get('billing-reports/export', [BillingReportController::class, 'export'])->name('billing-reports.export');
     Route::resource('users', UserController::class);
     Route::post('users/fetch-data-table', [UserController::class, 'fetchDataTable'])->name('users.fetchDataTable');
     Route::resource('roles', RoleController::class);

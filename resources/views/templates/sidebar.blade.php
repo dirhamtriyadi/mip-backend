@@ -112,8 +112,8 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
+                <li class="nav-item {{ Route::is('billing-reports.*') ? 'active' : '' }}">
+                    <a href="{{ route('billing-reports.index') }}" class="nav-link {{ Route::is('billing-reports.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-file-invoice-dollar"></i>
                         <p>
                             Laporan Penagihan
