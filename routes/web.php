@@ -40,6 +40,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('attendances/fetch-data-table', [AttendanceController::class, 'fetchDataTable'])->name('attendances.fetchDataTable');
     Route::get('attendance-reports', [AttendanceReportController::class, 'index'])->name('attendance-reports.index');
     Route::post('attendance-reports/fetch-data-table', [AttendanceReportController::class, 'fetchDataTable'])->name('attendance-reports.fetchDataTable');
+    Route::get('attendance-reports/export', [AttendanceReportController::class, 'export'])->name('attendance-reports.export');
     Route::resource('leaves', LeaveController::class);
     Route::post('leaves/fetch-data-table', [LeaveController::class, 'fetchDataTable'])->name('leaves.fetchDataTable');
     Route::post('leaves/{leave}/response', [LeaveController::class, 'response'])->name('leaves.response');

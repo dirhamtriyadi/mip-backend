@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
+use App\Exports\AttendanceReportExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class AttendanceReportController extends Controller
 {
@@ -130,4 +133,13 @@ class AttendanceReportController extends Controller
     //         'data' => $data,
     //     ]);
     // }
+
+    public function export(Request $request)
+    {
+        // get request start_date and end_date or set default this month
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
+        return Excel::download(new AttendanceReportExport($start_date, $end_date), Carbon::now()->toDateString() . '-billing-reports.xls');
+    }
 }
