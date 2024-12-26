@@ -23,6 +23,7 @@ Route::prefix('v1')->group(function () {
         Route::post('attendances/sick', [AttendanceController::class, 'sick'])->name('attendances.sick');
         Route::post('attendances/permit', [AttendanceController::class, 'permit'])->name('attendances.permit');
         Route::post('leaves/submission', [LeaveController::class, 'submission'])->name('leaves.submission');
+        Route::get('leaves', [LeaveController::class, 'index'])->name('leaves.index');
         Route::apiResource('billings', BillingController::class);
         Route::apiResource('users', UserController::class);
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
