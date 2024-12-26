@@ -41,11 +41,14 @@ class BillingController extends Controller
             ->whereBetween('date', [$start_date, $end_date])
             ->where('user_id', $user->id)
             ->where('destination', 'like', '%' . $search . '%')
+            ->orWhere('no_billing', 'like', '%' . $search . '%')
             ->orWhereHas('customer', function($q) use($search, $user, $start_date, $end_date) {
-                $q->where('name_customer', 'like', '%' . $search . '%')->whereHas('billing', function($q) use($user, $start_date, $end_date) {
-                    $q->whereBetween('date', [$start_date, $end_date])
-                        ->where('user_id', $user->id);
-                });
+                $q->where('name_customer', 'like', '%' . $search . '%')
+                    ->orWhere('no', 'like', '%' . $search . '%')
+                    ->whereHas('billing', function($q) use($user, $start_date, $end_date) {
+                        $q->whereBetween('date', [$start_date, $end_date])
+                            ->where('user_id', $user->id);
+                    });
             })
             ->orWhere('destination', 'like', '%' . $search . '%')
             ->orderBy('destination', 'asc')
