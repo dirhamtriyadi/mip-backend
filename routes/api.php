@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\AttendanceController;
 use App\Http\Controllers\Api\V1\LeaveController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\ProfileController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -26,6 +27,9 @@ Route::prefix('v1')->group(function () {
         Route::get('leaves', [LeaveController::class, 'index'])->name('leaves.index');
         Route::apiResource('billings', BillingController::class);
         Route::apiResource('users', UserController::class);
+        Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     });
 });
