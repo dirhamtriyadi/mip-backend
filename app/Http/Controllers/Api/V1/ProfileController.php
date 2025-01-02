@@ -91,9 +91,7 @@ class ProfileController extends Controller
             'name' => $request->name,
             'email' => $request->email,
         ]);
-        $user->detail_users()->updateOrCreate([
-            'nik' => $request->nik
-        ]);
+        $user->detail_users()->updateOrCreate(['user_id' => $id], ['nik' => $request->nik]);
         
         return response()->json([
             'status' => 'success',
