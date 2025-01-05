@@ -7,10 +7,10 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Tambah Akun Bank</h1>
+                        <h1>Edit Nasabah</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{ Breadcrumbs::render('bank-accounts.create') }}
+                        {{ Breadcrumbs::render('customers.edit', $data->id) }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -41,7 +41,7 @@
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Tambah Akun Bank</h3>
+                                <h3 class="card-title">Edit Nasabah</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"
@@ -55,15 +55,16 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-start">
-                                    <a href="{{ route('bank-accounts.index') }}" class="btn btn-warning mb-3"><i class="fas fa-arrow-left"></i> Kembali</a>
+                                    <a href="{{ route('customers.index') }}" class="btn btn-warning mb-3"><i class="fas fa-arrow-left"></i> Kembali</a>
                                 </div>
-                                <form id="bank-account-form" action="{{ route('bank-accounts.store') }}" method="POST">
+                                <form id="bank-account-form" action="{{ route('customers.update', $data->id) }}" method="POST">
                                     @csrf
+                                    @method('PUT')
 
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="no">No Kontrak/Rekening</label>
                                         <input type="number" class="form-control" id="no" name="no"
-                                            placeholder="Masukkan Nama" value="{{ old('no') }}">
+                                            placeholder="Masukkan Nama" value="{{ old('no', $data->no) }}">
                                         @error('no')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -71,23 +72,45 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="name_customer">Nama Nasabah</label>
                                         <input type="text" class="form-control" id="name_customer" name="name_customer"
-                                            placeholder="Masukkan Nama" value="{{ old('name_customer') }}">
+                                            placeholder="Masukkan Nama" value="{{ old('name_customer', $data->name_customer) }}">
                                         @error('name_customer')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="phone_number">Nomor HP</label>
+                                        <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                            placeholder="Masukkan Nomor HP" value="{{ old('phone_number', $data->phone_number) }}" data-inputmask='"mask": "9999-9999-99999"' data-mask>
+                                        @error('phone_number')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="address">Alamat</label>
                                         <textarea class="form-control" id="address" name="address"
-                                            placeholder="Masukkan Nama">{{ old('address') }}</textarea>
+                                            placeholder="Masukkan Nama">{{ old('address', $data->address) }}</textarea>
                                         @error('address')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="date">Tanggal</label>
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input type="text" class="form-control datetimepicker-input"
+                                                data-target="#reservationdate" name="date" placeholder="Masukan Tanggal" value="{{ old('date', $data->date) }}">
+                                            <div class="input-group-append" data-target="#reservationdate"
+                                                data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                        @error('date')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="name_bank">Nama Bank</label>
                                         <input type="text" class="form-control" id="name_bank" name="name_bank"
-                                            placeholder="Masukkan Nama" value="{{ old('name_bank') }}">
+                                            placeholder="Masukkan Nama" value="{{ old('name_bank', $data->name_bank) }}">
                                         @error('name_bank')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -95,7 +118,7 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="total_bill">Total Tagihan</label>
                                         <input type="text" class="form-control text-left" id="total_bill" name="total_bill"
-                                            placeholder="Masukkan Total Tagihan" value="{{ old('total_bill') }}" data-mask>
+                                            placeholder="Masukkan Total Tagihan" value="{{ old('total_bill', $data->total_bill) }}" data-mask>
                                         @error('total_bill')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -103,7 +126,7 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="installment">Angsuran Per Bulan</label>
                                         <input type="text" class="form-control text-left" id="installment" name="installment"
-                                            placeholder="Masukkan Angsuran Per Bulan" value="{{ old('installment') }}" data-mask>
+                                            placeholder="Masukkan Angsuran Per Bulan" value="{{ old('installment', $data->installment) }}" data-mask>
                                         @error('installment')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -111,7 +134,7 @@
                                     {{-- <div class="form-group" style="margin-top: 10px;">
                                         <label for="remaining_installment">Sisa Angsuran</label>
                                         <input type="text" class="form-control text-left" id="remaining_installment" name="remaining_installment"
-                                            placeholder="Masukkan Sisa Angsuran" value="{{ old('remaining_installment') }}" data-mask>
+                                            placeholder="Masukkan Sisa Angsuran" value="{{ old('remaining_installment', $data->remaining_installment) }}" data-mask>
                                         @error('remaining_installment')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -119,7 +142,7 @@
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
-                                            style="margin-top: 10px;">Submit</button>
+                                            style="margin-top: 10px;">Update</button>
                                     </div>
                                 </form>
                             </div>
@@ -139,13 +162,16 @@
 @endsection
 
 @push('styles')
-
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
 @endpush
 
 @push('scripts')
     <!-- InputMask -->
     <script src="{{ asset('adminlte') }}/plugins/moment/moment.min.js"></script>
     <script src="{{ asset('adminlte') }}/plugins/inputmask/jquery.inputmask.min.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ asset('adminlte') }}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <script>
         $(function() {
@@ -157,8 +183,18 @@
             $('#datemask2').inputmask('mm/dd/yyyy', {
                 'placeholder': 'mm/dd/yyyy'
             })
+            // Date picker
+            $('#reservationdate').datetimepicker({
+                // format date YYYY-MM-DD
+                format: 'YYYY-MM-DD'
+                // format: 'L'
+            });
             // Input data-mask to currency Rupiah
-            $('[data-mask]').inputmask('numeric', {
+            $('[data-mask]').inputmask({
+                'removeMaskOnSubmit': true
+            });
+            // Input total_bill to currency Rupiah
+            $('#total_bill').inputmask('numeric', {
                 'alias': 'numeric',
                 'groupSeparator': '.',
                 'autoGroup': true,
@@ -169,14 +205,25 @@
                 'rightAlign': false,
                 'allowMinus': false,
                 'allowPlus': false,
-                'autoUnmask': true,
-                'unmaskAsNumber': true,
+                // 'autoUnmask': true,
+                // 'unmaskAsNumber': true,
+                'removeMaskOnSubmit': true
             });
-
-            // Remove format total_bill
-            $('#bank-account-form').submit(function() {
-                $('#total_bill').inputmask('remove');
-                $('#installment').inputmask('remove');
+            // Input installment to currency Rupiah
+            $('#installment').inputmask('numeric', {
+                'alias': 'numeric',
+                'groupSeparator': '.',
+                'autoGroup': true,
+                'digits': 0,
+                'digitsOptional': false,
+                'prefix': 'Rp ',
+                'placeholder': '0',
+                'rightAlign': false,
+                'allowMinus': false,
+                'allowPlus': false,
+                // 'autoUnmask': true,
+                // 'unmaskAsNumber': true,
+                'removeMaskOnSubmit': true
             });
         })
     </script>

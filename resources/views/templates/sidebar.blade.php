@@ -46,8 +46,8 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('bank-accounts.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('bank-accounts.*') ? 'active' : '' }}">
+                <li class="nav-item {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('customers.*') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('customers.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-database"></i>
                         <p>
                             Master Data
@@ -68,9 +68,9 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('bank-accounts.index') }}" class="nav-link {{ Route::is('bank-accounts.*') ? 'active' : '' }}">
+                            <a href="{{ route('customers.index') }}" class="nav-link {{ Route::is('customers.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Akun Bank</p>
+                                <p>Nasabah</p>
                             </a>
                         </li>
                     </ul>
@@ -112,8 +112,8 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
+                <li class="nav-item {{ Route::is('billing-reports.*') ? 'active' : '' }}">
+                    <a href="{{ route('billing-reports.index') }}" class="nav-link {{ Route::is('billing-reports.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-file-invoice-dollar"></i>
                         <p>
                             Laporan Penagihan

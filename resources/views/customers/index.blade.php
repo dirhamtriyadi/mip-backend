@@ -7,10 +7,10 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Akun Bank</h1>
+                        <h1>Nasabah</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{  Breadcrumbs::render('bank-accounts') }}
+                        {{  Breadcrumbs::render('customers') }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -25,7 +25,7 @@
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Akun Bank</h3>
+                                <h3 class="card-title">Nasabah</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"
@@ -39,17 +39,19 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-end">
-                                    <a href="{{ route('bank-accounts.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
+                                    <a href="{{ route('customers.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="table" class="table table-bordered table-hover table-striped">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Nomor Rekening</th>
+                                                <th>Nomor Kontrak/Rekening</th>
                                                 <th>Nama Nasabah</th>
+                                                <th>No HP</th>
                                                 <th>Alamat</th>
                                                 <th>Nama Bank</th>
+                                                <th>Tanggal</th>
                                                 <th>Total Tagihan</th>
                                                 <th>Angsuran</th>
                                                 {{-- <th>Sisa Angsuran</th> --}}
@@ -69,8 +71,8 @@
                                                     <td>{{ $value->remaining_installment }}</td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <a href="{{ route('bank-accounts.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                                                            <form action="{{ route('bank-accounts.destroy', $value->id) }}" class="ml-1" method="post">
+                                                            <a href="{{ route('customers.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
+                                                            <form action="{{ route('customers.destroy', $value->id) }}" class="ml-1" method="post">
                                                                 @csrf
                                                                 @method('delete')
                                                                 <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
@@ -124,7 +126,7 @@
                 "processing":true,
                 "serverSide":true,
                 "ajax": {
-                    "url": "{{ route('bank-accounts.index') }}/fetch-data-table",
+                    "url": "{{ route('customers.index') }}/fetch-data-table",
                     "type": "post",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -141,14 +143,16 @@
                     { "data": "DT_RowIndex" },
                     { "data": "no" },
                     { "data": "name_customer" },
+                    { "data": "phone_number" },
                     { "data": "address" },
                     { "data": "name_bank" },
+                    { "data": "date" },
                     { "data": "total_bill", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp ') },
                     { "data": "installment", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp ') },
                     { "data": "action" },
                 ],
                 "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 7] },
+                    { "orderable": false, "searchable": false, "targets": [0, 9] },
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,

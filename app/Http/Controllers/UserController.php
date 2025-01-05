@@ -134,8 +134,6 @@ class UserController extends Controller
             $user->syncRoles([]);
         }
 
-
-
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 

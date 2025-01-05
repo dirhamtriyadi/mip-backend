@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bank_accounts', function (Blueprint $table) {
+        Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('no')->comment('Nomor kontrak/rekening');
             $table->string('name_customer')->comment('Nama pelanggan');
+            $table->string('phone_number')->nullable()->comment('Nomor telepon');
             $table->string('address')->comment('Alamat');
-            $table->string('name_bank')->comment('Nama bank');
+            $table->string('name_bank')->nullable()->comment('Nama bank');
+            $table->date('date')->comment('Tanggal membuat kontrak');
             $table->bigInteger('total_bill')->default(0)->comment('Total tagihan');
             $table->bigInteger('installment')->default(0)->comment('Angsuran per bulan');
             // $table->bigInteger('remaining_installment')->default(0)->comment('Sisa angsuran');
@@ -33,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bank_accounts');
+        Schema::dropIfExists('customers');
     }
 };

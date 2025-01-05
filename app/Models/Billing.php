@@ -20,9 +20,9 @@ class Billing extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function bankAccount()
+    public function customer()
     {
-        return $this->belongsTo(BankAccount::class);
+        return $this->belongsTo(Customer::class);
     }
 
     public function prunable(): Builder

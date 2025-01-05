@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="d-flex justify-content-end">
+                                <div class="d-flex justify-content-between">
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="start_date">Rentang Tanggal</label>
                                         <form action="{{ route('attendance-reports.index') }}" method="get">
@@ -70,6 +70,14 @@
                                                 </div>
                                                 <button type="submit" class="btn btn-primary ml-2">Filter</button>
                                             </div>
+                                        </form>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        {{-- Create to import data from excel --}}
+                                        <form action="{{ route('attendance-reports.export') }}" method="get">
+                                            <input type="hidden" class="form-control" name="start_date" placeholder="Masukan Tanggal" value="{{ $start_date }}">
+                                            <input type="hidden" class="form-control" name="end_date" placeholder="Masukan Tanggal" value="{{ $end_date }}">
+                                            <button type="submit" class="btn btn-success mb-3 mr-1"><i class="fas fa-file-excel"></i> Export</button>
                                         </form>
                                     </div>
                                 </div>

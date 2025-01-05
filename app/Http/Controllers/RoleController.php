@@ -67,7 +67,7 @@ class RoleController extends Controller
             $role->syncPermissions($validatedData['permissions']);
         }
 
-        return redirect()->route('roles.index');
+        return redirect()->route('roles.index')->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -112,7 +112,7 @@ class RoleController extends Controller
             $role->syncPermissions([]);
         }
 
-        return redirect()->route('roles.index');
+        return redirect()->route('roles.index')->with('success', 'Data berhasil diubah');
     }
 
     /**
@@ -123,6 +123,6 @@ class RoleController extends Controller
         $role = Role::findOrFail($id);
         $role->delete();
 
-        return redirect()->route('roles.index');
+        return redirect()->route('roles.index')->with('success', 'Data berhasil dihapus');
     }
 }

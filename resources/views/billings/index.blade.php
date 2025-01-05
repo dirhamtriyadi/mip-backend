@@ -38,31 +38,63 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="d-flex justify-content-end">
-                                    <a href="{{ route('billings.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        {{-- Create to select officer --}}
+                                        <button type="button" class="btn btn-info mb-3 mr-1" data-toggle="modal"
+                                            data-target="#modal-mass-select-officer">
+                                            <i class="fas fa-user"></i> Pilih Petugas
+                                        </button>
+                                        {{-- Reset selected data --}}
+                                        <button type="button" class="btn btn-warning mb-3 mr-1" id="reset-selected"><i
+                                            class="fas fa-redo"></i> Reset Data</button>
+                                        {{-- Delete selected data --}}
+                                        <button type="button" class="btn btn-danger mb-3 mr-1" id="delete-selected"><i
+                                                class="fas fa-trash"></i> Hapus</button>
+                                    </div>
+                                    <div>
+                                        {{-- Create to import data from excel --}}
+                                        <button type="button" class="btn btn-success mb-3 mr-1" data-toggle="modal"
+                                            data-target="#modal-import">
+                                            <i class="fas fa-file-excel"></i> Import
+                                        </button>
+                                        {{-- Create to download template import excel --}}
+                                        <a href="{{ route('billings.templateImport') }}" class="btn btn-info mb-3 mr-1"><i
+                                                class="fas fa-download"></i> Template Import</a>
+                                        {{-- Create to add new data --}}
+                                        <a href="{{ route('billings.create') }}" class="btn btn-primary mb-3 mr-1"><i
+                                                class="fas fa-plus"></i> Tambah</a>
+                                    </div>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="table" class="table table-bordered table-hover table-striped">
                                         <thead>
                                             <tr>
+                                                <th class="text-center"><input type="checkbox" id="select-all"></th>
                                                 <th>No</th>
                                                 <th>Nomor Tagihan</th>
                                                 <th>Nama Nasabah</th>
                                                 <th>Nama Petugas</th>
                                                 <th>Tanggal</th>
                                                 <th>Tujuan Penagihan</th>
-                                                <th>Hasil Penagihan (Kunjungan)</th>
+                                                <th>Bukti Kunjungan</th>
+                                                <th>Keterangan (Kunjungan)</th>
                                                 <th>Tanggal Janji Bayar</th>
+                                                <th>Bukti Janji Bayar</th>
+                                                <th>Keterangan (Janji Bayar)</th>
                                                 <th>Jumlah Setoran</th>
                                                 <th>Bukti Setoran</th>
+                                                <th>Keterangan (Setoran)</th>
                                                 <th>TTD Petugas</th>
                                                 <th>TTD Nasabah</th>
                                                 <th>Aksi</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {{-- @forelse ($data as $item => $value)
                                                 <tr>
+                                                    <td><input type="checkbox" class="checkbox" value="{{ $value->id }}"></td>
                                                     <td>{{ $item + 1 }}</td>
                                                     <td>{{ $value->user->name }}</td>
                                                     <td>{{ $value->code }}</td>
@@ -136,19 +168,109 @@
         </section>
         <!-- /.content -->
     </div>
+
+    <!-- Modal Import -->
+    <div class="modal fade" id="modal-import">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Import Penagihan</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('billings.import') }}" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        @csrf
+                        <div class="form-group" style="margin-top: 10px;" id="form-import">
+                            <label for="file">File Excel</label>
+
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="file"
+                                    name="file" value="{{ old('file') }}">
+                                <label class="custom-file-label" for="file">Choose file</label>
+                            </div>
+                            @error('file')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <!-- Modal Select Officer -->
+    <div class="modal fade" id="modal-mass-select-officer">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Pilih Petugas</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{-- <form action="{{ route('billings.massSelectOfficer') }}" method="post"> --}}
+                <form id="form-mass-select-officer">
+                    <div class="modal-body">
+                        @csrf
+                        <div class="form-group" id="form-mass-select-officer">
+                            <label for="user_id">Petugas</label>
+                            <select name="user_id" id="user_id" class="form-control">
+                                <option value="">Pilih Petugas</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ old('user_id') ?? $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+
+                            @error('user_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 @endsection
 
 @push('styles')
-
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 @endpush
 
 @push('scripts')
+    <!-- Select2 -->
+    <script src="{{ asset('adminlte') }}/plugins/select2/js/select2.full.min.js"></script>
+    <!-- bs-custom-file-input -->
+    <script src="{{ asset('adminlte') }}/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
     <script>
         $(document).ready(function() {
+            // File input
+            bsCustomFileInput.init();
+            // Initialize Select2
+            $('#user_id').select2({
+                theme: 'bootstrap4'
+            });
             // DataTables
-            $("#table").DataTable({
-                "processing":true,
-                "serverSide":true,
+            var table = $("#table").DataTable({
+                "processing": true,
+                "serverSide": true,
                 "ajax": {
                     "url": "{{ route('billings.index') }}/fetch-data-table",
                     "type": "post",
@@ -156,7 +278,12 @@
                         "_token": "{{ csrf_token() }}"
                     }
                 },
-                "responsive": true,
+                "responsive": {
+                    details: {
+                        type: 'column',
+                        target: -1
+                    }
+                },
                 // "lengthChange": false,
                 "lengthMenu": [
                     [10, 25, 50, 100, -1],
@@ -164,25 +291,165 @@
                 ],
                 "autoWidth": false,
                 "columns": [
+                    { "data": "select" },
                     { "data": "DT_RowIndex" },
                     { "data": "no_billing" },
-                    { "data": "bank_account" },
+                    { "data": "customer" },
                     { "data": "user" },
                     { "data": "date" },
                     { "data": "destination" },
-                    { "data": "result" },
+                    { "data": "image_visit" },
+                    { "data": "description_visit" },
                     { "data": "promise_date" },
+                    { "data": "image_promise" },
+                    { "data": "description_promise" },
                     { "data": "amount" },
                     { "data": "image_amount" },
+                    { "data": "description_amount" },
                     { "data": "signature_officer" },
                     { "data": "signature_customer" },
-                    { "data": "action" }
+                    { "data": "action" },
+                    { "data": "details" }
                 ],
-                "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 12] }
+                "columnDefs": [{
+                        "targets": 0,
+                        "className": 'text-center',
+                        "searchable": false,
+                        "orderable": false,
+                        "width": "10%",
+                    },
+                    {
+                        "orderable": false,
+                        "searchable": false,
+                        "targets": 17
+                    },
+                    {
+                        "targets": -1,
+                        "className": 'dtr-control arrow-right',
+                        "searchable": false,
+                        "orderable": false,
+                        "width": "10%",
+                    },
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+                "drawCallback": function(settings) {
+                    $('#select-all').prop('checked', false);
+                }
+            });
+
+            // Prevent checkbox click from triggering row expansion
+            $('#table').on('click', 'input[type="checkbox"]', function(e) {
+                e.stopPropagation();
+            });
+
+            // Select all checkboxes
+            $('#select-all').click(function() {
+                if (this.checked) {
+                    $('.checkbox').each(function() {
+                        this.checked = true;
+                    });
+                } else {
+                    $('.checkbox').each(function() {
+                        this.checked = false;
+                    });
+                }
+            });
+
+            // If all checkbox checkboxes are checked, check the select-all checkbox
+            $(document).on('change', '.checkbox', function() {
+                if ($('.checkbox:checked').length === $('.checkbox').length) {
+                    $('#select-all').prop('checked', true);
+                } else {
+                    $('#select-all').prop('checked', false);
+                }
+            });
+
+            // Reset selected items
+            $('#reset-selected').click(function() {
+                var selected = [];
+                $('.checkbox:checked').each(function() {
+                    selected.push($(this).val());
+                });
+
+                if (selected.length > 0) {
+                    if (confirm('Are you sure you want to reset the selected items?')) {
+                        $.ajax({
+                            url: '{{ route('billings.massReset') }}',
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                ids: selected
+                            },
+                            success: function(response) {
+                                // table.ajax.reload();
+                                location.reload();
+                            }
+                        });
+                    }
+                } else {
+                    alert('Please select at least one item to reset.');
+                }
+            })
+
+            // Delete selected items
+            $('#delete-selected').click(function() {
+                var selected = [];
+                $('.checkbox:checked').each(function() {
+                    selected.push($(this).val());
+                });
+
+                if (selected.length > 0) {
+                    if (confirm('Are you sure you want to delete the selected items?')) {
+                        $.ajax({
+                            url: '{{ route('billings.massDelete') }}',
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                ids: selected
+                            },
+                            success: function(response) {
+                                // table.ajax.reload();
+                                location.reload();
+                            }
+                        });
+                    }
+                } else {
+                    alert('Please select at least one item to delete.');
+                }
+            });
+
+            // Mass select officer
+            $('#form-mass-select-officer').submit(function(e) {
+                e.preventDefault();
+
+                var user_id = $('#user_id').val();
+                var selected = [];
+                $('.checkbox:checked').each(function() {
+                    selected.push($(this).val());
+                });
+
+                if (selected.length > 0) {
+                    if (user_id) {
+                        $.ajax({
+                            url: '{{ route('billings.massSelectOfficer') }}',
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                ids: selected,
+                                user_id: user_id
+                            },
+                            success: function(response) {
+                                // table.ajax.reload();
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        alert('Please select an officer.');
+                    }
+                } else {
+                    alert('Please select at least one item to assign an officer.');
+                }
             });
         });
     </script>

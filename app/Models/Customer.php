@@ -5,17 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BankAccount extends Model
+class Customer extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'bank_accounts';
+    protected $table = 'customers';
 
     protected $fillable = [
         'no',
         'name_customer',
+        'phone_number',
         'address',
         'name_bank',
+        'date',
         'total_bill',
         'installment',
         'remaining_installment',
@@ -23,6 +25,11 @@ class BankAccount extends Model
         'updated_by',
         'deleted_by',
     ];
+
+    public function billing()
+    {
+        return $this->hasMany(Billing::class);
+    }
 
     public function createdBy()
     {

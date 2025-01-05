@@ -94,14 +94,14 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="bank_account_id">Nasabah</label>
-                                        <select class="form-control select2" style="width: 100%;" id="bank_account_id" name="bank_account_id">
+                                        <label for="customer_id">Nasabah</label>
+                                        <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id">
                                             <option value="" selected>Pilih Nasabah</option>
-                                            @foreach ($bankAccounts as $bankAccount)
-                                                <option value="{{ $bankAccount->id }}" {{ old('bank_account_id', $data->bank_account_id) == $bankAccount->id ? 'selected' : '' }}>{{ $bankAccount->name_customer }}</option>
+                                            @foreach ($customers as $customer)
+                                                <option value="{{ $customer->id }}" {{ old('customer_id', $data->customer_id) == $customer->id ? 'selected' : '' }}>{{ $customer->name_customer }}</option>
                                             @endforeach
                                         </select>
-                                        @error('bank_account_id')
+                                        @error('customer_id')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -129,15 +129,32 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="result-group">
-                                        <label for="result">Hasil Penagihan</label>
-                                        <input type="text" class="form-control" id="result" name="result"
-                                            placeholder="Masukkan Hasil Penagihan" value="{{ old('result', $data->result) }}">
-                                        @error('result')
+                                    <div class="form-group" style="margin-top: 10px;" id="image-visit-group">
+                                        <label for="image_visit">Bukti Kunjungan</label>
+
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="image_visit"
+                                                name="image_visit" value="{{ old('image_visit') }}">
+                                            <label class="custom-file-label" for="image_visit">Choose file</label>
+                                        </div>
+                                        @error('image_visit')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                        @if ($data->image_visit)
+                                            <div class="mt-2">
+                                                <img src="{{ asset('images/billings/' . $data->image_visit) }}" alt="Current Image" width="150">
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;" id="description-visit-group">
+                                        <label for="description_visit">Keterangan Kunjungan</label>
+                                        <textarea class="form-control" id="description_visit" name="description_visit"
+                                            placeholder="Masukkan Keterangan Penagihan">{{ old('description_visit', $data->description_visit) }}</textarea>
+                                        @error('description_visit')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="promise-date-group">
+                                    <div class="form-group" style="margin-top: 10px;" id="date-promise-group">
                                         <label for="promise_date">Tanggal Janji Bayar</label>
                                         <div class="input-group date" id="promise_date" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
@@ -151,6 +168,31 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    <div class="form-group" style="margin-top: 10px;" id="image-promise-group">
+                                        <label for="image_promise">Bukti Janji Bayar</label>
+
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="image_promise"
+                                                name="image_promise" value="{{ old('image_promise') }}">
+                                            <label class="custom-file-label" for="image_promise">Choose file</label>
+                                        </div>
+                                        @error('image_promise')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                        @if ($data->image_promise)
+                                            <div class="mt-2">
+                                                <img src="{{ asset('images/billings/' . $data->image_promise) }}" alt="Current Image" width="150">
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;" id="description-promise-group">
+                                        <label for="description_promise">Keterangan Janji Bayar</label>
+                                        <textarea class="form-control" id="description_promise" name="description_promise"
+                                            placeholder="Masukkan Keterangan Penagihan">{{ old('description_promise', $data->description_promise) }}</textarea>
+                                        @error('description_promise')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                     <div class="form-group" style="margin-top: 10px;" id="amount-group">
                                         <label for="amount">Total Bayar</label>
                                         <input type="text" class="form-control text-left" id="amount" name="amount"
@@ -159,7 +201,7 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="image-group">
+                                    <div class="form-group" style="margin-top: 10px;" id="image-amount-group">
                                         <label for="image_amount">Bukti Bayar</label>
 
                                         <div class="custom-file">
@@ -175,6 +217,14 @@
                                                 <img src="{{ asset('images/billings/' . $data->image_amount) }}" alt="Current Image" width="150">
                                             </div>
                                         @endif
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;" id="description-amount-group">
+                                        <label for="description_amount">Keterangan Bayar</label>
+                                        <textarea class="form-control" id="description_amount" name="description_amount"
+                                            placeholder="Masukkan Keterangan Penagihan">{{ old('description_amount', $data->description_amount) }}</textarea>
+                                        @error('description_amount')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;" id="signature_officer-group">
                                         <label for="signature_officer">TTD Petugas</label>
@@ -288,31 +338,47 @@
             function toggleFields() {
                 var destination = $('#destination').val();
                 if (destination === 'visit') {
-                    $('#result-group').show();
-                    $('#promise-date-group').hide();
+                    $('#image-visit-group').show();
+                    $('#description-visit-group').show();
+                    $('#date-promise-group').hide();
+                    $('#image-promise-group').hide();
+                    $('#description-promise-group').hide();
                     $('#amount-group').hide();
-                    $('#image-group').hide();
-                    $('#signature_officer-group').hide();
-                    $('#signature_customer-group').hide();
+                    $('#image-amount-group').hide();
+                    $('#description-amount-group').hide();
+                    $('#signature_officer-group').show();
+                    $('#signature_customer-group').show();
                 } else if (destination === 'promise') {
-                    $('#result-group').hide();
-                    $('#promise-date-group').show();
+                    $('#image-visit-group').hide();
+                    $('#description-visit-group').hide();
+                    $('#date-promise-group').show();
+                    $('#image-promise-group').show();
+                    $('#description-promise-group').show();
                     $('#amount-group').hide();
-                    $('#image-group').hide();
+                    $('#image-amount-group').hide();
+                    $('#description-amount-group').hide();
                     $('#signature_officer-group').show();
                     $('#signature_customer-group').show();
                 } else if (destination === 'pay') {
-                    $('#result-group').hide();
-                    $('#promise-date-group').hide();
+                    $('#image-visit-group').hide();
+                    $('#description-visit-group').hide();
+                    $('#date-promise-group').hide();
+                    $('#image-promise-group').hide();
+                    $('#description-promise-group').hide();
                     $('#amount-group').show();
-                    $('#image-group').show();
+                    $('#image-amount-group').show();
+                    $('#description-amount-group').show();
                     $('#signature_officer-group').show();
                     $('#signature_customer-group').show();
                 } else {
-                    $('#result-group').hide();
-                    $('#promise-date-group').hide();
+                    $('#image-visit-group').hide();
+                    $('#description-visit-group').hide();
+                    $('#date-promise-group').hide();
+                    $('#image-promise-group').hide();
+                    $('#description-promise-group').hide();
                     $('#amount-group').hide();
-                    $('#image-group').hide();
+                    $('#image-amount-group').hide();
+                    $('#description-amount-group').hide();
                     $('#signature_officer-group').hide();
                     $('#signature_customer-group').hide();
                 }
