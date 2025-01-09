@@ -22,6 +22,22 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        @session('success')
+                            <div class="alert alert-success">
+                                <h5><i class="icon fas fa-check"></i> Alert!</h5>
+                                {{ session('success') }}
+                            </div>
+                        @endsession
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
@@ -84,15 +100,12 @@
                                                 <th>Nama Nasabah</th>
                                                 <th>Nama Petugas</th>
                                                 <th>Tanggal</th>
-                                                <th>Tujuan Penagihan</th>
-                                                <th>Bukti Kunjungan</th>
-                                                <th>Keterangan (Kunjungan)</th>
+                                                <th>Status Tagihan</th>
+                                                <th>Status Kunjungan</th>
                                                 <th>Tanggal Janji Bayar</th>
-                                                <th>Bukti Janji Bayar</th>
-                                                <th>Keterangan (Janji Bayar)</th>
-                                                <th>Jumlah Setoran</th>
-                                                <th>Bukti Setoran</th>
-                                                <th>Keterangan (Setoran)</th>
+                                                <th>Jumlah Bayar</th>
+                                                <th>Bukti (Kunjungan/Janji Bayar/Bayar)</th>
+                                                <th>Keterangan Kunjungan</th>
                                                 <th>TTD Petugas</th>
                                                 <th>TTD Nasabah</th>
                                                 <th>Aksi</th>
@@ -170,17 +183,14 @@
                     { "data": "customer" },
                     { "data": "user" },
                     { "data": "date" },
-                    { "data": "destination" },
-                    { "data": "image_visit" },
-                    { "data": "description_visit" },
-                    { "data": "promise_date" },
-                    { "data": "image_promise" },
-                    { "data": "description_promise" },
-                    { "data": "amount" },
-                    { "data": "image_amount" },
-                    { "data": "description_amount" },
-                    { "data": "signature_officer" },
-                    { "data": "signature_customer" },
+                    { "data": "status" },
+                    { "data": "billingStatuses.status" },
+                    { "data": "billingStatuses.promise_date" },
+                    { "data": "billingStatuses.payment_amount" },
+                    { "data": "billingStatuses.evidence" },
+                    { "data": "billingStatuses.description" },
+                    { "data": "billingStatuses.signature_officer" },
+                    { "data": "billingStatuses.signature_customer" },
                     { "data": "action" },
                     { "data": "details" }
                 ],
@@ -188,13 +198,11 @@
                         "targets": 0,
                         "className": 'text-center',
                         "searchable": false,
-                        "orderable": false,
-                        "width": "10%",
                     },
                     {
                         "orderable": false,
                         "searchable": false,
-                        "targets": 16
+                        "targets": [ 9, 11, 12, 13, 14 ]
                     },
                     {
                         "targets": -1,

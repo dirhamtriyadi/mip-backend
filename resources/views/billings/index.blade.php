@@ -22,6 +22,22 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        @session('success')
+                            <div class="alert alert-success">
+                                <h5><i class="icon fas fa-check"></i> Alert!</h5>
+                                {{ session('success') }}
+                            </div>
+                        @endsession
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
@@ -45,9 +61,6 @@
                                             data-target="#modal-mass-select-officer">
                                             <i class="fas fa-user"></i> Pilih Petugas
                                         </button>
-                                        {{-- Reset selected data --}}
-                                        <button type="button" class="btn btn-warning mb-3 mr-1" id="reset-selected"><i
-                                            class="fas fa-redo"></i> Reset Data</button>
                                         {{-- Delete selected data --}}
                                         <button type="button" class="btn btn-danger mb-3 mr-1" id="delete-selected"><i
                                                 class="fas fa-trash"></i> Hapus</button>
@@ -76,15 +89,12 @@
                                                 <th>Nama Nasabah</th>
                                                 <th>Nama Petugas</th>
                                                 <th>Tanggal</th>
-                                                <th>Tujuan Penagihan</th>
-                                                <th>Bukti Kunjungan</th>
-                                                <th>Keterangan (Kunjungan)</th>
+                                                <th>Status Tagihan</th>
+                                                <th>Status Kunjungan</th>
                                                 <th>Tanggal Janji Bayar</th>
-                                                <th>Bukti Janji Bayar</th>
-                                                <th>Keterangan (Janji Bayar)</th>
-                                                <th>Jumlah Setoran</th>
-                                                <th>Bukti Setoran</th>
-                                                <th>Keterangan (Setoran)</th>
+                                                <th>Jumlah Bayar</th>
+                                                <th>Bukti (Kunjungan/Janji Bayar/Bayar)</th>
+                                                <th>Keterangan Kunjungan</th>
                                                 <th>TTD Petugas</th>
                                                 <th>TTD Nasabah</th>
                                                 <th>Aksi</th>
@@ -92,65 +102,6 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {{-- @forelse ($data as $item => $value)
-                                                <tr>
-                                                    <td><input type="checkbox" class="checkbox" value="{{ $value->id }}"></td>
-                                                    <td>{{ $item + 1 }}</td>
-                                                    <td>{{ $value->user->name }}</td>
-                                                    <td>{{ $value->code }}</td>
-                                                    <td>{{ Carbon\Carbon::parse($value->date)->format('d-m-Y') }}</td>
-                                                    <td>{{ Carbon\Carbon::parse($value->time_check_in)->format('H:i') }}</td>
-                                                    <td>{{ $value->time_check_out ? Carbon\Carbon::parse($value->time_check_out)->format('H:i') : '-' }}</td>
-                                                    <td>{{ $value->late_duration ?? '-'  }}</td>
-                                                    <td>{{ $value->early_leave_duration ?? '-' }}</td>
-                                                    <td>
-                                                        @if ($value->type == 'present')
-                                                            <span class="badge badge-success">{{ $value->type }}</span>
-                                                        @elseif ($value->type == 'sick')
-                                                            <span class="badge badge-info">{{ $value->type }}</span>
-                                                        @elseif($value->type == 'permit')
-                                                            <span class="badge badge-danger">{{ $value->type }}</span>
-                                                        @else
-                                                            <span class="badge badge-warning">{{ $value->type }}</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ $value->reason_late ?? '-' }}</td>
-                                                    <td>{{ $value->reason_early_out ?? '-' }}</td>
-                                                    <td><a href="{{ asset('images/attendances/' . $value->image_check_in) }}" target="_blank">Masuk</a> {!! $value->image_check_out ? '| <a href="' . asset('images/attendances/' . $value->image_check_out) . '" target="_blank">Pulang</a>' : '| -' !!}</td>
-                                                    @php
-                                                        if (isset($value->location_check_in)) {
-                                                            $location_check_in = explode(',', $value->location_check_in);
-                                                        }
-                                                        if (isset($value->location_check_out)) {
-                                                            $location_check_out = explode(',', $value->location_check_out);
-                                                        }
-
-                                                        if (isset($value->location_check_in)) {
-                                                            $latitude_check_in = $location_check_in[0];
-                                                            $longitude_check_in = $location_check_in[1];
-                                                        }
-                                                        if (isset($value->location_check_out)) {
-                                                            $latitude_check_out = $location_check_out[0];
-                                                            $longitude_check_out = $location_check_out[1];
-                                                        }
-                                                    @endphp
-                                                    <td>{!! $value->location_check_in ? '<a href="https://www.google.com/maps/search/?api=1&query=' . $latitude_check_in . ',' . $longitude_check_in .'" target="_blank">Masuk</a>' : '-' !!} {!! $value->location_check_out ? '| <a href="https://www.google.com/maps/search/?api=1&query=' . $latitude_check_out . ',' . $longitude_check_out .'" target="_blank">Pulang</a>' : '| -' !!}</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <a href="{{ route('billings.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                                                            <form action="{{ route('billings.destroy', $value->id) }}" class="ml-1" method="post">
-                                                                @csrf
-                                                                @method('delete')
-                                                                <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                                                            </form>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td class="text-center" colspan="14">Data tidak ditemukan</td>
-                                                </tr>
-                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -297,21 +248,19 @@
                     { "data": "customer" },
                     { "data": "user" },
                     { "data": "date" },
-                    { "data": "destination" },
-                    { "data": "image_visit" },
-                    { "data": "description_visit" },
-                    { "data": "promise_date" },
-                    { "data": "image_promise" },
-                    { "data": "description_promise" },
-                    { "data": "amount" },
-                    { "data": "image_amount" },
-                    { "data": "description_amount" },
-                    { "data": "signature_officer" },
-                    { "data": "signature_customer" },
+                    { "data": "status" },
+                    { "data": "billingStatuses.status" },
+                    { "data": "billingStatuses.promise_date" },
+                    { "data": "billingStatuses.payment_amount" },
+                    { "data": "billingStatuses.evidence" },
+                    { "data": "billingStatuses.description" },
+                    { "data": "billingStatuses.signature_officer" },
+                    { "data": "billingStatuses.signature_customer" },
                     { "data": "action" },
                     { "data": "details" }
                 ],
-                "columnDefs": [{
+                "columnDefs": [
+                    {
                         "targets": 0,
                         "className": 'text-center',
                         "searchable": false,
@@ -321,7 +270,7 @@
                     {
                         "orderable": false,
                         "searchable": false,
-                        "targets": 17
+                        "targets": [ 10, 12, 13, 14 ]
                     },
                     {
                         "targets": -1,
@@ -364,33 +313,6 @@
                     $('#select-all').prop('checked', false);
                 }
             });
-
-            // Reset selected items
-            $('#reset-selected').click(function() {
-                var selected = [];
-                $('.checkbox:checked').each(function() {
-                    selected.push($(this).val());
-                });
-
-                if (selected.length > 0) {
-                    if (confirm('Are you sure you want to reset the selected items?')) {
-                        $.ajax({
-                            url: '{{ route('billings.massReset') }}',
-                            type: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                ids: selected
-                            },
-                            success: function(response) {
-                                // table.ajax.reload();
-                                location.reload();
-                            }
-                        });
-                    }
-                } else {
-                    alert('Please select at least one item to reset.');
-                }
-            })
 
             // Delete selected items
             $('#delete-selected').click(function() {

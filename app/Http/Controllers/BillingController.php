@@ -29,66 +29,63 @@ class BillingController extends Controller
     public function fetchDataTable(Request $request)
     {
         // load all billings priority user_id is null and destination is visit
-        $billings = Billing::with(['customer', 'user'])
+        $billings = Billing::with(['customer', 'user', 'billingStatuses'])
             ->orWhere('user_id', null)
-            ->orWhere('destination', 'visit')
+            ->orWhere('status', 'pending')
+            ->orWhere('status', 'process')
+            ->orWhere('status', 'success')
+            ->orWhere('status', 'cancel')
+            ->orderBy('status', 'asc')
             ->get();
 
         return DataTables::of($billings)
-            ->addColumn('select', function ($billing) {
-                return '<input type="checkbox" class="checkbox" id="select-' . $billing->id . '" name="checkbox[]" value="' . $billing->id . '">';
-            })
-            ->addIndexColumn()
-            ->addColumn('customer', function ($billing) {
-                return $billing->customer->name_customer;
-            })
-            ->addColumn('user', function ($billing) {
-                return $billing->user->name ?? '-';
-            })
-            ->editColumn('date', function ($billing) {
-                return Carbon::parse($billing->date)->format('d-m-Y');
-            })
-            ->editColumn('destination', function ($billing) {
-                return view('billings.destination', ['value' => $billing]);
-            })
-            ->editColumn('image_visit', function ($billing) {
-                return $billing->image_visit ? '<a href="' . asset('images/billings/' . $billing->image_visit) . '" target="_blank">Lihat</a>' : '-';
-            })
-            ->editColumn('description_visit', function ($billing) {
-                return $billing->description_visit ? $billing->description_visit : '-';
-            })
-            ->editColumn('promise_date', function ($billing) {
-                return $billing->promise_date ? Carbon::parse($billing->promise_date)->format('d-m-Y') : '-';
-            })
-            ->editColumn('image_promise', function ($billing) {
-                return $billing->image_promise ? '<a href="' . asset('images/billings/' . $billing->image_promise) . '" target="_blank">Lihat</a>' : '-';
-            })
-            ->editColumn('description_promise', function ($billing) {
-                return $billing->description_promise ? $billing->description_promise : '-';
-            })
-            ->editColumn('amount', function ($billing) {
-                return $billing->amount ? 'Rp ' . number_format($billing->amount, 0, ',', '.') : '-';
-            })
-            ->editColumn('image_amount', function ($billing) {
-                return $billing->image_amount ? '<a href="' . asset('images/billings/' . $billing->image_amount) . '" target="_blank">Lihat</a>' : '-';
-            })
-            ->editColumn('description_amount', function ($billing) {
-                return $billing->description_amount ? $billing->description_amount : '-';
-            })
-            ->editColumn('signature_officer', function ($billing) {
-                return $billing->signature_officer ? '<a href="' . asset('images/billings/' . $billing->signature_officer) . '" target="_blank">Lihat</a>' : '-';
-            })
-            ->editColumn('signature_customer', function ($billing) {
-                return $billing->signature_customer ? '<a href="' . asset('images/billings/' . $billing->signature_customer) . '" target="_blank">Lihat</a>' : '-';
-            })
-            ->addColumn('action', function ($billing) {
-                return view('billings.action', ['value' => $billing]);
-            })
-            ->addColumn('details', function ($billing) {
-                return;
-            })
-            ->rawColumns(['select', 'destination', 'image_visit', 'image_promise', 'image_amount', 'signature_officer', 'signature_customer', 'action'])
-            ->toJson();
+        ->addColumn('select', function ($billing) {
+            return '<input type="checkbox" class="checkbox" id="select-' . $billing->id . '" name="checkbox[]" value="' . $billing->id . '">';
+        })
+        ->addIndexColumn()
+        ->addColumn('customer', function ($billing) {
+            return $billing->customer->name_customer;
+        })
+        ->addColumn('user', function ($billing) {
+            return $billing->user->name ?? '-';
+        })
+        ->editColumn('date', function ($billing) {
+            return Carbon::parse($billing->date)->format('d-m-Y');
+        })
+        ->editColumn('status', function ($billing) {
+            return view('billings.status', ['value' => $billing]);
+        })
+        ->addColumn('billingStatuses.status', function ($billing) {
+            // return optional($billing->billingStatuses->last())->status ?? '-';
+            return view('billings.visit-status', ['value' => $billing]);
+        })
+        ->addColumn('billingStatuses.promise_date', function ($billing) {
+            return optional($billing->billingStatuses->last())->promise_date ? Carbon::parse($billing->billingStatuses->last()->promise_date)->format('d-m-Y') : '-';
+        })
+        ->addColumn('billingStatuses.payment_amount', function ($billing) {
+            // return optional($billing->billingStatuses->last())->payment_amount ? number_format($billing->billingStatuses->last()->payment_amount, 0, ',', '.') : '-';
+            return optional($billing->billingStatuses->last())->payment_amount ? 'Rp ' . number_format($billing->billingStatuses->last()->payment_amount, 0, ',', '.') : '-';
+        })
+        ->addColumn('billingStatuses.evidence', function ($billing) {
+            return optional($billing->billingStatuses->last())->evidence ? '<a href="' . asset('images/billings/' . $billing->billingStatuses->last()->evidence) . '" target="_blank">Lihat</a>' : '-';
+        })
+        ->addColumn('billingStatuses.description', function ($billing) {
+            return optional($billing->billingStatuses->last())->description ?? '-';
+        })
+        ->addColumn('billingStatuses.signature_officer', function ($billing) {
+            return optional($billing->billingStatuses->last())->signature_officer ? '<a href="' . asset('images/billings/' . $billing->billingStatuses->last()->signature_officer) . '" target="_blank">Lihat</a>' : '-';
+        })
+        ->addColumn('billingStatuses.signature_customer', function ($billing) {
+            return optional($billing->billingStatuses->last())->signature_customer ? '<a href="' . asset('images/billings/' . $billing->billingStatuses->last()->signature_customer) . '" target="_blank">Lihat</a>' : '-';
+        })
+        ->addColumn('action', function ($billing) {
+            return view('billings.action', ['value' => $billing]);
+        })
+        ->addColumn('details', function ($billing) {
+            return;
+        })
+        ->rawColumns(['select', 'billingStatuses.evidence', 'billingStatuses.signature_officer', 'billingStatuses.signature_customer', 'action'])
+        ->toJson();
     }
 
     /**
@@ -111,25 +108,28 @@ class BillingController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'no_billing' => 'required|unique:billings',
+            'no_billing' => 'nullable|unique:billings',
             'date' => 'required|date',
             'customer_id' => 'required|exists:customers,id',
-            'user_id' => 'required|exists:users,id',
-            'destination' => 'required|in:visit,promise,pay',
-            'image_visit' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description_visit' => 'nullable',
-            // 'promise_date' => 'required_if:destination,promise',
-            'promise_date' => 'nullable',
-            'image_promise' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description_promise' => 'nullable',
-            // 'amount' => 'required_if:destination,pay',
-            'amount' => 'nullable',
-            'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description_amount' => 'nullable',
-            'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'user_id' => 'nullable|exists:users,id',
+            'status' => 'nullable|in:pending,process,success,cancel',
+            // 'destination' => 'required|in:visit,promise,pay',
+            // 'image_visit' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'description_visit' => 'nullable',
+            // 'promise_date' => 'nullable',
+            // 'image_promise' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'description_promise' => 'nullable',
+            // 'amount' => 'nullable',
+            // 'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'description_amount' => 'nullable',
+            // 'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        $customer = Customer::findOrFail($validatedData['customer_id']);
+        if ($validatedData['no_billing'] == null) {
+            $validatedData['no_billing'] = Carbon::now()->format('YmdHis') . $customer->no;
+        }
         $validatedData['created_by'] = auth()->id();
 
         // save image to public/images/billings and change name to timestamp
@@ -212,23 +212,22 @@ class BillingController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'no_billing' => 'required|unique:billings,no_billing,' . $id,
+            'no_billing' => 'nullable|unique:billings,no_billing,' . $id,
             'date' => 'required|date',
             'customer_id' => 'required|exists:customers,id',
-            'user_id' => 'required|exists:users,id',
-            'destination' => 'required|in:visit,promise,pay',
-            'image_visit' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description_visit' => 'nullable',
-            // 'promise_date' => 'required_if:destination,promise',
-            'promise_date' => 'nullable',
-            'image_promise' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description_promise' => 'nullable',
-            // 'amount' => 'required_if:destination,pay',
-            'amount' => 'nullable',
-            'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description_amount' => 'nullable',
-            'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'user_id' => 'nullable|exists:users,id',
+            'status' => 'required|in:pending,process,success,cancel',
+            // 'destination' => 'required|in:visit,promise,pay',
+            // 'image_visit' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'description_visit' => 'nullable',
+            // 'promise_date' => 'nullable',
+            // 'image_promise' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'description_promise' => 'nullable',
+            // 'amount' => 'nullable',
+            // 'image_amount' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'description_amount' => 'nullable',
+            // 'signature_officer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'signature_customer' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $billing = Billing::findOrFail($id);
@@ -303,33 +302,12 @@ class BillingController extends Controller
             $validatedData['signature_customer'] = $fileName;
         }
 
+        $customer = Customer::findOrFail($validatedData['customer_id']);
+        if ($validatedData['no_billing'] == null) {
+            $validatedData['no_billing'] = Carbon::now()->format('YmdHis') . $customer->no;
+        }
         $validatedData['updated_by'] = auth()->id();
-        // if ($request->destination == 'visit') {
-        //     $validatedData['description_visit'] = null;
-        //     $validatedData['promise_date'] = null;
-        //     $validatedData['description_promise'] = null;
-        //     $validatedData['amount'] = null;
-        //     $validatedData['description_amount'] = null;
-        //     if ($billing->image_visit != null && file_exists(public_path('images/billings/' . $billing->image_visit))) {
-        //         unlink(public_path('images/billings/' . $billing->image_visit));
-        //     }
-        //     if ($billing->image_promise != null && file_exists(public_path('images/billings/' . $billing->image_promise))) {
-        //         unlink(public_path('images/billings/' . $billing->image_promise));
-        //     }
-        //     if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
-        //         unlink(public_path('images/billings/' . $billing->image_amount));
-        //     }
-        //     $validatedData['image_amount'] = null;
-        //     if ($billing->siganture_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
-        //         unlink(public_path('images/billings/' . $billing->signature_officer));
-        //     }
-        //     $validatedData['signature_officer'] = null;
-        //     if ($billing->siganture_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
-        //         unlink(public_path('images/billings/' . $billing->signature_customer));
-        //     }
-        //     $validatedData['signature_customer'] = null;
-        // }
-
+        
         $billing->update($validatedData);
 
         return redirect()->route('billings.index')->with('success', 'Data berhasil diperbarui');
@@ -341,66 +319,11 @@ class BillingController extends Controller
     public function destroy(string $id)
     {
         $billing = Billing::findOrFail($id);
-
-        // remove image
-        // if (file_exists(public_path('images/billings/' . $billing->image_amount))) {
-        //     unlink(public_path('_amounts/billings/' . $billing->image_amount));
-        // }
-
-        // if (file_exists(public_path('images/billings/' . $billing->signature_officer))) {
-        //     unlink(public_path('_amounts/billings/' . $billing->signature_officer))) {;
-        // }
-
-        // if (file_exists(public_path('images/billings/' . $billing->signature_customer))) {
-        //     unlink(public_path('_amounts/billings/' . $billing->signature_customer))) {;
-        // }
-
         $billing->deleted_by = auth()->id();
         $billing->save();
         $billing->delete();
 
         return redirect()->route('billings.index')->with('success', 'Data berhasil dihapus');
-    }
-
-    public function reset(string $id)
-    {
-        $user = auth()->user();
-        $billing = Billing::findOrFail($id);
-
-        $billing->destination = 'visit';
-        $billing->description_visit = null;
-        $billing->promise_date = null;
-        $billing->description_promise = null;
-        $billing->amount = null;
-        $billing->description_amount = null;
-        $billing->updated_by = $user->id;
-        $billing->deleted_by = null;
-        $billing->deleted_at = null;
-        // remove image
-        if ($billing->image_visit != null && file_exists(public_path('images/billings/' . $billing->image_visit))) {
-            unlink(public_path('images/billings/' . $billing->image_visit));
-        }
-        $billing->image_visit = null;
-        if ($billing->image_promise != null && file_exists(public_path('images/billings/' . $billing->image_promise))) {
-            unlink(public_path('images/billings/' . $billing->image_promise));
-        }
-        $billing->image_promise = null;
-        if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
-            unlink(public_path('images/billings/' . $billing->image_amount));
-        }
-        $billing->image_amount = null;
-        if ($billing->signature_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
-            unlink(public_path('images/billings/' . $billing->signature_officer));
-        }
-        $billing->signature_officer = null;
-        if ($billing->signature_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
-            unlink(public_path('images/billings/' . $billing->signature_customer));
-        }
-        $billing->signature_customer = null;
-
-        $billing->save();
-
-        return redirect()->route('billings.index')->with('success', 'Data berhasil direset');
     }
 
     public function import(Request $request)
@@ -440,55 +363,6 @@ class BillingController extends Controller
         }
 
         return redirect()->route('billings.index')->with('success', 'Data berhasil dihapus');
-    }
-
-    public function massReset(Request $request)
-    {
-        $request->validate([
-            'ids' => 'required|array',
-            'ids.*' => 'required|exists:billings,id',
-        ]);
-
-        $ids = $request->input('ids', []);
-        $user = auth()->user();
-
-        foreach ($ids as $id) {
-            $billing = Billing::findOrFail($id);
-            $billing->destination = 'visit';
-            $billing->description_visit = null;
-            $billing->promise_date = null;
-            $billing->description_promise = null;
-            $billing->amount = null;
-            $billing->description_amount = null;
-            $billing->updated_by = $user->id;
-            $billing->deleted_by = null;
-            $billing->deleted_at = null;
-            // remove image
-            if ($billing->image_visit != null && file_exists(public_path('images/billings/' . $billing->image_visit))) {
-                unlink(public_path('images/billings/' . $billing->image_visit));
-            }
-            $billing->image_visit = null;
-            if ($billing->image_promise != null && file_exists(public_path('images/billings/' . $billing->image_promise))) {
-                unlink(public_path('images/billings/' . $billing->image_promise));
-            }
-            $billing->image_promise = null;
-            if ($billing->image_amount != null && file_exists(public_path('images/billings/' . $billing->image_amount))) {
-                unlink(public_path('images/billings/' . $billing->image_amount));
-            }
-            $billing->image_amount = null;
-            if ($billing->signature_officer != null && file_exists(public_path('images/billings/' . $billing->signature_officer))) {
-                unlink(public_path('images/billings/' . $billing->signature_officer));
-            }
-            $billing->signature_officer = null;
-            if ($billing->signature_customer != null && file_exists(public_path('images/billings/' . $billing->signature_customer))) {
-                unlink(public_path('images/billings/' . $billing->signature_customer));
-            }
-            $billing->signature_customer = null;
-
-            $billing->save();
-        }
-
-        return redirect()->route('billings.index')->with('success', 'Data berhasil direset');
     }
 
     public function massSelectOfficer(Request $request)

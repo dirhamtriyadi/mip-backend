@@ -117,124 +117,19 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="destination">Tujuan Penagihan</label>
-                                        <select class="form-control select2" style="width: 100%;" id="destination" name="destination">
-                                            <option value="" selected>Pilih Tujuan</option>
-                                            <option value="visit" {{ old('destination') == 'visit' ? 'selected' : '' }}>Kunjungan</option>
-                                            <option value="promise" {{ old('destination') == 'promise' ? 'selected' : '' }}>Janji Bayar</option>
-                                            <option value="pay" {{ old('destination') == 'pay' ? 'selected' : '' }}>Bayar</option>
+                                        <label for="status">Status Penagihan</label>
+                                        <select class="form-control select2" style="width: 100%;" id="status" name="status">
+                                            <option value="" selected>Pilih Status</option>
+                                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Menunggu</option>
+                                            <option value="process  " {{ old('status') == 'process ' ? 'selected' : '' }}>Proses</option>
+                                            <option value="success" {{ old('status') == 'success' ? 'selected' : '' }}>Berhasil</option>
+                                            <option value="cancel" {{ old('status') == 'cancel' ? 'selected' : '' }}>Gagal</option>
                                         </select>
-                                        @error('destination')
+                                        @error('status')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="image-visit-group">
-                                        <label for="image_visit">Bukti Kunjungan</label>
-
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="image_visit"
-                                                name="image_visit" value="{{ old('image_visit') }}">
-                                            <label class="custom-file-label" for="image_visit">Choose file</label>
-                                        </div>
-                                        @error('image_visit')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="description-visit-group">
-                                        <label for="description_visit">Keterangan Kunjungan</label>
-                                        <textarea class="form-control" id="description_visit" name="description_visit"
-                                            placeholder="Masukkan Keterangan Penagihan">{{ old('description_visit') }}</textarea>
-                                        @error('description_visit')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="date-promise-group">
-                                        <label for="promise_date">Tanggal Janji Bayar</label>
-                                        <div class="input-group date" id="promise_date" data-target-input="nearest">
-                                            <input type="text" class="form-control datetimepicker-input"
-                                                data-target="#promise_date" name="promise_date" placeholder="Masukan Tanggal Bayar" value="{{ old('promise_date') }}">
-                                            <div class="input-group-append" data-target="#promise_date"
-                                                data-toggle="datetimepicker">
-                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                            </div>
-                                        </div>
-                                        @error('promise_date')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="image-promise-group">
-                                        <label for="image_promise">Bukti Janji Bayar</label>
-
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="image_promise"
-                                                name="image_promise" value="{{ old('image_promise') }}">
-                                            <label class="custom-file-label" for="image_promise">Choose file</label>
-                                        </div>
-                                        @error('image_promise')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="description-promise-group">
-                                        <label for="description_promise">Keterangan Janji Bayar</label>
-                                        <textarea class="form-control" id="description_promise" name="description_promise"
-                                            placeholder="Masukkan Keterangan Penagihan">{{ old('description_promise') }}</textarea>
-                                        @error('description_promise')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="amount-group">
-                                        <label for="amount">Total Bayar</label>
-                                        <input type="text" class="form-control text-left" id="amount" name="amount"
-                                            placeholder="Masukkan Total Bayar" value="{{ old('amount') }}" data-mask>
-                                        @error('amount')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="image-amount-group">
-                                        <label for="image_amount">Bukti Bayar</label>
-
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="image_amount"
-                                                name="image_amount" value="{{ old('image_amount') }}">
-                                            <label class="custom-file-label" for="image_amount">Choose file</label>
-                                        </div>
-                                        @error('image_amount')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="description-amount-group">
-                                        <label for="description_amount">Keterangan Bayar</label>
-                                        <textarea class="form-control" id="description_amount" name="description_amount"
-                                            placeholder="Masukkan Keterangan Penagihan">{{ old('description_amount') }}</textarea>
-                                        @error('description_amount')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="signature_officer-group">
-                                        <label for="signature_officer">TTD Petugas</label>
-
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="signature_officer"
-                                                name="signature_officer" value="{{ old('signature_officer') }}">
-                                            <label class="custom-file-label" for="signature_officer">Choose file</label>
-                                        </div>
-                                        @error('signature_officer')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group" style="margin-top: 10px;" id="signature_customer-group">
-                                        <label for="signature_customer">TTD Nasabah</label>
-
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="signature_customer"
-                                                name="signature_customer" value="{{ old('signature_customer') }}">
-                                            <label class="custom-file-label" for="signature_customer">Choose file</label>
-                                        </div>
-                                        @error('signature_customer')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
+                                    
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
                                             style="margin-top: 10px;">Submit</button>
@@ -306,64 +201,6 @@
             // Remove format amount
             $('#billing-form').submit(function() {
                 $('#amount').inputmask('remove');
-            });
-
-            // Show/hide fields based on destination
-            function toggleFields() {
-                var destination = $('#destination').val();
-                if (destination === 'visit') {
-                    $('#image-visit-group').show();
-                    $('#description-visit-group').show();
-                    $('#date-promise-group').hide();
-                    $('#image-promise-group').hide();
-                    $('#description-promise-group').hide();
-                    $('#amount-group').hide();
-                    $('#image-amount-group').hide();
-                    $('#description-amount-group').hide();
-                    $('#signature_officer-group').show();
-                    $('#signature_customer-group').show();
-                } else if (destination === 'promise') {
-                    $('#image-visit-group').hide();
-                    $('#description-visit-group').hide();
-                    $('#date-promise-group').show();
-                    $('#image-promise-group').show();
-                    $('#description-promise-group').show();
-                    $('#amount-group').hide();
-                    $('#image-amount-group').hide();
-                    $('#description-amount-group').hide();
-                    $('#signature_officer-group').show();
-                    $('#signature_customer-group').show();
-                } else if (destination === 'pay') {
-                    $('#image-visit-group').hide();
-                    $('#description-visit-group').hide();
-                    $('#date-promise-group').hide();
-                    $('#image-promise-group').hide();
-                    $('#description-promise-group').hide();
-                    $('#amount-group').show();
-                    $('#image-amount-group').show();
-                    $('#description-amount-group').show();
-                    $('#signature_officer-group').show();
-                    $('#signature_customer-group').show();
-                } else {
-                    $('#image-visit-group').hide();
-                    $('#description-visit-group').hide();
-                    $('#date-promise-group').hide();
-                    $('#image-promise-group').hide();
-                    $('#description-promise-group').hide();
-                    $('#amount-group').hide();
-                    $('#image-amount-group').hide();
-                    $('#description-amount-group').hide();
-                    $('#signature_officer-group').hide();
-                    $('#signature_customer-group').hide();
-                }
-            }
-
-            // Initial toggle
-            toggleFields();
-
-            // Toggle fields on change
-            $('#destination').change(function() {
-                toggleFields();
             });
         });
     </script>

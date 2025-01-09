@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AttendanceController;
 use App\Http\Controllers\Api\V1\LeaveController;
 use App\Http\Controllers\Api\V1\BillingController;
+use App\Http\Controllers\Api\V1\BillingStatusController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
@@ -26,6 +27,7 @@ Route::prefix('v1')->group(function () {
         Route::post('leaves/submission', [LeaveController::class, 'submission'])->name('leaves.submission');
         Route::get('leaves', [LeaveController::class, 'index'])->name('leaves.index');
         Route::apiResource('billings', BillingController::class);
+        Route::apiResource('billing-statuses', BillingStatusController::class);
         Route::apiResource('users', UserController::class);
         Route::get('profile', [ProfileController::class, 'index'])->name('profile');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');

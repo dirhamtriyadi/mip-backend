@@ -25,6 +25,16 @@ class Billing extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function billingStatuses()
+    {
+        return $this->hasMany(BillingStatus::class);
+    }
+
+    public function latestBillingStatus()
+    {
+        return $this->hasOne(BillingStatus::class)->latestOfMany();
+    }
+
     public function prunable(): Builder
     {
         return static::where('deleted_at', '<=', now()->subMonth());

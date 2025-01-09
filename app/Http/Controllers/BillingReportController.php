@@ -34,15 +34,14 @@ class BillingReportController extends Controller
 
         $billings = Billing::with(['customer', 'user'])
             ->whereBetween('date', [$start_date, $end_date])
-            ->where('destination', 'visit')
-            ->orWhere('destination', 'promise')
-            ->orWhere('destination', 'pay')
+            ->where('status', 'pending')
+            ->orWhere('status', 'process')
+            ->orWhere('status', 'success')
+            ->orWhere('status', 'cancel')
+            ->orderBy('status', 'asc')
             ->get();
 
         return DataTables::of($billings)
-            ->addColumn('select', function ($billing) {
-                return '<input type="checkbox" class="checkbox" id="select-' . $billing->id . '" name="checkbox[]" value="' . $billing->id . '">';
-            })
             ->addIndexColumn()
             ->addColumn('customer', function ($billing) {
                 return $billing->customer->name_customer;
@@ -53,46 +52,39 @@ class BillingReportController extends Controller
             ->editColumn('date', function ($billing) {
                 return Carbon::parse($billing->date)->format('d-m-Y');
             })
-            ->editColumn('destination', function ($billing) {
-                return view('billings.destination', ['value' => $billing]);
+            ->editColumn('status', function ($billing) {
+                return view('billings.status', ['value' => $billing]);
             })
-            ->editColumn('image_visit', function ($billing) {
-                return $billing->image_visit ? '<a href="' . asset('images/billings/' . $billing->image_visit) . '" target="_blank">Lihat</a>' : '-';
+            ->addColumn('billingStatuses.status', function ($billing) {
+                // return optional($billing->billingStatuses->last())->status ?? '-';
+                return view('billings.visit-status', ['value' => $billing]);
             })
-            ->editColumn('description_visit', function ($billing) {
-                return $billing->description_visit ? $billing->description_visit : '-';
+            ->addColumn('billingStatuses.promise_date', function ($billing) {
+                return optional($billing->billingStatuses->last())->promise_date ? Carbon::parse($billing->billingStatuses->last()->promise_date)->format('d-m-Y') : '-';
             })
-            ->editColumn('promise_date', function ($billing) {
-                return $billing->promise_date ? Carbon::parse($billing->promise_date)->format('d-m-Y') : '-';
+            ->addColumn('billingStatuses.payment_amount', function ($billing) {
+                // return optional($billing->billingStatuses->last())->payment_amount ? number_format($billing->billingStatuses->last()->payment_amount, 0, ',', '.') : '-';
+                return optional($billing->billingStatuses->last())->payment_amount ? 'Rp ' . number_format($billing->billingStatuses->last()->payment_amount, 0, ',', '.') : '-';
             })
-            ->editColumn('image_promise', function ($billing) {
-                return $billing->image_promise ? '<a href="' . asset('images/billings/' . $billing->image_promise) . '" target="_blank">Lihat</a>' : '-';
+            ->addColumn('billingStatuses.evidence', function ($billing) {
+                return optional($billing->billingStatuses->last())->evidence ? '<a href="' . asset('images/billings/' . $billing->billingStatuses->last()->evidence) . '" target="_blank">Lihat</a>' : '-';
             })
-            ->editColumn('description_promise', function ($billing) {
-                return $billing->description_promise ? $billing->description_promise : '-';
+            ->addColumn('billingStatuses.description', function ($billing) {
+                return optional($billing->billingStatuses->last())->description ?? '-';
             })
-            ->editColumn('amount', function ($billing) {
-                return $billing->amount ? 'Rp ' . number_format($billing->amount, 0, ',', '.') : '-';
+            ->addColumn('billingStatuses.signature_officer', function ($billing) {
+                return optional($billing->billingStatuses->last())->signature_officer ? '<a href="' . asset('images/billings/' . $billing->billingStatuses->last()->signature_officer) . '" target="_blank">Lihat</a>' : '-';
             })
-            ->editColumn('image_amount', function ($billing) {
-                return $billing->image_amount ? '<a href="' . asset('images/billings/' . $billing->image_amount) . '" target="_blank">Lihat</a>' : '-';
-            })
-            ->editColumn('description_amount', function ($billing) {
-                return $billing->description_amount ? $billing->description_amount : '-';
-            })
-            ->editColumn('signature_officer', function ($billing) {
-                return $billing->signature_officer ? '<a href="' . asset('images/billings/' . $billing->signature_officer) . '" target="_blank">Lihat</a>' : '-';
-            })
-            ->editColumn('signature_customer', function ($billing) {
-                return $billing->signature_customer ? '<a href="' . asset('images/billings/' . $billing->signature_customer) . '" target="_blank">Lihat</a>' : '-';
+            ->addColumn('billingStatuses.signature_customer', function ($billing) {
+                return optional($billing->billingStatuses->last())->signature_customer ? '<a href="' . asset('images/billings/' . $billing->billingStatuses->last()->signature_customer) . '" target="_blank">Lihat</a>' : '-';
             })
             ->addColumn('action', function ($billing) {
-                return view('billings.action', ['value' => $billing]);
+                return view('billing-reports.action', ['value' => $billing]);
             })
             ->addColumn('details', function ($billing) {
                 return;
             })
-            ->rawColumns(['select', 'destination', 'image_visit', 'image_promise', 'image_amount', 'signature_officer', 'signature_customer', 'action'])
+            ->rawColumns(['select', 'billingStatuses.evidence', 'billingStatuses.signature_officer', 'billingStatuses.signature_customer', 'action'])
             ->toJson();
     }
 

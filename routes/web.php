@@ -47,10 +47,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('billings/template-import', [BillingController::class, 'templateImport'])->name('billings.templateImport');
     Route::resource('billings', BillingController::class);
     Route::post('billings/fetch-data-table', [BillingController::class, 'fetchDataTable'])->name('billings.fetchDataTable');
-    Route::put('billings/{billing}/reset', [BillingController::class, 'reset'])->name('billings.reset');
+    // Route::put('billings/{billing}/reset', [BillingController::class, 'reset'])->name('billings.reset');
     Route::post('billings/import', [BillingController::class, 'import'])->name('billings.import');
     Route::post('billings/mass-delete', [BillingController::class, 'massDelete'])->name('billings.massDelete');
-    Route::post('billings/mass-reset', [BillingController::class, 'massReset'])->name('billings.massReset');
+    // Route::post('billings/mass-reset', [BillingController::class, 'massReset'])->name('billings.massReset');
     Route::post('billings/mass-select-offficer', [BillingController::class, 'massSelectOfficer'])->name('billings.massSelectOfficer');
     Route::get('billing-reports', [BillingReportController::class, 'index'])->name('billing-reports.index');
     Route::post('billing-reports/fetch-data-table', [BillingReportController::class, 'fetchDataTable'])->name('billing-reports.fetchDataTable');
