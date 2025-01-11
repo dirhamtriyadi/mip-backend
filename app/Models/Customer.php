@@ -16,15 +16,20 @@ class Customer extends Model
         'name_customer',
         'phone_number',
         'address',
-        'name_bank',
         'date',
         'total_bill',
         'installment',
         'remaining_installment',
+        'bank_id',
         'created_by',
         'updated_by',
         'deleted_by',
     ];
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class, 'bank_id');
+    }
 
     public function billing()
     {

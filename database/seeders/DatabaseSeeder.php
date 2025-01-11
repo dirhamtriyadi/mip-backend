@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             PermissionTableSeeder::class,
             UserSeeder::class,
             WorkScheduleSeeder::class,
+            BankSeeder::class,
         ]);
 
         // User::factory(10000)->create();

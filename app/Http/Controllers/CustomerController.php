@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Bank;
 use Carbon\Carbon;
 
 class CustomerController extends Controller
@@ -21,12 +22,21 @@ class CustomerController extends Controller
     public function fetchDataTable(Request $request)
     {
         // load all bank accounts
-        $customers = Customer::all();
+        $customers = Customer::with('bank')->get();
 
         return DataTables::of($customers)
             ->addIndexColumn()
+            ->addColumn('name_bank', function ($customer) {
+                return $customer->bank->name;
+            })
             ->editColumn('date', function ($billing) {
                 return Carbon::parse($billing->date)->format('d-m-Y');
+            })
+            ->editColumn('total_bill', function ($billing) {
+                return $billing->total_bill ?? '0';
+            })
+            ->editColumn('installment', function ($billing) {
+                return $billing->installment ?? '0';
             })
             ->addColumn('action', function ($customer) {
                 return view('customers.action', ['value' => $customer]);
@@ -40,7 +50,11 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        return view('customers.create');
+        $banks = Bank::all();
+
+        return view('customers.create', [
+            'banks' => $banks,
+        ]);
     }
 
     /**
@@ -53,7 +67,7 @@ class CustomerController extends Controller
             'name_customer' => 'required',
             'phone_number' => 'nullable',
             'address' => 'required',
-            'name_bank' => 'nullable',
+            'bank_id' => 'required|numeric',
             'date' => 'required|date',
             'total_bill' => 'nullable|numeric',
             'installment' => 'nullable|numeric',
@@ -80,9 +94,11 @@ class CustomerController extends Controller
     public function edit(string $id)
     {
         $customer = Customer::findOrFail($id);
+        $banks = Bank::all();
 
         return view('customers.edit', [
             'data' => $customer,
+            'banks' => $banks,
         ]);
     }
 
@@ -96,7 +112,7 @@ class CustomerController extends Controller
             'name_customer' => 'required',
             'phone_number' => 'nullable',
             'address' => 'required',
-            'name_bank' => 'nullable',
+            'bank_id' => 'required|numeric',
             'date' => 'required|date',
             'total_bill' => 'nullable|numeric',
             'installment' => 'nullable|numeric',

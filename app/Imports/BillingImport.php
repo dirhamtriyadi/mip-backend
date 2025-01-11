@@ -26,7 +26,7 @@ class BillingImport implements ToModel, WithHeadingRow
             'name_customer' => $row['name_customer'] ?? $row['nama'],
             'phone_number' => $row['phone_number'] ?? $row['nohp'] ?? $row['hp'] ?? null,
             'address' => $row['address'] ?? $row['alamat'],
-            'name_bank' => $row['name_bank'] ?? $row['bank'] ?? null,
+            'bank_id' => $row['bank_id'] ?? $row['bank'] ?? null,
             'date' => $row['date'] ?? $row['tglkontrak'] ?? $row['tgleff'],
             'total_bill' => $row['osmdlc'] + $row['osmgnc'],
             'installment' => $row['installment'] ?? $row['angsmdl'],

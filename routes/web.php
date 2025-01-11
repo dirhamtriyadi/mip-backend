@@ -8,6 +8,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\BankContoller;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\BillingReportController;
 use App\Http\Controllers\UserController;
@@ -23,7 +24,7 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/login', [AuthController::class, 'postLogin'])->name('postLogin');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:Admin|Super Admin'])->group(function () {
     Route::get("/dashboard", function () {
         return view("dashboard.index");
     })->name("dashboard");
@@ -44,6 +45,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('leaves', LeaveController::class);
     Route::post('leaves/fetch-data-table', [LeaveController::class, 'fetchDataTable'])->name('leaves.fetchDataTable');
     Route::post('leaves/{leave}/response', [LeaveController::class, 'response'])->name('leaves.response');
+    Route::resource('banks', BankContoller::class);
+    Route::post('banks/fetch-data-table', [BankContoller::class, 'fetchDataTable'])->name('banks.fetchDataTable');
     Route::get('billings/template-import', [BillingController::class, 'templateImport'])->name('billings.templateImport');
     Route::resource('billings', BillingController::class);
     Route::post('billings/fetch-data-table', [BillingController::class, 'fetchDataTable'])->name('billings.fetchDataTable');

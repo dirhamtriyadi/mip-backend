@@ -107,10 +107,14 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="name_bank">Nama Bank</label>
-                                        <input type="text" class="form-control" id="name_bank" name="name_bank"
-                                            placeholder="Masukkan Nama" value="{{ old('name_bank') }}">
-                                        @error('name_bank')
+                                        <label for="bank_id">Bank</label>
+                                        <select class="form-control select2" style="width: 100%;" id="bank_id" name="bank_id">
+                                            <option value="" selected>Pilih Bank</option>
+                                            @foreach ($banks as $bank)
+                                                <option value="{{ $bank->id }}" {{ old('bank_id') == $bank->id ? 'selected' : '' }}>{{ $bank->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('bank_id')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -130,14 +134,6 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    {{-- <div class="form-group" style="margin-top: 10px;">
-                                        <label for="remaining_installment">Sisa Angsuran</label>
-                                        <input type="text" class="form-control text-left" id="remaining_installment" name="remaining_installment"
-                                            placeholder="Masukkan Sisa Angsuran" value="{{ old('remaining_installment') }}" data-mask>
-                                        @error('remaining_installment')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div> --}}
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
@@ -161,11 +157,16 @@
 @endsection
 
 @push('styles')
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
     <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
 @endpush
 
 @push('scripts')
+    <!-- Select2 -->
+    <script src="{{ asset('adminlte') }}/plugins/select2/js/select2.full.min.js"></script>
     <!-- InputMask -->
     <script src="{{ asset('adminlte') }}/plugins/moment/moment.min.js"></script>
     <script src="{{ asset('adminlte') }}/plugins/inputmask/jquery.inputmask.min.js"></script>
@@ -174,6 +175,10 @@
 
     <script>
         $(function() {
+            //Initialize Select2 Elements
+            $('.select2').select2({
+                theme: 'bootstrap4'
+            });
             //Datemask dd/mm/yyyy
             $('#datemask').inputmask('dd/mm/yyyy', {
                 'placeholder': 'dd/mm/yyyy'

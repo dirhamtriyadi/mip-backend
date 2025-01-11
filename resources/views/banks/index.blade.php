@@ -7,10 +7,10 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Nasabah</h1>
+                        <h1>Bank</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{  Breadcrumbs::render('customers') }}
+                        {{  Breadcrumbs::render('banks') }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -41,7 +41,7 @@
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Nasabah</h3>
+                                <h3 class="card-title">Bank</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"
@@ -55,21 +55,16 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-end">
-                                    <a href="{{ route('customers.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
+                                    <a href="{{ route('banks.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="table" class="table table-bordered table-hover table-striped">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Nomor Kontrak/Rekening</th>
-                                                <th>Nama Nasabah</th>
-                                                <th>No HP</th>
-                                                <th>Alamat</th>
                                                 <th>Nama Bank</th>
-                                                <th>Tanggal</th>
-                                                <th>Total Tagihan</th>
-                                                <th>Angsuran</th>
+                                                <th>ID</th>
+                                                <th>Total Nasabah</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -115,7 +110,7 @@
                 "processing":true,
                 "serverSide":true,
                 "ajax": {
-                    "url": "{{ route('customers.index') }}/fetch-data-table",
+                    "url": "{{ route('banks.index') }}/fetch-data-table",
                     "type": "post",
                     "data": {
                         "_token": "{{ csrf_token() }}"
@@ -130,18 +125,13 @@
                 "autoWidth": false,
                 "columns": [
                     { "data": "DT_RowIndex" },
-                    { "data": "no" },
-                    { "data": "name_customer" },
-                    { "data": "phone_number" },
-                    { "data": "address" },
-                    { "data": "name_bank" },
-                    { "data": "date" },
-                    { "data": "total_bill", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ') },
-                    { "data": "installment", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ') },
+                    { "data": "name" },
+                    { "data": "id" },
+                    { "data": "total_customer" },
                     { "data": "action" },
                 ],
                 "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 9] },
+                    { "orderable": false, "searchable": false, "targets": 4 },
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
