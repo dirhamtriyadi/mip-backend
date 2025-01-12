@@ -2,13 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Http\Request;
 use App\Models\WorkSchedule;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 
-class WorkScheduleController extends Controller
+class WorkScheduleController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            // 'auth',
+            // new Middleware('subscribed', except: ['store']),
+            new Middleware('permission:jam-kerja.index', only: ['index']),
+            new Middleware('permission:jam-kerja.create', only: ['index', 'create', 'store']),
+            new Middleware('permission:jam-kerja.edit', only: ['index', 'edit', 'update']),
+            new Middleware('permission:jam-kerja.delete', only: ['index', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

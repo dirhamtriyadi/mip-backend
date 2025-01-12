@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Http\Request;
 use App\Models\Billing;
 use App\Models\User;
@@ -11,8 +13,23 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\BillingImport;
 
-class BillingController extends Controller
+class BillingController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            // 'auth',
+            // new Middleware('subscribed', except: ['store']),
+            new Middleware('permission:penagihan.index', only: ['index']),
+            new Middleware('permission:penagihan.create', only: ['index', 'create', 'store']),
+            new Middleware('permission:penagihan.edit', only: ['index', 'edit', 'update']),
+            new Middleware('permission:penagihan.delete', only: ['index', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

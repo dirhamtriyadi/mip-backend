@@ -2,12 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Http\Request;
 use App\Models\Bank;
 use Yajra\DataTables\Facades\DataTables;
 
-class BankContoller extends Controller
+class BankContoller extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            // 'auth',
+            // new Middleware('subscribed', except: ['store']),
+            new Middleware('permission:bank.index', only: ['index']),
+            new Middleware('permission:bank.create', only: ['index', 'create', 'store']),
+            new Middleware('permission:bank.edit', only: ['index', 'edit', 'update']),
+            new Middleware('permission:bank.delete', only: ['index', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

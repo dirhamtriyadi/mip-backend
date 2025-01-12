@@ -2,14 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Bank;
 use Carbon\Carbon;
 
-class CustomerController extends Controller
+class CustomerController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            // 'auth',
+            // new Middleware('subscribed', except: ['store']),
+            new Middleware('permission:nasabah.index', only: ['index']),
+            new Middleware('permission:nasabah.create', only: ['index', 'create', 'store']),
+            new Middleware('permission:nasabah.edit', only: ['index', 'edit', 'update']),
+            new Middleware('permission:nasabah.delete', only: ['index', 'destroy']),
+        ];
+    }
+    
     /**
      * Display a listing of the resource.
      */

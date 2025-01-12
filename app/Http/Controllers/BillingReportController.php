@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Http\Request;
 use App\Models\Billing;
 use Yajra\DataTables\Facades\DataTables;
@@ -9,8 +11,23 @@ use Carbon\Carbon;
 use App\Exports\BillingReportExport;
 use Maatwebsite\Excel\Facades\Excel;
 
-class BillingReportController extends Controller
+class BillingReportController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            // 'auth',
+            // new Middleware('subscribed', except: ['store']),
+            new Middleware('permission:laporan-penagihan.index', only: ['index']),
+            new Middleware('permission:laporan-penagihan.create', only: ['index', 'create', 'store']),
+            new Middleware('permission:laporan-penagihan.edit', only: ['index', 'edit', 'update']),
+            new Middleware('permission:laporan-penagihan.delete', only: ['index', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
