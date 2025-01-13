@@ -9,6 +9,7 @@ use App\Models\Attendance;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
 use App\Exports\AttendanceReportExport;
+use App\Exports\AttendanceReportByUserExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 
@@ -80,8 +81,10 @@ class AttendanceReportController extends Controller implements HasMiddleware
                     'value' => $attendanceReport,
                 ]);
             })
-            ->addColumn('action', function ($attendanceReport) {
+            ->addColumn('action', function ($attendanceReport) use ($start_date, $end_date) {
                 return view('attendance-reports.action', [
+                    'start_date' => $start_date,
+                    'end_date' => $end_date,
                     'value' => $attendanceReport,
                 ]);
             })
@@ -157,6 +160,26 @@ class AttendanceReportController extends Controller implements HasMiddleware
         $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
-        return Excel::download(new AttendanceReportExport($start_date, $end_date), Carbon::now()->toDateString() . '-billing-reports.xls');
+        return Excel::download(new AttendanceReportExport($start_date, $end_date), Carbon::now()->toDateString() . '-attendance-reports.xls');
+    }
+
+    public function exportByUser(Request $request)
+    {
+        // get request start_date and end_date or set default this month
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+        $user_id = $request->user_id;
+
+        if(!$user_id){
+            return redirect()->back()->with('error', 'User id is required');
+        }
+
+        $user = User::find($user_id);
+
+        if(!$user){
+            return redirect()->back()->with('error', 'User not found');
+        }
+
+        return Excel::download(new AttendanceReportByUserExport($start_date, $end_date, $request->user_id), Carbon::now()->toDateString() . '-attendance-reports-' . $user->name . '.xls');
     }
 }

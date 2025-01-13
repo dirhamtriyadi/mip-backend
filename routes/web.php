@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('attendance-reports', [AttendanceReportController::class, 'index'])->name('attendance-reports.index');
     Route::post('attendance-reports/fetch-data-table', [AttendanceReportController::class, 'fetchDataTable'])->name('attendance-reports.fetchDataTable');
     Route::get('attendance-reports/export', [AttendanceReportController::class, 'export'])->name('attendance-reports.export');
+    Route::get('attendance-reports/export-by-user', [AttendanceReportController::class, 'exportByUser'])->name('attendance-reports.exportByUser');
     Route::resource('leaves', LeaveController::class);
     Route::post('leaves/fetch-data-table', [LeaveController::class, 'fetchDataTable'])->name('leaves.fetchDataTable');
     Route::post('leaves/{leave}/response', [LeaveController::class, 'response'])->name('leaves.response');
