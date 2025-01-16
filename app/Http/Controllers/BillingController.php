@@ -46,7 +46,7 @@ class BillingController extends Controller implements HasMiddleware
     public function fetchDataTable(Request $request)
     {
         // load all billings priority user_id is null and destination is visit
-        $billings = Billing::with(['customer', 'user', 'billingStatuses'])
+        $billings = Billing::with(['customer', 'user', 'billingStatuses', 'latestBillingStatus'])
             ->orWhere('user_id', null)
             ->orWhere('status', 'pending')
             ->orWhere('status', 'process')
@@ -73,8 +73,8 @@ class BillingController extends Controller implements HasMiddleware
             return view('billings.status', ['value' => $billing]);
         })
         ->addColumn('billingStatuses.status', function ($billing) {
-            // return optional($billing->billingStatuses->last())->status ?? '-';
-            return view('billings.visit-status', ['value' => $billing]);
+            // return view('billings.visit-status', ['value' => $billing]);
+            return optional($billing->billingStatuses->last())->status ? '<span class="badge badge-' . $billing->billingStatuses->last()->status->color() . '">' . $billing->billingStatuses->last()->status->label() . '</span>' : '-';
         })
         ->addColumn('billingStatuses.promise_date', function ($billing) {
             return optional($billing->billingStatuses->last())->promise_date ? Carbon::parse($billing->billingStatuses->last()->promise_date)->format('d-m-Y') : '-';
@@ -101,7 +101,7 @@ class BillingController extends Controller implements HasMiddleware
         ->addColumn('details', function ($billing) {
             return;
         })
-        ->rawColumns(['select', 'billingStatuses.evidence', 'billingStatuses.signature_officer', 'billingStatuses.signature_customer', 'action'])
+        ->rawColumns(['select', 'billingStatuses.status', 'billingStatuses.evidence', 'billingStatuses.signature_officer', 'billingStatuses.signature_customer', 'action'])
         ->toJson();
     }
 
@@ -324,7 +324,7 @@ class BillingController extends Controller implements HasMiddleware
             $validatedData['no_billing'] = Carbon::now()->format('YmdHis') . $customer->no;
         }
         $validatedData['updated_by'] = auth()->id();
-        
+
         $billing->update($validatedData);
 
         return redirect()->route('billings.index')->with('success', 'Data berhasil diperbarui');
