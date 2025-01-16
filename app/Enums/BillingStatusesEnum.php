@@ -26,6 +26,13 @@ enum BillingStatusesEnum: string
         };
     }
 
+    public static function search(string $query): array
+    {
+        return array_values(array_filter(self::cases(), function ($status) use ($query) {
+            return stripos($status->label(), $query) !== false;
+        }));
+    }
+
     public static function all(): array
     {
         return array_map(fn ($value) => $value::label(), self::values());

@@ -9,6 +9,7 @@ use App\Models\BillingStatus;
 use App\Http\Resources\Api\V1\BillingResource;
 use Validator;
 use Carbon\Carbon;
+use App\Enums\BillingStatusesEnum;
 
 class BillingController extends Controller
 {
@@ -47,18 +48,30 @@ class BillingController extends Controller
             ->get();
 
         if ($search) {
+            // Cari enum yang cocok dengan pencarian
+            $matchingStatuses = BillingStatusesEnum::search($search);
+
+            // Ambil nilai (`value`) dari hasil pencarian
+            $matchingValues = array_map(fn ($status) => $status->value, $matchingStatuses);
+
+            // Pastikan $matchingValues adalah array yang valid untuk query
+            if (empty($matchingValues)) {
+                $matchingValues = [null]; // Jika tidak ada pencocokan, kita bisa gunakan nilai default
+            }
+            // dd($matchingValues);
+
             $billings = Billing::with(['customer', 'user', 'latestBillingStatus'])
             ->where('user_id', $user->id)
             ->whereBetween('date', [$start_date, $end_date])
-            ->where(function($query) use ($search) {
+            ->where(function($query) use ($search, $matchingValues) {
                 $query->where('status', 'like', '%' . $search . '%')
                       ->orWhere('no_billing', 'like', '%' . $search . '%')
                       ->orWhereHas('customer', function($q) use ($search) {
                           $q->where('name_customer', 'like', '%' . $search . '%')
                             ->orWhere('no', 'like', '%' . $search . '%');
                       })
-                      ->orWhereHas('latestBillingStatus', function($q) use ($search) {
-                          $q->where('status', 'like', '%' . $search . '%');
+                      ->orWhereHas('latestBillingStatus', function($q) use ($matchingValues) {
+                          $q->whereIn('status', $matchingValues);
                       });
             })
             ->orderBy(
@@ -128,7 +141,7 @@ class BillingController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // 
+        //
     }
 
     /**
