@@ -4,25 +4,28 @@ namespace App\Enums;
 
 enum BillingStatusEnum: string
 {
-    case Visit = "visit";
-    case PromiseToPay = "promise_to_pay";
-    case Pay = "pay";
+    case Pending = "pending";
+    case Process = "process";
+    case Success = "success";
+    case Cancel = "cancel";
 
     public function label(): string
     {
         return match ($this) {
-            self::Visit => "Kunjungan",
-            self::PromiseToPay => "Janji bayar",
-            self::Pay => "Bayar",
+            self::Pending => "Menunggu",
+            self::Process => "Diproses",
+            self::Success => "Berhasil",
+            self::Cancel => "Gagal",
         };
     }
 
     public function color(): string
     {
         return match ($this) {
-            self::Visit => "info",
-            self::PromiseToPay => "warning",
-            self::Pay => "success",
+            self::Pending => "warning",
+            self::Process => "info",
+            self::Success => "success",
+            self::Cancel => "danger",
         };
     }
 }

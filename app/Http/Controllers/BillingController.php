@@ -70,7 +70,8 @@ class BillingController extends Controller implements HasMiddleware
             return Carbon::parse($billing->date)->format('d-m-Y');
         })
         ->editColumn('status', function ($billing) {
-            return view('billings.status', ['value' => $billing]);
+            // return view('billings.status', ['value' => $billing]);
+            return '<span class="badge badge-' . $billing->status->color() . '">' . $billing->status->label() . '</span>';
         })
         ->addColumn('billingStatuses.status', function ($billing) {
             // return view('billings.visit-status', ['value' => $billing]);
@@ -101,7 +102,7 @@ class BillingController extends Controller implements HasMiddleware
         ->addColumn('details', function ($billing) {
             return;
         })
-        ->rawColumns(['select', 'billingStatuses.status', 'billingStatuses.evidence', 'billingStatuses.signature_officer', 'billingStatuses.signature_customer', 'action'])
+        ->rawColumns(['select', 'status', 'billingStatuses.status', 'billingStatuses.evidence', 'billingStatuses.signature_officer', 'billingStatuses.signature_customer', 'action'])
         ->toJson();
     }
 

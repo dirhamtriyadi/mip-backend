@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\BillingStatusEnum;
+use App\Enums\BillingStatusesEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,7 +15,7 @@ class BillingStatus extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'status' => BillingStatusEnum::class,
+        'status' => BillingStatusesEnum::class,
     ];
 
     public function billing()
