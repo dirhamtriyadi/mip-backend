@@ -12,6 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\BillingImport;
+// use App\Enums\BillingStatusEnum;
 
 class BillingController extends Controller implements HasMiddleware
 {
@@ -213,11 +214,13 @@ class BillingController extends Controller implements HasMiddleware
         $billing = Billing::findOrFail($id);
         $users = User::all();
         $customers = Customer::all();
+        // $billingStatusesEnum = BillingStatusEnum::class;
 
         return view('billings.edit', [
             'data' => $billing,
             'users' => $users,
             'customers' => $customers,
+            // 'billingStatusesEnum' => $billingStatusesEnum,
         ]);
     }
 
