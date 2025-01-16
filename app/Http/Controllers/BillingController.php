@@ -70,18 +70,15 @@ class BillingController extends Controller implements HasMiddleware
             return Carbon::parse($billing->date)->format('d-m-Y');
         })
         ->editColumn('status', function ($billing) {
-            // return view('billings.status', ['value' => $billing]);
             return '<span class="badge badge-' . $billing->status->color() . '">' . $billing->status->label() . '</span>';
         })
         ->addColumn('billingStatuses.status', function ($billing) {
-            // return view('billings.visit-status', ['value' => $billing]);
             return optional($billing->billingStatuses->last())->status ? '<span class="badge badge-' . $billing->billingStatuses->last()->status->color() . '">' . $billing->billingStatuses->last()->status->label() . '</span>' : '-';
         })
         ->addColumn('billingStatuses.promise_date', function ($billing) {
             return optional($billing->billingStatuses->last())->promise_date ? Carbon::parse($billing->billingStatuses->last()->promise_date)->format('d-m-Y') : '-';
         })
         ->addColumn('billingStatuses.payment_amount', function ($billing) {
-            // return optional($billing->billingStatuses->last())->payment_amount ? number_format($billing->billingStatuses->last()->payment_amount, 0, ',', '.') : '-';
             return optional($billing->billingStatuses->last())->payment_amount ? 'Rp ' . number_format($billing->billingStatuses->last()->payment_amount, 0, ',', '.') : '-';
         })
         ->addColumn('billingStatuses.evidence', function ($billing) {

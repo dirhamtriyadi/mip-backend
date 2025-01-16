@@ -70,11 +70,10 @@ class BillingReportController extends Controller implements HasMiddleware
                 return Carbon::parse($billing->date)->format('d-m-Y');
             })
             ->editColumn('status', function ($billing) {
-                return view('billings.status', ['value' => $billing]);
+                return '<span class="badge badge-' . $billing->status->color() . '">' . $billing->status->label() . '</span>';
             })
             ->addColumn('billingStatuses.status', function ($billing) {
-                // return optional($billing->billingStatuses->last())->status ?? '-';
-                return view('billings.visit-status', ['value' => $billing]);
+                return optional($billing->billingStatuses->last())->status ? '<span class="badge badge-' . $billing->billingStatuses->last()->status->color() . '">' . $billing->billingStatuses->last()->status->label() . '</span>' : '-';
             })
             ->addColumn('billingStatuses.promise_date', function ($billing) {
                 return optional($billing->billingStatuses->last())->promise_date ? Carbon::parse($billing->billingStatuses->last()->promise_date)->format('d-m-Y') : '-';
@@ -101,7 +100,7 @@ class BillingReportController extends Controller implements HasMiddleware
             ->addColumn('details', function ($billing) {
                 return;
             })
-            ->rawColumns(['select', 'billingStatuses.evidence', 'billingStatuses.signature_officer', 'billingStatuses.signature_customer', 'action'])
+            ->rawColumns(['select', 'status', 'billingStatuses.status', 'billingStatuses.evidence', 'billingStatuses.signature_officer', 'billingStatuses.signature_customer', 'action'])
             ->toJson();
     }
 
