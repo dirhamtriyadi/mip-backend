@@ -397,6 +397,8 @@ class BillingController extends Controller implements HasMiddleware
         foreach ($ids as $id) {
             $billing = Billing::findOrFail($id);
             $billing->user_id = $validatedData['user_id'];
+            $billing->status = 'process';
+            $billing->updated_by = $user->id;
             $billing->save();
         }
 
