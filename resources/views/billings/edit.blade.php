@@ -121,10 +121,10 @@
                                         <label for="status">Status Penagihan</label>
                                         <select class="form-control select2" style="width: 100%;" id="status" name="status">
                                             <option value="" selected>Pilih Status</option>
-                                            <option value="pending" {{ old('status', $data->status) == 'pending' ? 'selected' : '' }}>Menunggu</option>
-                                            <option value="process" {{ old('status', $data->status) == 'process' ? 'selected' : '' }}>Proses</option>
-                                            <option value="success" {{ old('status', $data->status) == 'success' ? 'selected' : '' }}>Berhasil</option>
-                                            <option value="cancel" {{ old('status', $data->status) == 'cancel' ? 'selected' : '' }}>Gagal</option>
+                                            <option value="pending" {{ old('status', $data->status->label()) == 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
+                                            <option value="process" {{ old('status', $data->status->label()) == 'Diproses' ? 'selected' : '' }}>Proses</option>
+                                            <option value="success" {{ old('status', $data->status->label()) == 'Berhasil' ? 'selected' : '' }}>Berhasil</option>
+                                            <option value="cancel" {{ old('status', $data->status->label()) == 'Gagal' ? 'selected' : '' }}>Gagal</option>
                                         </select>
                                         @error('status')
                                             <div class="alert alert-danger">{{ $message }}</div>
