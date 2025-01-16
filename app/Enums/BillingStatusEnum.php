@@ -12,10 +12,10 @@ enum BillingStatusEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => "Menunggu",
-            self::Process => "Diproses",
-            self::Success => "Berhasil",
-            self::Cancel => "Gagal",
+            self::Pending => __('enums.billing_status.pending'),
+            self::Process => __('enums.billing_status.process'),
+            self::Success => __('enums.billing_status.success'),
+            self::Cancel => __('enums.billing_status.cancel'),
         };
     }
 
@@ -27,5 +27,10 @@ enum BillingStatusEnum: string
             self::Success => "success",
             self::Cancel => "danger",
         };
+    }
+
+    public static function all(): array
+    {
+        return array_map(fn ($value) => $value::label(), self::values());
     }
 }

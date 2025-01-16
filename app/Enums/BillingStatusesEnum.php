@@ -11,9 +11,9 @@ enum BillingStatusesEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::Visit => "Kunjungan",
-            self::PromiseToPay => "Janji bayar",
-            self::Pay => "Bayar",
+            self::Visit => __('enums.billingStatus_status.visit'),
+            self::PromiseToPay => __('enums.billingStatus_status.promise_to_pay'),
+            self::Pay => __('enums.billingStatus_status.pay'),
         };
     }
 
@@ -24,5 +24,10 @@ enum BillingStatusesEnum: string
             self::PromiseToPay => "warning",
             self::Pay => "success",
         };
+    }
+
+    public static function all(): array
+    {
+        return array_map(fn ($value) => $value::label(), self::values());
     }
 }
