@@ -22,7 +22,11 @@ class BillingResource extends JsonResource
             'customer' => $this->customer,
             'user_id' => $this->user_id,
             'user' => $this->user,
-            'status' => $this->status,
+            // 'status' => $this->status,
+            'status' => [
+                'label' => $this->status->label(),
+                'value' => $this->status->value,
+            ],
             // 'billingStatuses' => $this->billingStatuses,
             'billingStatuses' => BillingStatusResource::collection($this->billingStatuses),
             'latestBillingStatus' => new BillingStatusResource($this->latestBillingStatus),

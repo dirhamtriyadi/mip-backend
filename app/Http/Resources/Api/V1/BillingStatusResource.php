@@ -17,7 +17,11 @@ class BillingStatusResource extends JsonResource
         return [
             'id' => $this->id,
             'billing_id' => $this->billing_id,
-            'status' => $this->status,
+            // 'status' => $this->status,
+            'status' => [
+                'label' => $this->status->label(),
+                'value' => $this->status->value,
+            ],
             'status_date' => $this->status_date,
             'description' => $this->description,
             'evidence' => isset($this->evidence) ? asset('images/billings/' . $this->evidence) : null,
