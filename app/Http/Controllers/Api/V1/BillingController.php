@@ -86,7 +86,7 @@ class BillingController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully.',
-            'data' => BillingResource::collection($billings)
+            'data' => BillingResource::collection($billings),
         ], 200);
     }
 
@@ -117,14 +117,17 @@ class BillingController extends Controller
         if (!$billing) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data not found.'
+                'message' => 'Data not found.',
+                'errors' => [
+                    'id' => 'Data not found.',
+                ],
             ], 404);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully.',
-            'data' => new BillingResource($billing)
+            'data' => new BillingResource($billing),
         ], 200);
     }
 

@@ -69,6 +69,9 @@ class ProfileController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Data not found.',
+                'errors' => [
+                    'id' => 'Data not found.',
+                ],
             ], 404);
         }
 
@@ -82,8 +85,9 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors()->first(),
-            ], 400);
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
         // Update user data with relation to detail_users->nik if exists nik from detail_users update nik if not exists create new detail_users
@@ -92,11 +96,11 @@ class ProfileController extends Controller
             'email' => $request->email,
         ]);
         $user->detail_users()->updateOrCreate(['user_id' => $id], ['nik' => $request->nik]);
-        
+
         return response()->json([
             'status' => 'success',
             'message' => 'User updated successfully.',
-            'data' => new UserResource($user)
+            'data' => new UserResource($user),
         ], 200);
     }
 
@@ -117,6 +121,9 @@ class ProfileController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Data not found.',
+                'errors' => [
+                    'id' => 'Data not found.',
+                ],
             ], 404);
         }
 
@@ -127,19 +134,20 @@ class ProfileController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors()->first(),
-            ], 400);
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
-        // Update user data with relation to detail_users->nik 
+        // Update password
         $user->update([
             'password' => bcrypt($request->password)
         ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'User updated successfully.',
-            'data' => new UserResource($user)
+            'message' => 'User updated password successfully.',
+            'data' => new UserResource($user),
         ], 200);
     }
 }

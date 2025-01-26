@@ -41,8 +41,9 @@ class AttendanceController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors(),
-            ], 400);
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $validatedData = $validator->validated();
@@ -152,8 +153,9 @@ class AttendanceController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors(),
-            ], 400);
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $validatedData = $validator->validated();
@@ -230,8 +232,9 @@ class AttendanceController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors(),
-            ], 400);
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $validatedData = $validator->validated();
@@ -355,8 +358,9 @@ class AttendanceController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors(),
-            ], 400);
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $validatedData = $validator->validated();

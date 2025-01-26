@@ -37,7 +37,10 @@ class BillingStatusController extends Controller
         if (!$billing) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data not found.'
+                'message' => 'Data not found.',
+                'errors' => [
+                    'id' => 'Data not found.',
+                ],
             ], 404);
         }
 
@@ -61,7 +64,7 @@ class BillingStatusController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation error.',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -125,7 +128,7 @@ class BillingStatusController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data updated successfully.',
-            'data' => new BillingResource($billing)
+            'data' => new BillingResource($billing),
         ], 200);
     }
 
