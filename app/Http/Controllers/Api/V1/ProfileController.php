@@ -79,7 +79,7 @@ class ProfileController extends Controller
             'name' => 'required',
             'email' => 'email|unique:users,email,'.$id,
             // validate input nik if exists in detail_users table nik update nik if not exists create new detail_users
-            'nik' => 'required|unique:detail_users,nik,' . ($user->detail_users ? $user->detail_users->id : null),
+            // 'nik' => 'required|unique:detail_users,nik,' . ($user->detail_users ? $user->detail_users->id : null),
         ]);
 
         if ($validator->fails()) {
@@ -95,7 +95,7 @@ class ProfileController extends Controller
             'name' => $request->name,
             'email' => $request->email,
         ]);
-        $user->detail_users()->updateOrCreate(['user_id' => $id], ['nik' => $request->nik]);
+        // $user->detail_users()->updateOrCreate(['user_id' => $id], ['nik' => $request->nik]);
 
         return response()->json([
             'status' => 'success',
