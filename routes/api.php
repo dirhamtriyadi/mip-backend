@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\AttendanceController;
 use App\Http\Controllers\Api\V1\LeaveController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\BillingStatusController;
+use App\Http\Controllers\Api\V1\BillingReportController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
@@ -28,6 +29,9 @@ Route::prefix('v1')->group(function () {
         Route::get('leaves', [LeaveController::class, 'index'])->name('leaves.index');
         Route::apiResource('billings', BillingController::class);
         Route::apiResource('billing-statuses', BillingStatusController::class);
+        Route::get('billing-reports/export-pdf/by-user', [BillingReportController::class, 'exportPdfByUser'])->name('billing-reports.export-pdf.by-user');
+        Route::get('billing-reports/export-pdf/by-customer', [BillingReportController::class, 'exportPdfByCustomer'])->name('billing-reports.export-pdf.by-customer');
+        Route::apiResource('billing-reports', BillingReportController::class);
         Route::apiResource('users', UserController::class);
         Route::get('profile', [ProfileController::class, 'index'])->name('profile');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
