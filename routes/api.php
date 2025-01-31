@@ -20,22 +20,39 @@ Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
 
     Route::middleware('auth:sanctum')->group(function () {
+        // Attendance
         Route::get('attendances/work-schedules', [AttendanceController::class, 'workSchedules'])->name('attendances.work-schedules');
         Route::post('attendances/check-in', [AttendanceController::class, 'checkIn'])->name('attendances.check-in');
         Route::post('attendances/check-out', [AttendanceController::class, 'checkOut'])->name('attendances.check-out');
         Route::post('attendances/sick', [AttendanceController::class, 'sick'])->name('attendances.sick');
         Route::post('attendances/permit', [AttendanceController::class, 'permit'])->name('attendances.permit');
+
+        // Leaves
         Route::post('leaves/submission', [LeaveController::class, 'submission'])->name('leaves.submission');
         Route::get('leaves', [LeaveController::class, 'index'])->name('leaves.index');
-        Route::apiResource('billings', BillingController::class);
+
+        // Billing
+        Route::get('billings', [BillingController::class, 'index'])->name('billings.index');
+        Route::get('billings/{id}', [BillingController::class, 'show'])->name('billings.show');
+
+        // Billing Status
+        Route::post('billing-statuses', [BillingStatusController::class, 'store'])->name('billing-statuses.store');
         Route::apiResource('billing-statuses', BillingStatusController::class);
+
+        // Billing Report
+        Route::get('billing-reports', [BillingReportController::class, 'index'])->name('billing-reports.index');
         Route::get('billing-reports/export-pdf/by-user', [BillingReportController::class, 'exportPdfByUser'])->name('billing-reports.export-pdf.by-user');
         Route::get('billing-reports/export-pdf/by-customer', [BillingReportController::class, 'exportPdfByCustomer'])->name('billing-reports.export-pdf.by-customer');
-        Route::apiResource('billing-reports', BillingReportController::class);
+
+        // User
         Route::apiResource('users', UserController::class);
+
+        // Profile
         Route::get('profile', [ProfileController::class, 'index'])->name('profile');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::put('profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+
+        // Auth
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     });
 });
