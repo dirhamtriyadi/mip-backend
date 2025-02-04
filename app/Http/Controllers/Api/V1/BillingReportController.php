@@ -15,7 +15,7 @@ class BillingReportController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $search = $request->search ?? null;
         $start_date = $request->start_date ?? Carbon::now()->startOfMonth();
