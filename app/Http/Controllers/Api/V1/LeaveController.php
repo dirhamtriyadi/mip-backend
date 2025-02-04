@@ -14,6 +14,7 @@ class LeaveController extends Controller
     {
         $leaves = Leave::with('user.detail_users')
             ->where('user_id', auth()->user()->id)
+            ->latest()
             ->first();
 
         if (!$leaves) {
@@ -57,7 +58,7 @@ class LeaveController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Cuti berhasil diajukan',
-            'data' => LeaveResource::collection($leave),
+            'data' => new LeaveResource($leave),
         ], 200);
     }
 }
