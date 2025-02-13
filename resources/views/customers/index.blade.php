@@ -10,7 +10,7 @@
                         <h1>Nasabah</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{  Breadcrumbs::render('customers') }}
+                        {{ Breadcrumbs::render('customers') }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -55,20 +55,26 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-end">
-                                    <a href="{{ route('customers.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
+                                    <a href="{{ route('customers.create') }}" class="btn btn-primary mb-3"><i
+                                            class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="table" class="table table-bordered table-hover table-striped">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Nomor Kontrak/Rekening</th>
+                                                <th>Nomor Kontrak</th>
+                                                <th>Nomor Rekening</th>
                                                 <th>Nama Nasabah</th>
                                                 <th>No HP</th>
                                                 <th>Alamat</th>
+                                                <th>Desa</th>
+                                                <th>Kecamatan</th>
                                                 <th>Nama Bank</th>
-                                                <th>Tanggal</th>
-                                                <th>Total Tagihan</th>
+                                                <th>Nama Petugas</th>
+                                                <th>Outstanding Awal</th>
+                                                <th>Outstanding Sisa</th>
+                                                <th>Outstanding Total</th>
                                                 <th>Angsuran</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -112,8 +118,8 @@
 
             // DataTables
             $("#table").DataTable({
-                "processing":true,
-                "serverSide":true,
+                "processing": true,
+                "serverSide": true,
                 "ajax": {
                     "url": "{{ route('customers.index') }}/fetch-data-table",
                     "type": "post",
@@ -128,21 +134,61 @@
                     [10, 25, 50, 100, "All"]
                 ],
                 "autoWidth": false,
-                "columns": [
-                    { "data": "DT_RowIndex" },
-                    { "data": "no" },
-                    { "data": "name_customer" },
-                    { "data": "phone_number" },
-                    { "data": "address" },
-                    { "data": "name_bank" },
-                    { "data": "date" },
-                    { "data": "total_bill", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ') },
-                    { "data": "installment", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ') },
-                    { "data": "action" },
+                "columns": [{
+                        "data": "DT_RowIndex"
+                    },
+                    {
+                        "data": "no_contract"
+                    },
+                    {
+                        "data": "bank_account_number"
+                    },
+                    {
+                        "data": "name_customer"
+                    },
+                    {
+                        "data": "phone_number"
+                    },
+                    {
+                        "data": "address"
+                    },
+                    {
+                        "data": "village"
+                    },
+                    {
+                        "data": "subdistrict"
+                    },
+                    {
+                        "data": "name_bank"
+                    },
+                    {
+                        "data": "name_officer"
+                    },
+                    {
+                        "data": "os_start",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "os_remaining",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "os_total",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "monthly_installments",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "action"
+                    },
                 ],
-                "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 9] },
-                ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "searchable": false,
+                    "targets": [0, 13]
+                }, ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
             });

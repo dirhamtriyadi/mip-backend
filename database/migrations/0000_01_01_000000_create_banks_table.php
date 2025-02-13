@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('banks', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique()->comment('Nama Bank');
+            $table->bigInteger('branch_code')->unique()->nullable()->comment('Kode Bank');
             $table->timestamps();
         });
     }
