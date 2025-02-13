@@ -55,7 +55,8 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-start">
-                                    <a href="{{ route('banks.index') }}" class="btn btn-warning mb-3"><i class="fas fa-arrow-left"></i> Kembali</a>
+                                    <a href="{{ route('banks.index') }}" class="btn btn-warning mb-3"><i
+                                            class="fas fa-arrow-left"></i> Kembali</a>
                                 </div>
                                 <form id="bank-account-form" action="{{ route('banks.update', $data->id) }}" method="POST">
                                     @csrf
@@ -65,6 +66,15 @@
                                         <input type="text" class="form-control" id="name" name="name"
                                             placeholder="Masukkan Nama" value="{{ old('name', $data->name) }}">
                                         @error('name')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="branch_code">Kode Cabang</label>
+                                        <input type="text" class="form-control" id="branch_code" name="branch_code"
+                                            placeholder="Masukkan Kode Cabang"
+                                            value="{{ old('branch_code', $data->branch_code) }}">
+                                        @error('branch_code')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>

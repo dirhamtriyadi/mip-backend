@@ -10,7 +10,7 @@
                         <h1>Bank</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{  Breadcrumbs::render('banks') }}
+                        {{ Breadcrumbs::render('banks') }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -55,7 +55,8 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-end">
-                                    <a href="{{ route('banks.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
+                                    <a href="{{ route('banks.create') }}" class="btn btn-primary mb-3"><i
+                                            class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="table" class="table table-bordered table-hover table-striped">
@@ -63,6 +64,7 @@
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama Bank</th>
+                                                <th>Kode Cabang</th>
                                                 <th>ID</th>
                                                 <th>Total Nasabah</th>
                                                 <th>Aksi</th>
@@ -107,8 +109,8 @@
 
             // DataTables
             $("#table").DataTable({
-                "processing":true,
-                "serverSide":true,
+                "processing": true,
+                "serverSide": true,
                 "ajax": {
                     "url": "{{ route('banks.index') }}/fetch-data-table",
                     "type": "post",
@@ -123,16 +125,30 @@
                     [10, 25, 50, 100, "All"]
                 ],
                 "autoWidth": false,
-                "columns": [
-                    { "data": "DT_RowIndex" },
-                    { "data": "name" },
-                    { "data": "id" },
-                    { "data": "total_customer" },
-                    { "data": "action" },
+                "columns": [{
+                        "data": "DT_RowIndex"
+                    },
+                    {
+                        "data": "name"
+                    },
+                    {
+                        "data": "branch_code"
+                    },
+                    {
+                        "data": "id"
+                    },
+                    {
+                        "data": "total_customer"
+                    },
+                    {
+                        "data": "action"
+                    },
                 ],
-                "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": 4 },
-                ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "searchable": false,
+                    "targets": 4
+                }, ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
             });

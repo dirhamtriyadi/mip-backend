@@ -72,6 +72,7 @@ class BankContoller extends Controller implements HasMiddleware
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:banks',
+            'branch_code' => 'nullable|numeric|unique:banks'
         ]);
 
         $bank = Bank::create($validatedData);
@@ -93,7 +94,7 @@ class BankContoller extends Controller implements HasMiddleware
     public function edit(string $id)
     {
         $bank = Bank::findOrFail($id);
-        
+
         return view('banks.edit', [
             'data' => $bank,
         ]);
@@ -106,6 +107,7 @@ class BankContoller extends Controller implements HasMiddleware
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:banks,name,'.$id,
+            'branch_code' => 'nullable|numeric|unique:banks,branch_code,'.$id
         ]);
 
         $bank = Bank::findOrFail($id);
