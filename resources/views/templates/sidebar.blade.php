@@ -46,26 +46,14 @@
                         </p>
                     </a>
                 </li>
-                @canany([
-                    'jam-kerja.index',
-                    'jam-kerja.create',
-                    'jam-kerja.edit',
-                    'jam-kerja.delete',
-                    'hari-libur.index',
-                    'hari-libur.create',
-                    'hari-libur.edit',
-                    'hari-libur.delete',
-                    'bank.index',
-                    'bank.create',
-                    'bank.edit',
-                    'bank.delete',
-                    'nasabah.index',
-                    'nasabah.create',
-                    'nasabah.edit',
-                    'nasabah.delete',
-                ])
-                    <li class="nav-item {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('banks.*') | Route::is('customers.*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('banks.*') | Route::is('customers.*') ? 'active' : '' }}">
+                @canany(['jam-kerja.index', 'jam-kerja.create', 'jam-kerja.edit', 'jam-kerja.delete',
+                    'hari-libur.index', 'hari-libur.create', 'hari-libur.edit', 'hari-libur.delete', 'bank.index',
+                    'bank.create', 'bank.edit', 'bank.delete', 'nasabah.index', 'nasabah.create', 'nasabah.edit',
+                    'nasabah.delete'])
+                    <li
+                        class="nav-item {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('banks.*') | Route::is('customers.*') ? 'menu-open' : '' }}">
+                        <a href="#"
+                            class="nav-link {{ Route::is('work-schedules.*') | Route::is('annual-holidays.*') | Route::is('banks.*') | Route::is('customers.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-database"></i>
                             <p>
                                 Master Data
@@ -73,53 +61,37 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @canany([
-                                'jam-kerja.index',
-                                'jam-kerja.create',
-                                'jam-kerja.edit',
-                                'jam-kerja.delete',
-                            ])
+                            @canany(['jam-kerja.index', 'jam-kerja.create', 'jam-kerja.edit', 'jam-kerja.delete'])
                                 <li class="nav-item">
-                                    <a href="{{ route('work-schedules.index') }}" class="nav-link {{ Route::is('work-schedules.*') ? 'active' : '' }}">
+                                    <a href="{{ route('work-schedules.index') }}"
+                                        class="nav-link {{ Route::is('work-schedules.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Jam dan Hari Kerja</p>
                                     </a>
                                 </li>
                             @endcan
-                            @canany([
-                                'hari-libur.index',
-                                'hari-libur.create',
-                                'hari-libur.edit',
-                                'hari-libur.delete',
-                            ])
+                            @canany(['hari-libur.index', 'hari-libur.create', 'hari-libur.edit', 'hari-libur.delete'])
                                 <li class="nav-item">
-                                    <a href="{{ route('annual-holidays.index') }}" class="nav-link {{ Route::is('annual-holidays.*') ? 'active' : '' }}">
+                                    <a href="{{ route('annual-holidays.index') }}"
+                                        class="nav-link {{ Route::is('annual-holidays.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Hari Libur</p>
                                     </a>
                                 </li>
                             @endcan
-                            @canany([
-                                'bank.index',
-                                'bank.create',
-                                'bank.edit',
-                                'bank.delete',
-                            ])
+                            @canany(['bank.index', 'bank.create', 'bank.edit', 'bank.delete'])
                                 <li class="nav-item">
-                                    <a href="{{ route('banks.index') }}" class="nav-link {{ Route::is('banks.*') ? 'active' : '' }}">
+                                    <a href="{{ route('banks.index') }}"
+                                        class="nav-link {{ Route::is('banks.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Bank</p>
                                     </a>
                                 </li>
                             @endcan
-                            @canany([
-                                'nasabah.index',
-                                'nasabah.create',
-                                'nasabah.edit',
-                                'nasabah.delete',
-                            ])
+                            @canany(['nasabah.index', 'nasabah.create', 'nasabah.edit', 'nasabah.delete'])
                                 <li class="nav-item">
-                                    <a href="{{ route('customers.index') }}" class="nav-link {{ Route::is('customers.*') ? 'active' : '' }}">
+                                    <a href="{{ route('customers.index') }}"
+                                        class="nav-link {{ Route::is('customers.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Nasabah</p>
                                     </a>
@@ -128,22 +100,13 @@
                         </ul>
                     </li>
                 @endcan
-                @canany([
-                    'absen.index',
-                    'absen.create',
-                    'absen.edit',
-                    'absen.delete',
-                    'laporan-absen.index',
-                    'laporan-absen.create',
-                    'laporan-absen.edit',
-                    'laporan-absen.delete',
-                    'cuti.index',
-                    'cuti.create',
-                    'cuti.edit',
-                    'cuti.delete'
-                ])
-                    <li class="nav-item {{ Route::is('attendances.*') | Route::is('attendance-reports.*') | Route::is('leaves.*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ Route::is('attendances.*') | Route::is('attendance-reports.*') | Route::is('leaves.*') ? 'active' : '' }}">
+                @canany(['absen.index', 'absen.create', 'absen.edit', 'absen.delete', 'laporan-absen.index',
+                    'laporan-absen.create', 'laporan-absen.edit', 'laporan-absen.delete', 'cuti.index', 'cuti.create',
+                    'cuti.edit', 'cuti.delete'])
+                    <li
+                        class="nav-item {{ Route::is('attendances.*') | Route::is('attendance-reports.*') | Route::is('leaves.*') ? 'menu-open' : '' }}">
+                        <a href="#"
+                            class="nav-link {{ Route::is('attendances.*') | Route::is('attendance-reports.*') | Route::is('leaves.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-briefcase"></i>
                             <p>
                                 Absen
@@ -151,40 +114,29 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @canany([
-                                'absen.index',
-                                'absen.create',
-                                'absen.edit',
-                                'absen.delete',
-                            ])
+                            @canany(['absen.index', 'absen.create', 'absen.edit', 'absen.delete'])
                                 <li class="nav-item">
-                                    <a href="{{ route('attendances.index') }}" class="nav-link {{ Route::is('attendances.*') ? 'active' : '' }}">
+                                    <a href="{{ route('attendances.index') }}"
+                                        class="nav-link {{ Route::is('attendances.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Absen</p>
                                     </a>
                                 </li>
                             @endcan
-                            @canany([
-                                'laporan-absen.index',
-                                'laporan-absen.create',
-                                'laporan-absen.edit',
-                                'laporan-absen.delete',
-                            ])
+                            @canany(['laporan-absen.index', 'laporan-absen.create', 'laporan-absen.edit',
+                                'laporan-absen.delete'])
                                 <li class="nav-item">
-                                    <a href="{{ route('attendance-reports.index') }}" class="nav-link {{ Route::is('attendance-reports.*') ? 'active' : '' }}">
+                                    <a href="{{ route('attendance-reports.index') }}"
+                                        class="nav-link {{ Route::is('attendance-reports.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Laporan Absen</p>
                                     </a>
                                 </li>
                             @endcan
-                            @canany([
-                                'cuti.index',
-                                'cuti.create',
-                                'cuti.edit',
-                                'cuti.delete',
-                            ])
+                            @canany(['cuti.index', 'cuti.create', 'cuti.edit', 'cuti.delete'])
                                 <li class="nav-item">
-                                    <a href="{{ route('leaves.index') }}" class="nav-link {{ Route::is('leaves.*') ? 'active' : '' }}">
+                                    <a href="{{ route('leaves.index') }}"
+                                        class="nav-link {{ Route::is('leaves.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Cuti</p>
                                     </a>
@@ -193,14 +145,11 @@
                         </ul>
                     </li>
                 @endcan
-                @canany([
-                    'laporan-penagihan.index',
-                    'laporan-penagihan.create',
-                    'laporan-penagihan.edit',
-                    'laporan-penagihan.delete'
-                ])
-                    <li class="nav-item {{ Route::is('billings.*') ? 'active' : '' }}">
-                        <a href="{{ route('billings.index') }}" class="nav-link {{ Route::is('billings.*') ? 'active' : '' }}">
+                @canany(['laporan-penagihan.index', 'laporan-penagihan.create', 'laporan-penagihan.edit',
+                    'laporan-penagihan.delete'])
+                    <li class="nav-item {{ Route::is('customer-billings.*') ? 'active' : '' }}">
+                        <a href="{{ route('customer-billings.index') }}"
+                            class="nav-link {{ Route::is('customer-billings.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-money-bill-wave"></i>
                             <p>
                                 Penagihan
@@ -208,14 +157,11 @@
                         </a>
                     </li>
                 @endcan
-                @canany([
-                    'laporan-penagihan.index',
-                    'laporan-penagihan.create',
-                    'laporan-penagihan.edit',
-                    'laporan-penagihan.delete'
-                ])
+                @canany(['laporan-penagihan.index', 'laporan-penagihan.create', 'laporan-penagihan.edit',
+                    'laporan-penagihan.delete'])
                     <li class="nav-item {{ Route::is('billing-reports.*') ? 'active' : '' }}">
-                        <a href="{{ route('billing-reports.index') }}" class="nav-link {{ Route::is('billing-reports.*') ? 'active' : '' }}">
+                        <a href="{{ route('billing-reports.index') }}"
+                            class="nav-link {{ Route::is('billing-reports.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-file-invoice-dollar"></i>
                             <p>
                                 Laporan Penagihan
@@ -223,12 +169,7 @@
                         </a>
                     </li>
                 @endcan
-                @canany([
-                    'role.index',
-                    'role.create',
-                    'role.edit',
-                    'role.delete'
-                ])
+                @canany(['role.index', 'role.create', 'role.edit', 'role.delete'])
                     <li class="nav-item">
                         <a href="{{ route('roles.index') }}" class="nav-link {{ Route::is('roles.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-user-shield"></i>
@@ -238,12 +179,7 @@
                         </a>
                     </li>
                 @endcan
-                @canany([
-                    'user.index',
-                    'user.create',
-                    'user.edit',
-                    'user.delete'
-                ])
+                @canany(['user.index', 'user.create', 'user.edit', 'user.delete'])
                     <li class="nav-item">
                         <a href="{{ route('users.index') }}" class="nav-link {{ Route::is('users.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-users"></i>
