@@ -159,9 +159,9 @@
                 @endcan
                 @canany(['laporan-penagihan.index', 'laporan-penagihan.create', 'laporan-penagihan.edit',
                     'laporan-penagihan.delete'])
-                    <li class="nav-item {{ Route::is('billing-reports.*') ? 'active' : '' }}">
-                        <a href="{{ route('billing-reports.index') }}"
-                            class="nav-link {{ Route::is('billing-reports.*') ? 'active' : '' }}">
+                    <li class="nav-item {{ Route::is('customer-billing-reports.*') ? 'active' : '' }}">
+                        <a href="{{ route('customer-billing-reports.index') }}"
+                            class="nav-link {{ Route::is('customer-billing-reports.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-file-invoice-dollar"></i>
                             <p>
                                 Laporan Penagihan

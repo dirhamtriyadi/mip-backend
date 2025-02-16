@@ -2,11 +2,11 @@
 
 namespace App\Exports;
 
-use App\Models\Billing;
+use App\Models\CustomerBilling;
 use Maatwebsite\Excel\Concerns\FromView;
 use Illuminate\Contracts\View\View;
 
-class BillingReportExport implements FromView
+class CustomerBillingExport implements FromView
 {
     public function __construct($start_date, $end_date)
     {
@@ -30,9 +30,9 @@ class BillingReportExport implements FromView
 
     public function view(): View
     {
-        $billings = Billing::with(['customer', 'user'])->whereBetween('date', [$this->start_date, $this->end_date])->get();
+        $billings = CustomerBilling::with(['customer', 'user'])->whereBetween('created_at', [$this->start_date, $this->end_date])->get();
 
-        return view('billing-reports.excel', [
+        return view('customer-billing-reports.excel', [
             'data' => $billings
         ]);
     }

@@ -6,11 +6,11 @@ use App\Http\Controllers\AnnualHolidayController;
 use App\Http\Controllers\WorkScheduleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerBillingController;
+use App\Http\Controllers\CustomerBillingReportController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\BankContoller;
-use App\Http\Controllers\BillingReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 
@@ -66,11 +66,9 @@ Route::middleware('auth')->group(function () {
     Route::post('customer-billings/import', [CustomerBillingController::class, 'import'])->name('customer-billings.import');
     Route::post('customer-billings/mass-delete', [CustomerBillingController::class, 'massDelete'])->name('customer-billings.massDelete');
     Route::post('customer-billings/mass-select-officer', [CustomerBillingController::class, 'massSelectOfficer'])->name('customer-billings.massSelectOfficer');
-
-    // Route tagihan
-    // Route::get('billing-reports', [BillingReportController::class, 'index'])->name('billing-reports.index');
-    // Route::post('billing-reports/fetch-data-table', [BillingReportController::class, 'fetchDataTable'])->name('billing-reports.fetchDataTable');
-    // Route::get('billing-reports/export', [BillingReportController::class, 'export'])->name('billing-reports.export');
+    Route::get('customer-billing-reports', [CustomerBillingReportController::class, 'index'])->name('customer-billing-reports.index');
+    Route::post('customer-billing-reports/fetch-data-table', [CustomerBillingReportController::class, 'fetchDataTable'])->name('customer-billing-reports.fetchDataTable');
+    Route::get('customer-billing-reports/export', [CustomerBillingReportController::class, 'export'])->name('customer-billing-reports.export');
 
     // Route user
     Route::resource('users', UserController::class);

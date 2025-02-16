@@ -10,7 +10,7 @@
                         <h1>Laporan Penagihan</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{ Breadcrumbs::render('billings') }}
+                        {{ Breadcrumbs::render('customer-billing-reports') }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -84,10 +84,13 @@
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
                                         {{-- Create to import data from excel --}}
-                                        <form action="{{ route('billing-reports.export') }}" method="get">
-                                            <input type="hidden" class="form-control" name="start_date" placeholder="Masukan Tanggal" value="{{ $start_date }}">
-                                            <input type="hidden" class="form-control" name="end_date" placeholder="Masukan Tanggal" value="{{ $end_date }}">
-                                            <button type="submit" class="btn btn-success mb-3 mr-1"><i class="fas fa-file-excel"></i> Export</button>
+                                        <form action="{{ route('customer-billing-reports.export') }}" method="get">
+                                            <input type="hidden" class="form-control" name="start_date"
+                                                placeholder="Masukan Tanggal" value="{{ $start_date }}">
+                                            <input type="hidden" class="form-control" name="end_date"
+                                                placeholder="Masukan Tanggal" value="{{ $end_date }}">
+                                            <button type="submit" class="btn btn-success mb-3 mr-1"><i
+                                                    class="fas fa-file-excel"></i> Export</button>
                                         </form>
                                     </div>
                                 </div>
@@ -95,12 +98,13 @@
                                     <table id="table" class="table table-bordered table-hover table-striped">
                                         <thead>
                                             <tr>
+                                                <th><input type="checkbox" id="select-all" /></th>
                                                 <th>No</th>
                                                 <th>Nomor Tagihan</th>
+                                                <th>Nomor Kontrak</th>
                                                 <th>Nama Nasabah</th>
                                                 <th>Nama Petugas</th>
-                                                <th>Tanggal</th>
-                                                <th>Status Tagihan</th>
+                                                <th>Bank</th>
                                                 <th>Status Kunjungan</th>
                                                 <th>Tanggal Janji Bayar</th>
                                                 <th>Jumlah Bayar</th>
@@ -108,7 +112,6 @@
                                                 <th>Keterangan Kunjungan</th>
                                                 <th>TTD Petugas</th>
                                                 <th>TTD Nasabah</th>
-                                                <th>Aksi</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -133,36 +136,33 @@
 @endsection
 
 @push('styles')
-    <!-- Moment -->
-    <script src="{{ asset('adminlte') }}/plugins/moment/moment.min.js"></script>
-    <!-- Tempusdominus Bootstrap 4 -->
-    <link rel="stylesheet"
-        href="{{ asset('adminlte') }}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 @endpush
 
 @push('scripts')
-    <!-- Tempusdominus Bootstrap 4 -->
-    <script src="{{ asset('adminlte') }}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('adminlte') }}/plugins/select2/js/select2.full.min.js"></script>
+    <!-- bs-custom-file-input -->
+    <script src="{{ asset('adminlte') }}/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
     <script>
         $(document).ready(function() {
-            //Date range picker
-            $('#start_date').datetimepicker({
-                format: 'YYYY-MM-DD'
-            });
-            $('#end_date').datetimepicker({
-                format: 'YYYY-MM-DD'
+            // File input
+            bsCustomFileInput.init();
+            // Initialize Select2
+            $('#user_id').select2({
+                theme: 'bootstrap4'
             });
             // DataTables
             var table = $("#table").DataTable({
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('billing-reports.index') }}/fetch-data-table",
+                    "url": "{{ route('customer-billings.index') }}/fetch-data-table",
                     "type": "post",
                     "data": {
-                        "_token": "{{ csrf_token() }}",
-                        "start_date": "{{ $start_date }}",
-                        "end_date": "{{ $end_date }}"
+                        "_token": "{{ csrf_token() }}"
                     }
                 },
                 "responsive": {
@@ -177,32 +177,61 @@
                     [10, 25, 50, 100, "All"]
                 ],
                 "autoWidth": false,
-                "columns": [
-                    { "data": "DT_RowIndex" },
-                    { "data": "no_billing" },
-                    { "data": "customer" },
-                    { "data": "user" },
-                    { "data": "date" },
-                    { "data": "status" },
-                    { "data": "billingStatuses.status" },
-                    { "data": "billingStatuses.promise_date" },
-                    { "data": "billingStatuses.payment_amount" },
-                    { "data": "billingStatuses.evidence" },
-                    { "data": "billingStatuses.description" },
-                    { "data": "billingStatuses.signature_officer" },
-                    { "data": "billingStatuses.signature_customer" },
-                    { "data": "action" },
-                    { "data": "details" }
+                "columns": [{
+                        "data": "select"
+                    },
+                    {
+                        "data": "DT_RowIndex"
+                    },
+                    {
+                        "data": "bill_number"
+                    },
+                    {
+                        "data": "no_contract"
+                    },
+                    {
+                        "data": "customer"
+                    },
+                    {
+                        "data": "user"
+                    },
+                    {
+                        "data": "bank"
+                    },
+                    {
+                        "data": "status"
+                    },
+                    {
+                        "data": "promise_date"
+                    },
+                    {
+                        "data": "payment_amount"
+                    },
+                    {
+                        "data": "proof"
+                    },
+                    {
+                        "data": "description"
+                    },
+                    {
+                        "data": "signature_officer"
+                    },
+                    {
+                        "data": "signature_customer"
+                    },
+                    {
+                        "data": "details"
+                    }
                 ],
                 "columnDefs": [{
                         "targets": 0,
-                        "className": 'text-center',
                         "searchable": false,
+                        "orderable": false,
                     },
                     {
                         "orderable": false,
                         "searchable": false,
-                        "targets": [ 9, 11, 12, 13, 14 ]
+                        "targets": [10, 12, 13]
                     },
                     {
                         "targets": -1,
@@ -213,7 +242,37 @@
                     },
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`
+                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+                "drawCallback": function(settings) {
+                    $('#select-all').prop('checked', false);
+                }
+            });
+
+            // Prevent checkbox click from triggering row expansion
+            $('#table').on('click', 'input[type="checkbox"]', function(e) {
+                e.stopPropagation();
+            });
+
+            // Select all checkboxes
+            $('#select-all').click(function() {
+                if (this.checked) {
+                    $('.checkbox').each(function() {
+                        this.checked = true;
+                    });
+                } else {
+                    $('.checkbox').each(function() {
+                        this.checked = false;
+                    });
+                }
+            });
+
+            // If all checkbox checkboxes are checked, check the select-all checkbox
+            $(document).on('change', '.checkbox', function() {
+                if ($('.checkbox:checked').length === $('.checkbox').length) {
+                    $('#select-all').prop('checked', true);
+                } else {
+                    $('#select-all').prop('checked', false);
+                }
             });
         });
     </script>

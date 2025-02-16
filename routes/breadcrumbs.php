@@ -152,6 +152,12 @@ Breadcrumbs::for('customer-billings.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('customer-billings.create'));
 });
 
+// Dashboard > Customer Billing Reports
+Breadcrumbs::for('customer-billing-reports', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Customer Billing Reports', route('customer-billing-reports.index'));
+});
+
 // Dashboard > Roles
 Breadcrumbs::for('roles', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
