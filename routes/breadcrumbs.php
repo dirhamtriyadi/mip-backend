@@ -134,22 +134,22 @@ Breadcrumbs::for('leaves.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('leaves.create'));
 });
 
-// Dashboard > Billings
-Breadcrumbs::for('billings', function (BreadcrumbTrail $trail) {
+// Dashboard > Customer Billings
+Breadcrumbs::for('customer-billings', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
-    $trail->push('Billings', route('billings.index'));
+    $trail->push('Customer Billings', route('customer-billings.index'));
 });
 
-// Dashboard > Billings > [Billing] > Edit
-Breadcrumbs::for('billings.edit', function (BreadcrumbTrail $trail, $role) {
-    $trail->parent('billings');
-    $trail->push('Edit', route('billings.edit', $role));
+// Dashboard > Customer Billings > [Billing] > Edit
+Breadcrumbs::for('customer-billings.edit', function (BreadcrumbTrail $trail, $role) {
+    $trail->parent('customer-billings');
+    $trail->push('Edit', route('customer-billings.edit', $role));
 });
 
-// Dashboard > Billings > Create
-Breadcrumbs::for('billings.create', function (BreadcrumbTrail $trail) {
-    $trail->parent('billings');
-    $trail->push('Create', route('billings.create'));
+// Dashboard > Customer Billings > Create
+Breadcrumbs::for('customer-billings.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('customer-billings');
+    $trail->push('Create', route('customer-billings.create'));
 });
 
 // Dashboard > Roles
