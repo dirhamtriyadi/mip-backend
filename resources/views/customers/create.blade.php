@@ -141,7 +141,7 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="form-group" style="margin-top: 10px;">
+                                    {{-- <div class="form-group" style="margin-top: 10px;">
                                         <label for="user_id">Petugas</label>
                                         <select class="form-control select2" style="width: 100%;" id="user_id"
                                             name="user_id">
@@ -155,7 +155,7 @@
                                         @error('user_id')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="os_start">Outstanding Awal</label>
                                         <input type="text" class="form-control text-left" id="os_start"

@@ -106,7 +106,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group">
+                                    {{-- <div class="form-group">
                                         <label for="user_id">Petugas</label>
                                         <select class="form-control select2" id="user_id" name="user_id">
                                             @foreach ($users as $user)
@@ -115,7 +115,7 @@
                                                     {{ $user->name }}</option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="os_start">Outstanding Awal</label>
                                         <input type="text" class="form-control text-left" id="os_start" name="os_start"

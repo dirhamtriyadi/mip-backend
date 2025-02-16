@@ -19,7 +19,7 @@ class Customer extends Model
         'phone_number',
         'status',
         'bank_id',
-        'user_id',
+        // 'user_id',
         'os_start',
         'os_remaining',
         'os_total',
@@ -34,10 +34,10 @@ class Customer extends Model
         return $this->belongsTo(Bank::class, 'bank_id');
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
 
     public function billing()
     {
@@ -47,6 +47,11 @@ class Customer extends Model
     public function customerAddress()
     {
         return $this->hasOne(CustomerAddress::class, 'customer_id');
+    }
+
+    public function latestCustomerBilling()
+    {
+        return $this->hasOne(CustomerBilling::class, 'customer_id')->latestOfMany();
     }
 
     public function createdBy()

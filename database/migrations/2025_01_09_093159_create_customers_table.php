@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('phone_number')->nullable()->comment('Nomor telepon');
             $table->enum('status', ['paid', 'not_yet_paid'])->default('not_yet_paid')->comment('Status lunas');
             $table->foreignId('bank_id')->nullable()->constrained('banks')->onDelete('cascade')->comment('ID bank');
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->comment('ID petugas');
+            // $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->comment('ID petugas');
             $table->bigInteger('os_start')->nullable()->default(0)->comment('Outstanding awal');
             $table->bigInteger('os_remaining')->nullable()->default(0)->comment('Outstanding sisa');
             $table->bigInteger('os_total')->nullable()->default(0)->comment('Total outstanding');
