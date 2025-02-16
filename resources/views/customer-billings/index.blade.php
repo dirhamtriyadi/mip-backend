@@ -90,7 +90,8 @@
                                                 <th>Nama Nasabah</th>
                                                 <th>Nama Petugas</th>
                                                 <th>Bank</th>
-                                                <th>Status Kunjungan</th>
+                                                <th>Status Penagihan</th>
+                                                <th>Tanggal Penagihan</th>
                                                 <th>Tanggal Janji Bayar</th>
                                                 <th>Jumlah Bayar</th>
                                                 <th>Bukti (Kunjungan/Janji Bayar/Bayar)</th>
@@ -264,6 +265,9 @@
                     },
                     {
                         "data": "status"
+                    },
+                    {
+                        "data": "date_exec"
                     },
                     {
                         "data": "promise_date"

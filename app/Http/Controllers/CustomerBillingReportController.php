@@ -72,6 +72,9 @@ class CustomerBillingReportController extends Controller
             ->editColumn('status', function ($customerBilling) {
                 return optional($customerBilling->latestBillingFollowups->last())->status ? '<span class="badge badge-' . $customerBilling->latestBillingFollowups->last()->status->color() . '">' . $customerBilling->latestBillingFollowups->last()->status->label() . '</span>' : '-';
             })
+            ->addColumn('date_exec', function ($customerBilling) {
+                return optional($customerBilling->latestBillingFollowups->last())->date_exec ? Carbon::parse($customerBilling->latestBillingFollowups->last()->date_exec)->format('d-m-Y') : '-';
+            })
             ->addColumn('promise_date', function ($customerBilling) {
                 return optional($customerBilling->latestBillingFollowups->last())->promise_date ? Carbon::parse($customerBilling->latestBillingFollowups->last()->promise_date)->format('d-m-Y') : '-';
             })
