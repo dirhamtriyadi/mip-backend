@@ -204,7 +204,7 @@
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
-                                            style="margin-top: 10px;">Simpan</button>
+                                            style="margin-top: 10px;">Submit</button>
                                     </div>
                                 </form>
                             </div>

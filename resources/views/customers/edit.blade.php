@@ -164,7 +164,7 @@
                                     </div>
 
                                     <div class="mt-2 d-flex justify-content-center">
-                                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
                                 </form>
                             </div>
