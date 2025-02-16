@@ -24,6 +24,7 @@ class Customer extends Model
         'os_remaining',
         'os_total',
         'monthly_installments',
+        'description',
         'created_by',
         'updated_by',
         'deleted_by',

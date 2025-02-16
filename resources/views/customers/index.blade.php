@@ -76,6 +76,7 @@
                                                 <th>Outstanding Sisa</th>
                                                 <th>Outstanding Total</th>
                                                 <th>Angsuran</th>
+                                                <th>Keterangan</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -181,13 +182,16 @@
                         "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
                     },
                     {
+                        "data": "description"
+                    },
+                    {
                         "data": "action"
                     },
                 ],
                 "columnDefs": [{
                     "orderable": false,
                     "searchable": false,
-                    "targets": [0, 13]
+                    "targets": [0, 14]
                 }, ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,

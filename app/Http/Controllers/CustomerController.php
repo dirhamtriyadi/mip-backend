@@ -40,7 +40,8 @@ class CustomerController extends Controller implements HasMiddleware
     public function fetchDataTable(Request $request)
     {
         // load all bank accounts
-        $customers = Customer::with(['bank', 'user', 'customerAddress'])->get();
+        // $customers = Customer::with(['bank', 'user', 'customerAddress'])->get();
+        $customers = Customer::with(['bank', 'customerAddress'])->get();
 
         return DataTables::of($customers)
             ->addIndexColumn()
@@ -81,11 +82,11 @@ class CustomerController extends Controller implements HasMiddleware
     public function create()
     {
         $banks = Bank::all();
-        $users = User::all();
+        // $users = User::all();
 
         return view('customers.create', [
             'banks' => $banks,
-            'users' => $users
+            // 'users' => $users
         ]);
     }
 
@@ -102,7 +103,7 @@ class CustomerController extends Controller implements HasMiddleware
             'phone_number' => 'nullable',
             'status' => 'nullable|in:paid,not_yet_paid',
             'bank_id' => 'nullable|numeric',
-            'user_id' => 'nullable|numeric',
+            // 'user_id' => 'nullable|numeric',
             'os_start' => 'nullable|numeric',
             'os_remaining' => 'nullable|numeric',
             'os_total' => 'nullable|numeric',
@@ -139,12 +140,12 @@ class CustomerController extends Controller implements HasMiddleware
     {
         $customer = Customer::findOrFail($id);
         $banks = Bank::all();
-        $users = User::all();
+        // $users = User::all();
 
         return view('customers.edit', [
             'customer' => $customer,
             'banks' => $banks,
-            'users' => $users
+            // 'users' => $users
         ]);
     }
 
@@ -161,7 +162,7 @@ class CustomerController extends Controller implements HasMiddleware
             'phone_number' => 'nullable',
             'status' => 'nullable|in:paid,not_yet_paid',
             'bank_id' => 'nullable|numeric',
-            'user_id' => 'nullable|numeric',
+            // 'user_id' => 'nullable|numeric',
             'os_start' => 'nullable|numeric',
             'os_remaining' => 'nullable|numeric',
             'os_total' => 'nullable|numeric',
