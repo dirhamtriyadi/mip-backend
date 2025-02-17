@@ -22,7 +22,7 @@ class CustomerBillingResource extends JsonResource
             'user_id' => $this->user_id,
             'user' => $this->user,
             // 'billingFollowups' => BillingFollowupResource::collection($this->billingFollowups),
-            'latestBillingFollowups' => new BillingFollowupResource($this->latestBillingFollowups->last()),
+            'latestBillingFollowups' => new BillingFollowupResource($this->latestBillingFollowups->first()),
             'created_at' => $this->created_at,
         ];
     }

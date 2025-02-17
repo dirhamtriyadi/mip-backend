@@ -23,11 +23,11 @@ class BillingFollowupResource extends JsonResource
             ],
             'date_exec' => $this->date_exec,
             'description' => $this->description,
-            'proof' => isset($this->proof) ? asset('images/billings/' . $this->proof) : null,
+            'proof' => isset($this->proof) ? asset('images/customer-billings/' . $this->proof) : null,
             'promise_date' => isset($this->promise_date) ? $this->promise_date : null,
             'payment_amount' => isset($this->payment_amount) ? $this->payment_amount : null,
-            'signature_officer' => isset($this->signature_officer) ? asset('images/billings/' . $this->signature_officer) : null,
-            'signature_customer' => isset($this->signature_customer) ? asset('images/billings/' . $this->signature_customer) : null,
+            'signature_officer' => isset($this->signature_officer) ? asset('images/customer-billings/' . $this->signature_officer) : null,
+            'signature_customer' => isset($this->signature_customer) ? asset('images/customer-billings/' . $this->signature_customer) : null,
         ];
     }
 }
