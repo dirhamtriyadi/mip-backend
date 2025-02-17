@@ -4,14 +4,12 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Billing;
-use App\Models\BillingStatus;
-use App\Http\Resources\Api\V1\BillingResource;
-use Validator;
 use Carbon\Carbon;
-use App\Enums\BillingStatusesEnum;
+use App\Models\CustomerBilling;
+use App\Enums\BillingFollowupEnum;
+use App\Http\Resources\Api\V1\CustomerBillingResource;
 
-class BillingController extends Controller
+class CustomerBillingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -29,27 +27,21 @@ class BillingController extends Controller
             $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
         }
 
-        $billings = Billing::with(['customer', 'user', 'latestBillingStatus'])
+        $billings = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
             ->where('user_id', $user->id)
-            ->whereBetween('date', [$start_date, $end_date])
-            ->orWhereHas('latestBillingStatus', function($q) use($search, $user, $start_date, $end_date) {
+            ->whereBetween('created_at', [$start_date, $end_date])
+            ->orWhereHas('latestBillingFollowups', function($q) use($search, $user, $start_date, $end_date) {
                 $q->whereIn('status', ['visit', 'promise_to_pay', 'pay'])
-                  ->whereHas('billing', function($q) use($user, $start_date, $end_date) {
-                      $q->whereBetween('date', [$start_date, $end_date])
+                  ->whereHas('customerBilling', function($q) use($user, $start_date, $end_date) {
+                      $q->whereBetween('date_exec', [$start_date, $end_date])
                         ->where('user_id', $user->id);
                   });
             })
-            ->orderBy(
-                BillingStatus::select('status')
-                    ->whereColumn('billing_id', 'billings.id')
-                    ->orderBy('created_at', 'desc')
-                    ->limit(1)
-            )
             ->get();
 
         if ($search) {
             // Cari enum yang cocok dengan pencarian
-            $matchingStatuses = BillingStatusesEnum::search($search);
+            $matchingStatuses = BillingFollowupEnum::search($search);
 
             // Ambil nilai (`value`) dari hasil pencarian
             $matchingValues = array_map(fn ($status) => $status->value, $matchingStatuses);
@@ -60,33 +52,26 @@ class BillingController extends Controller
             }
             // dd($matchingValues);
 
-            $billings = Billing::with(['customer', 'user', 'latestBillingStatus'])
+            $billings = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
             ->where('user_id', $user->id)
-            ->whereBetween('date', [$start_date, $end_date])
+            ->whereBetween('created_at', [$start_date, $end_date])
             ->where(function($query) use ($search, $matchingValues) {
-                $query->where('status', 'like', '%' . $search . '%')
-                      ->orWhere('no_billing', 'like', '%' . $search . '%')
+                $query->where('bill_number', 'like', '%' . $search . '%')
                       ->orWhereHas('customer', function($q) use ($search) {
                           $q->where('name_customer', 'like', '%' . $search . '%')
-                            ->orWhere('no', 'like', '%' . $search . '%');
+                            ->orWhere('no_contract', 'like', '%' . $search . '%');
                       })
-                      ->orWhereHas('latestBillingStatus', function($q) use ($matchingValues) {
+                      ->orWhereHas('latestBillingFollowups', function($q) use ($matchingValues) {
                           $q->whereIn('status', $matchingValues);
                       });
             })
-            ->orderBy(
-                BillingStatus::select('status')
-                    ->whereColumn('billing_id', 'billings.id')
-                    ->orderBy('created_at', 'desc')
-                    ->limit(1)
-            )
             ->get();
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully.',
-            'data' => BillingResource::collection($billings),
+            'data' => CustomerBillingResource::collection($billings),
         ], 200);
     }
 
@@ -96,7 +81,7 @@ class BillingController extends Controller
     public function show(string $id)
     {
         $user = auth()->user();
-        $billing = Billing::where('user_id', $user->id)->where('id', $id)->first();
+        $billing = CustomerBilling::where('user_id', $user->id)->where('id', $id)->first();
 
         if (!$billing) {
             return response()->json([
@@ -111,7 +96,7 @@ class BillingController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully.',
-            'data' => new BillingResource($billing),
+            'data' => new CustomerBillingResource($billing),
         ], 200);
     }
 }

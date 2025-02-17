@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AttendanceController;
 use App\Http\Controllers\Api\V1\LeaveController;
-use App\Http\Controllers\Api\V1\BillingController;
+use App\Http\Controllers\Api\V1\CustomerBillingController;
 use App\Http\Controllers\Api\V1\BillingStatusController;
 use App\Http\Controllers\Api\V1\BillingReportController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -31,9 +31,9 @@ Route::prefix('v1')->group(function () {
         Route::post('leaves/submission', [LeaveController::class, 'submission'])->name('leaves.submission');
         Route::get('leaves', [LeaveController::class, 'index'])->name('leaves.index');
 
-        // Billing
-        Route::get('billings', [BillingController::class, 'index'])->name('billings.index');
-        Route::get('billings/{id}', [BillingController::class, 'show'])->name('billings.show');
+        // Customer Billing
+        Route::get('customer-billings', [CustomerBillingController::class, 'index'])->name('customer-billings.index');
+        Route::get('customer-billings/{id}', [CustomerBillingController::class, 'show'])->name('customer-billings.show');
 
         // Billing Status
         Route::post('billing-statuses', [BillingStatusController::class, 'store'])->name('billing-statuses.store');

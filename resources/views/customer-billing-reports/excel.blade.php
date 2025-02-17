@@ -25,6 +25,9 @@
     </thead>
     <tbody>
         @foreach ($data as $item => $value)
+            @php
+                $latestFollowup = $value->latestBillingFollowups->last() ?? null;
+            @endphp
             <tr>
                 <td>{{ $item + 1 }}</td>
                 <td>{{ $value->bill_number }}</td>
@@ -40,12 +43,30 @@
                 <td>{{ $value->customer->monthly_installments }}</td>
                 <td>{{ $value->customer->bank->name }}</td>
                 <td>{{ $value->latestBillingFollowups->last()->status }}</td>
-                <td>{{ $value->latestBillingFollowups->last()->proof }}</td>
+                <td>
+                    @if ($latestFollowup && $latestFollowup->proof)
+                        {!! '<img src="' . $latestFollowup->proof . '" alt="Bukti Penagihan" width="100">' !!}
+                    @else
+                        -
+                    @endif
+                </td>
                 <td>{{ $value->latestBillingFollowups->last()->promise_date }}</td>
                 <td>{{ $value->latestBillingFollowups->last()->payment_amount }}</td>
                 <td>{{ $value->latestBillingFollowups->last()->description }}</td>
-                <td>{{ $value->latestBillingFollowups->last()->signature_officer }}</td>
-                <td>{{ $value->latestBillingFollowups->last()->signature_customer }}</td>
+                <td>
+                    @if ($latestFollowup && $latestFollowup->signature_officer)
+                        {!! '<img src="' . $latestFollowup->signature_officer . '" alt="TTD Petugas" width="100">' !!}
+                    @else
+                        -
+                    @endif
+                </td>
+                <td>
+                    @if ($latestFollowup && $latestFollowup->signature_customer)
+                        {!! '<img src="' . $latestFollowup->signature_customer . '" alt="TTD Nasabah" width="100">' !!}
+                    @else
+                        -
+                    @endif
+                </td>
             </tr>
         @endforeach
     </tbody>
