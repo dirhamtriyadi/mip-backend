@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AttendanceController;
 use App\Http\Controllers\Api\V1\LeaveController;
 use App\Http\Controllers\Api\V1\CustomerBillingController;
+use App\Http\Controllers\Api\V1\BillingFollowupController;
 use App\Http\Controllers\Api\V1\BillingStatusController;
 use App\Http\Controllers\Api\V1\BillingReportController;
 use App\Http\Controllers\Api\V1\UserController;
@@ -35,9 +36,8 @@ Route::prefix('v1')->group(function () {
         Route::get('customer-billings', [CustomerBillingController::class, 'index'])->name('customer-billings.index');
         Route::get('customer-billings/{id}', [CustomerBillingController::class, 'show'])->name('customer-billings.show');
 
-        // Billing Status
-        Route::post('billing-statuses', [BillingStatusController::class, 'store'])->name('billing-statuses.store');
-        Route::apiResource('billing-statuses', BillingStatusController::class);
+        // Billing Followup
+        Route::post('billing-followups', [BillingFollowupController::class, 'store'])->name('billing-followups.store');
 
         // Billing Report
         Route::get('billing-reports', [BillingReportController::class, 'index'])->name('billing-reports.index');
