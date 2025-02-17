@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('status', ['visit', 'promise_to_pay', 'pay'])->default('visit')->comment('Status kunjungan');
             $table->date('date_exec')->comment('Tanggal di eksekusi');
             $table->text('description')->comment('Deskripsi');
-            $table->string('proof')->comment('Bukti berupa gambar');
+            $table->string('proof')->nullable()->comment('Bukti berupa gambar');
             $table->date('promise_date')->nullable()->comment('Tanggal janji bayar');
             $table->bigInteger('payment_amount')->nullable()->comment('Jumlah pembayaran');
             $table->string('signature_officer')->nullable()->comment('Tanda tangan petugas');
