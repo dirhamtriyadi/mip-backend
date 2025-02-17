@@ -27,7 +27,7 @@ class CustomerBillingController extends Controller
             $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
         }
 
-        $billings = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
+        $customerBillings = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
             ->where('user_id', $user->id)
             ->whereBetween('created_at', [$start_date, $end_date])
             ->orWhereHas('latestBillingFollowups', function($q) use($search, $user, $start_date, $end_date) {
@@ -52,7 +52,7 @@ class CustomerBillingController extends Controller
             }
             // dd($matchingValues);
 
-            $billings = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
+            $customerBillings = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
             ->where('user_id', $user->id)
             ->whereBetween('created_at', [$start_date, $end_date])
             ->where(function($query) use ($search, $matchingValues) {
@@ -71,7 +71,7 @@ class CustomerBillingController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully.',
-            'data' => CustomerBillingResource::collection($billings),
+            'data' => CustomerBillingResource::collection($customerBillings),
         ], 200);
     }
 
@@ -81,9 +81,9 @@ class CustomerBillingController extends Controller
     public function show(string $id)
     {
         $user = auth()->user();
-        $billing = CustomerBilling::where('user_id', $user->id)->where('id', $id)->first();
+        $customerBilling = CustomerBilling::where('user_id', $user->id)->where('id', $id)->first();
 
-        if (!$billing) {
+        if (!$customerBilling) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Data not found.',
@@ -96,7 +96,7 @@ class CustomerBillingController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully.',
-            'data' => new CustomerBillingResource($billing),
+            'data' => new CustomerBillingResource($customerBilling),
         ], 200);
     }
 }
