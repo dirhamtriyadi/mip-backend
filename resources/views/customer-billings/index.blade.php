@@ -72,8 +72,8 @@
                                             <i class="fas fa-file-excel"></i> Import
                                         </button>
                                         {{-- Create to download template import excel --}}
-                                        {{-- <a href="{{ route('customer-billings.templateImport') }}" class="btn btn-info mb-3 mr-1"><i
-                                                class="fas fa-download"></i> Template Import</a> --}}
+                                        <a href="{{ route('customer-billings.templateImport') }}" class="btn btn-info mb-3 mr-1"><i
+                                                class="fas fa-download"></i> Template Import</a>
                                         {{-- Create to add new data --}}
                                         <a href="{{ route('customer-billings.create') }}"
                                             class="btn btn-primary mb-3 mr-1"><i class="fas fa-plus"></i> Tambah</a>
@@ -131,7 +131,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                {{-- <form action="{{ route('customer-billings.import') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('customer-billings.import') }}" method="post" enctype="multipart/form-data">
                     <div class="modal-body">
                         @csrf
                         <div class="form-group" style="margin-top: 10px;" id="form-import">
@@ -151,7 +151,7 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
-                </form> --}}
+                </form>
             </div>
             <!-- /.modal-content -->
         </div>

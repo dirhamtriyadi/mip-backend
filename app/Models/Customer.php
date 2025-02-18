@@ -50,6 +50,11 @@ class Customer extends Model
         return $this->hasOne(CustomerAddress::class, 'customer_id');
     }
 
+    public function customerBilling()
+    {
+        return $this->hasOne(CustomerBilling::class, 'customer_id');
+    }
+
     public function latestCustomerBilling()
     {
         return $this->hasOne(CustomerBilling::class, 'customer_id')->latestOfMany();

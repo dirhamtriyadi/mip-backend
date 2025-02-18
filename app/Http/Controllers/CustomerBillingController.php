@@ -11,7 +11,7 @@ use App\Models\Customer;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\BillingImport;
+use App\Imports\CustomerBillingImport;
 
 class CustomerBillingController extends Controller implements HasMiddleware
 {
@@ -217,7 +217,7 @@ class CustomerBillingController extends Controller implements HasMiddleware
 
     public function templateImport()
     {
-        $template = public_path('templates/billings.xls');
+        $template = public_path('templates/customer-billing-templae-import.xlsx');
 
         return response()->download($template);
     }
