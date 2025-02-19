@@ -8,6 +8,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use App\Models\CustomerBilling;
 use App\Models\User;
 use App\Models\Customer;
+use App\Models\Bank;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -36,9 +37,11 @@ class CustomerBillingController extends Controller implements HasMiddleware
     public function index()
     {
         $users = User::all();
+        $banks = Bank::all();
 
         return view('customer-billings.index', [
-            'users' => $users
+            'users' => $users,
+            'banks' => $banks,
         ]);
     }
 
@@ -205,12 +208,13 @@ class CustomerBillingController extends Controller implements HasMiddleware
 
     public function import(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'file' => 'required|file|mimes:xlsx,xls',
+            'bank_id' => 'required|numeric',
         ]);
 
         $file = $request->file('file');
-        Excel::import(new CustomerBillingImport, $file);
+        Excel::import(new CustomerBillingImport($validatedData['bank_id']), $file);
 
         return redirect()->route('customer-billings.index')->with('success', 'Data berhasil diimport');
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('bill_number')->unique()->comment('Nomor tagihan');
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade')->comment('ID nasabah');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->comment('ID petugas');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->comment('ID petugas');
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();

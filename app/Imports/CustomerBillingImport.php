@@ -10,6 +10,11 @@ use Carbon\Carbon;
 
 class CustomerBillingImport implements ToModel, WithHeadingRow
 {
+    public function __construct(int $bank_id)
+    {
+        $this->bank_id = $bank_id;
+    }
+
     /**
     * @param array $row
     *
@@ -20,14 +25,14 @@ class CustomerBillingImport implements ToModel, WithHeadingRow
         $user = auth()->user();
 
         // Check if customer already exists if not create new customer
-        $customer = Customer::firstOrCreate([
+        $customer = Customer::updateOrCreate([
             'no_contract' => $row['no_contract'] ?? $row['no_kontrak'],
         ], [
             'bank_account_number' => $row['bank_account_number'] ?? $row['no_rekening'] ?? null,
             'name_customer' => $row['name_customer'] ?? $row['nama_nasabah'],
             'name_mother ' => $row['name_mother'] ?? $row['nama_ibu'] ?? null,
             'phone_number' => $row['phone_number'] ?? $row['no_hp'] ?? $row['hp'] ?? null,
-            'bank_id' => $row['bank_id'] ?? $row['bank'] ?? null,
+            'bank_id' => $this->bank_id,
             'os_start' => $row['os_start'] ?? $row['os_awal'] ?? null,
             'os_remaining' => $row['os_remaining'] ?? $row['os_sisa'] ?? null,
             'os_total' => $row['os_total'] ?? null,

@@ -134,6 +134,19 @@
                 <form action="{{ route('customer-billings.import') }}" method="post" enctype="multipart/form-data">
                     <div class="modal-body">
                         @csrf
+                        <div class="form-group" id="form-mass-select-officer">
+                            <label for="bank_id">Bank</label>
+                            <select name="bank_id" id="bank_id" class="form-control">
+                                <option value="">Pilih Bank</option>
+                                @foreach ($banks as $bank)
+                                    <option value="{{ old('bank_id') ?? $bank->id }}">{{ $bank->name }}</option>
+                                @endforeach
+                            </select>
+
+                            @error('bank_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <div class="form-group" style="margin-top: 10px;" id="form-import">
                             <label for="file">File Excel</label>
 
@@ -217,6 +230,9 @@
             bsCustomFileInput.init();
             // Initialize Select2
             $('#user_id').select2({
+                theme: 'bootstrap4'
+            });
+            $('#bank_id').select2({
                 theme: 'bootstrap4'
             });
             // DataTables
