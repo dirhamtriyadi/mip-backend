@@ -108,13 +108,6 @@ Breadcrumbs::for('attendances.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('attendances.create'));
 });
 
-// Dashboard > Absen > Attendance Reports
-Breadcrumbs::for('attendance-reports', function (BreadcrumbTrail $trail) {
-    $trail->parent('dashboard');
-    $trail->push('Absen');
-    $trail->push('Attendance Reports', route('attendance-reports.index'));
-});
-
 // Dashboard > Absen > Leaves
 Breadcrumbs::for('leaves', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
@@ -152,9 +145,24 @@ Breadcrumbs::for('customer-billings.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('customer-billings.create'));
 });
 
-// Dashboard > Customer Billing Reports
+// Dashboard > Laporan > Attendance Reports
+Breadcrumbs::for('officer-reports', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Officer Reports', route('officer-reports.index'));
+});
+
+// Dashboard > Laporan > Attendance Reports
+Breadcrumbs::for('attendance-reports', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Attendance Reports', route('attendance-reports.index'));
+});
+
+// Dashboard > Laporan > Customer Billing Reports
 Breadcrumbs::for('customer-billing-reports', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
+    $trail->push('Laporan');
     $trail->push('Customer Billing Reports', route('customer-billing-reports.index'));
 });
 

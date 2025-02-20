@@ -9,6 +9,7 @@ use App\Http\Controllers\CustomerBillingController;
 use App\Http\Controllers\CustomerBillingReportController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\OfficerReportController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\BankContoller;
 use App\Http\Controllers\UserController;
@@ -69,6 +70,12 @@ Route::middleware('auth')->group(function () {
     Route::get('customer-billing-reports', [CustomerBillingReportController::class, 'index'])->name('customer-billing-reports.index');
     Route::post('customer-billing-reports/fetch-data-table', [CustomerBillingReportController::class, 'fetchDataTable'])->name('customer-billing-reports.fetchDataTable');
     Route::get('customer-billing-reports/export', [CustomerBillingReportController::class, 'export'])->name('customer-billing-reports.export');
+
+    // Route laporan
+    Route::get('officer-reports', [OfficerReportController::class, 'index'])->name('officer-reports.index');
+    Route::post('officer-reports/fetch-data-table', [OfficerReportController::class, 'fetchDataTable'])->name('officer-reports.fetchDataTable');
+    // Route::get('officer-reports/export', [OfficerReportController::class, 'export'])->name('officer-reports.export');
+    // Route::get('officer-reports/export-by-user', [OfficerReportController::class, 'exportByUser'])->name('officer-reports.exportByUser');
 
     // Route user
     Route::resource('users', UserController::class);

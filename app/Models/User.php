@@ -68,4 +68,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Bank::class);
     }
+
+    public function customerBillings()
+    {
+        return $this->hasMany(CustomerBilling::class);
+    }
+
+    public function customerBillingFollowups()
+    {
+        return $this->hasMany(BillingFollowup::class);
+    }
 }
