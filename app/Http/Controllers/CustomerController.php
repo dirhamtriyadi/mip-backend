@@ -60,17 +60,14 @@ class CustomerController extends Controller implements HasMiddleware
             ->addColumn('subdistrict', function ($customer) {
                 return $customer->customerAddress->subdistrict ?? '-';
             })
-            ->editColumn('date', function ($billing) {
-                return Carbon::parse($billing->date)->format('d-m-Y');
-            })
-            ->editColumn('total_bill', function ($billing) {
-                return $billing->total_bill ?? '0';
-            })
-            ->editColumn('installment', function ($billing) {
-                return $billing->installment ?? '0';
+            ->editColumn('due_date', function ($customer) {
+                return $customer->due_date ? Carbon::parse($customer->due_date)->format('d-m-Y') : '-';
             })
             ->addColumn('action', function ($customer) {
                 return view('customers.action', ['value' => $customer]);
+            })
+            ->addColumn('details', function ($customerBilling) {
+                return;
             })
             ->rawColumns(['action'])
             ->toJson();
@@ -104,10 +101,13 @@ class CustomerController extends Controller implements HasMiddleware
             'status' => 'nullable|in:paid,not_yet_paid',
             'bank_id' => 'nullable|numeric',
             // 'user_id' => 'nullable|numeric',
+            'margin_start' => 'nullable|numeric',
             'os_start' => 'nullable|numeric',
-            'os_remaining' => 'nullable|numeric',
-            'os_total' => 'nullable|numeric',
-            'monthly_installments' => 'nullable|numeric',
+            'margin_remaining' => 'nullable|numeric',
+            'installments' => 'nullable|numeric',
+            'month_arrears' => 'nullable|numeric',
+            'arrears' => 'nullable|numeric',
+            'due_date' => 'nullable|date',
             'address' => 'nullable',
             'village' => 'nullable',
             'subdistrict' => 'nullable',
@@ -163,10 +163,13 @@ class CustomerController extends Controller implements HasMiddleware
             'status' => 'nullable|in:paid,not_yet_paid',
             'bank_id' => 'nullable|numeric',
             // 'user_id' => 'nullable|numeric',
+            'margin_start' => 'nullable|numeric',
             'os_start' => 'nullable|numeric',
-            'os_remaining' => 'nullable|numeric',
-            'os_total' => 'nullable|numeric',
-            'monthly_installments' => 'nullable|numeric',
+            'margin_remaining' => 'nullable|numeric',
+            'installments' => 'nullable|numeric',
+            'month_arrears' => 'nullable|numeric',
+            'arrears' => 'nullable|numeric',
+            'due_date' => 'nullable|date',
             'address' => 'nullable',
             'village' => 'nullable',
             'subdistrict' => 'nullable',

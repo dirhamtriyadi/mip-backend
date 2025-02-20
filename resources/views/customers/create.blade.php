@@ -62,9 +62,9 @@
                                     @csrf
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="no_contract">No Kontrak</label>
+                                        <label for="no_contract">No Kontrak *</label>
                                         <input type="number" class="form-control" id="no_contract" name="no_contract"
-                                            placeholder="Masukkan Nama" value="{{ old('no_contract') }}">
+                                            placeholder="Masukkan Nama" value="{{ old('no_contract') }}" required>
                                         @error('no_contract')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -79,9 +79,9 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="name_customer">Nama Nasabah</label>
+                                        <label for="name_customer">Nama Nasabah *</label>
                                         <input type="text" class="form-control" id="name_customer" name="name_customer"
-                                            placeholder="Masukkan Nama Nasabah" value="{{ old('name_customer') }}">
+                                            placeholder="Masukkan Nama Nasabah" value="{{ old('name_customer') }}" required>
                                         @error('name_customer')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -157,6 +157,15 @@
                                         @enderror
                                     </div> --}}
                                     <div class="form-group" style="margin-top: 10px;">
+                                        <label for="margin_start">Margin Awal</label>
+                                        <input type="text" class="form-control text-left" id="margin_start"
+                                            name="margin_start" placeholder="Masukkan Margin Awal"
+                                            value="{{ old('margin_start') }}" data-mask>
+                                        @error('margin_start')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
                                         <label for="os_start">Outstanding Awal</label>
                                         <input type="text" class="form-control text-left" id="os_start"
                                             name="os_start" placeholder="Masukkan Outstanding Awal"
@@ -166,29 +175,51 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="os_remaining">Outstanding Sisa</label>
-                                        <input type="text" class="form-control text-left" id="os_remaining"
-                                            name="os_remaining" placeholder="Masukkan Outstanding Sisa"
-                                            value="{{ old('os_remaining') }}" data-mask>
-                                        @error('os_remaining')
+                                        <label for="margin_remaining">Margin Sisa</label>
+                                        <input type="text" class="form-control text-left" id="margin_remaining"
+                                            name="margin_remaining" placeholder="Masukkan Margin Sisa"
+                                            value="{{ old('margin_remaining') }}" data-mask>
+                                        @error('margin_remaining')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="os_total">Outstanding Total</label>
-                                        <input type="text" class="form-control text-left" id="os_total"
-                                            name="os_total" placeholder="Masukkan Outstanding Total"
-                                            value="{{ old('os_total') }}" data-mask>
-                                        @error('os_total')
+                                        <label for="installments">Angsuran Per Bulan</label>
+                                        <input type="text" class="form-control text-left" id="installments"
+                                            name="installments" placeholder="Masukkan Angsuran Per Bulan"
+                                            value="{{ old('installments') }}" data-mask>
+                                        @error('installments')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="monthly_installments">Angsuran Per Bulan</label>
-                                        <input type="text" class="form-control text-left" id="monthly_installments"
-                                            name="monthly_installments" placeholder="Masukkan Angsuran Per Bulan"
-                                            value="{{ old('monthly_installments') }}" data-mask>
-                                        @error('monthly_installments')
+                                        <label for="month_arrears">Tunggak Bulan</label>
+                                        <input type="number"  class="form-control" id="month_arrears" name="month_arrears"
+                                            placeholder="Masukkan Tunggak Bulan" value="{{ old('month_arrears') }}">
+                                        @error('month_arrears')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="arrears">Tunggakan</label>
+                                        <input type="text" class="form-control text-left" id="arrears"
+                                            name="arrears" placeholder="Masukkan Tunggakan"
+                                            value="{{ old('arrears') }}" data-mask>
+                                        @error('arrears')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="due_date">Tanggal Jatuh Tempo</label>
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input type="text" class="form-control datetimepicker-input"
+                                                data-target="#reservationdate" name="due_date" placeholder="Masukan Tanggal" value="{{ old('due_date') }}">
+                                            <div class="input-group-append" data-target="#reservationdate"
+                                                data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                        @error('due_date')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -201,6 +232,7 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @include('templates.form.required')
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
@@ -265,6 +297,22 @@
             $('[data-mask]').inputmask({
                 'removeMaskOnSubmit': true
             });
+            // Input margin_start to currency Rupiah
+            $('#margin_start').inputmask('numeric', {
+                'alias': 'numeric',
+                'groupSeparator': '.',
+                'autoGroup': true,
+                'digits': 0,
+                'digitsOptional': false,
+                'prefix': 'Rp ',
+                'placeholder': '0',
+                'rightAlign': false,
+                'allowMinus': false,
+                'allowPlus': false,
+                // 'autoUnmask': true,
+                // 'unmaskAsNumber': true,
+                'removeMaskOnSubmit': true
+            });
             // Input os_start to currency Rupiah
             $('#os_start').inputmask('numeric', {
                 'alias': 'numeric',
@@ -281,8 +329,8 @@
                 // 'unmaskAsNumber': true,
                 'removeMaskOnSubmit': true
             });
-            // Input os_remaining to currency Rupiah
-            $('#os_remaining').inputmask('numeric', {
+            // Input margin_remaining to currency Rupiah
+            $('#margin_remaining').inputmask('numeric', {
                 'alias': 'numeric',
                 'groupSeparator': '.',
                 'autoGroup': true,
@@ -297,24 +345,8 @@
                 // 'unmaskAsNumber': true,
                 'removeMaskOnSubmit': true
             });
-            // Input os_total to currency Rupiah
-            $('#os_total').inputmask('numeric', {
-                'alias': 'numeric',
-                'groupSeparator': '.',
-                'autoGroup': true,
-                'digits': 0,
-                'digitsOptional': false,
-                'prefix': 'Rp ',
-                'placeholder': '0',
-                'rightAlign': false,
-                'allowMinus': false,
-                'allowPlus': false,
-                // 'autoUnmask': true,
-                // 'unmaskAsNumber': true,
-                'removeMaskOnSubmit': true
-            });
-            // Input os_total to currency Rupiah
-            $('#monthly_installments').inputmask('numeric', {
+            // Input installments to currency Rupiah
+            $('#installments').inputmask('numeric', {
                 'alias': 'numeric',
                 'groupSeparator': '.',
                 'autoGroup': true,

@@ -66,18 +66,23 @@
                                                 <th>Nomor Kontrak</th>
                                                 <th>Nomor Rekening</th>
                                                 <th>Nama Nasabah</th>
+                                                <th>Nama Ibu</th>
                                                 <th>No HP</th>
                                                 <th>Alamat</th>
                                                 <th>Desa</th>
                                                 <th>Kecamatan</th>
                                                 <th>Nama Bank</th>
-                                                <th>Nama Petugas</th>
+                                                {{-- <th>Nama Petugas</th> --}}
+                                                <th>Margin Awal</th>
                                                 <th>Outstanding Awal</th>
-                                                <th>Outstanding Sisa</th>
-                                                <th>Outstanding Total</th>
+                                                <th>Margin Sisa</th>
                                                 <th>Angsuran</th>
+                                                <th>Tunggak Bulan</th>
+                                                <th>Tunggakan</th>
+                                                <th>Tanggal Jatuh Tempo</th>
                                                 <th>Keterangan</th>
                                                 <th>Aksi</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -128,7 +133,12 @@
                         "_token": "{{ csrf_token() }}"
                     }
                 },
-                "responsive": true,
+                "responsive": {
+                    details: {
+                        type: 'column',
+                        target: -1
+                    }
+                },
                 // "lengthChange": false,
                 "lengthMenu": [
                     [10, 25, 50, 100, -1],
@@ -148,6 +158,9 @@
                         "data": "name_customer"
                     },
                     {
+                        "data": "name_mother"
+                    },
+                    {
                         "data": "phone_number"
                     },
                     {
@@ -162,24 +175,34 @@
                     {
                         "data": "name_bank"
                     },
+                    // {
+                    //     "data": "name_officer"
+                    // },
                     {
-                        "data": "name_officer"
+                        "data": "margin_start",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
                     },
                     {
                         "data": "os_start",
                         "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
                     },
                     {
-                        "data": "os_remaining",
+                        "data": "margin_remaining",
                         "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
                     },
                     {
-                        "data": "os_total",
+                        "data": "installments",
                         "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
                     },
                     {
-                        "data": "monthly_installments",
+                        "data": "month_arrears",
+                    },
+                    {
+                        "data": "arrears",
                         "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "due_date"
                     },
                     {
                         "data": "description"
@@ -187,12 +210,22 @@
                     {
                         "data": "action"
                     },
+                    {
+                        "data": "details"
+                    }
                 ],
                 "columnDefs": [{
                     "orderable": false,
                     "searchable": false,
                     "targets": [0, 14]
-                }, ],
+                },
+                {
+                    "targets": -1,
+                    "className": 'dtr-control arrow-right',
+                    "searchable": false,
+                    "orderable": false,
+                    "width": "10%",
+                }],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
             });

@@ -21,10 +21,13 @@ return new class extends Migration
             $table->enum('status', ['paid', 'not_yet_paid'])->default('not_yet_paid')->comment('Status lunas');
             $table->foreignId('bank_id')->nullable()->constrained('banks')->onDelete('cascade')->comment('ID bank');
             // $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->comment('ID petugas');
+            $table->bigInteger('margin_start')->nullable()->default(0)->comment('Margin awal');
             $table->bigInteger('os_start')->nullable()->default(0)->comment('Outstanding awal');
-            $table->bigInteger('os_remaining')->nullable()->default(0)->comment('Outstanding sisa');
-            $table->bigInteger('os_total')->nullable()->default(0)->comment('Total outstanding');
-            $table->bigInteger('monthly_installments')->nullable()->default(0)->comment('Angsuran perbulan');
+            $table->bigInteger('margin_remaining')->nullable()->default(0)->comment('Margin sisa');
+            $table->bigInteger('installments')->nullable()->default(0)->comment('Angsuran perbulan');
+            $table->bigInteger('month_arrears')->nullable()->default(0)->comment('Tunggakan bulan');
+            $table->bigInteger('arrears')->nullable()->default(0)->comment('Tunggakan');
+            $table->date('due_date')->nullable()->comment('Tanggal jatuh tempo');
             $table->text('description')->nullable()->comment('Dekripsi nasabah: DU atau NON DU');
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
