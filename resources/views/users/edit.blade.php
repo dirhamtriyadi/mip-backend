@@ -45,18 +45,18 @@
                                     @csrf
                                     @method('PUT')
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="name">Nama</label>
+                                        <label for="name">Nama *</label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            placeholder="Masukkan Nama" value="{{ old('name', $user->name) }}">
+                                            placeholder="Masukkan Nama" value="{{ old('name', $user->name) }}" required>
 
                                         @error('name')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="email">Email</label>
+                                        <label for="email">Email *</label>
                                         <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Masukkan Email" value="{{ old('email', $user->email) }}">
+                                            placeholder="Masukkan Email" value="{{ old('email', $user->email) }}" required>
 
                                         @error('email')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -64,9 +64,9 @@
                                     </div>
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="password">Password</label>
+                                        <label for="password">Password *</label>
                                         <input type="password" class="form-control" id="password" name="password"
-                                            placeholder="Masukkan Password">
+                                            placeholder="Masukkan Password" required>
 
                                         @error('password')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -74,9 +74,9 @@
                                     </div>
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="password_confirmation">Konfirmasi Password</label>
+                                        <label for="password_confirmation">Konfirmasi Password *</label>
                                         <input type="password" class="form-control" id="password_confirmation"
-                                            name="password_confirmation" placeholder="Masukkan Konfirmasi Password">
+                                            name="password_confirmation" placeholder="Masukkan Konfirmasi Password" required>
 
                                         @error('password_confirmation')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -84,10 +84,10 @@
                                     </div>
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="nik">NIK</label>
+                                        <label for="nik">NIK *</label>
                                         <input type="text" class="form-control" id="nik" name="nik"
                                             placeholder="Masukkan NIK"
-                                            value="{{ old('nik', $user->detail_users->nik ?? '') }}">
+                                            value="{{ old('nik', $user->detail_users->nik ?? '') }}" required>
 
                                         @error('nik')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -110,6 +110,7 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @include('templates.form.required')
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
