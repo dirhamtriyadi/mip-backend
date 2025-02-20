@@ -221,7 +221,7 @@ class CustomerBillingController extends Controller implements HasMiddleware
 
     public function templateImport()
     {
-        $template = public_path('templates/customer-billing-templae-import.xlsx');
+        $template = public_path('templates/customer-billing-template-import.xlsx');
 
         return response()->download($template);
     }
