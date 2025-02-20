@@ -72,9 +72,9 @@
                                     @method('PUT')
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="user_id">User</label>
+                                        <label for="user_id">User *</label>
                                         <select class="form-control select2" style="width: 100%;" data-select2-id="1"
-                                            tabindex="-1" aria-hidden="true" id="user_id" name="user_id">
+                                            tabindex="-1" aria-hidden="true" id="user_id" name="user_id" required>
                                             <option value="" selected>Pilih User</option>
                                             @foreach ($users as $user)
                                                 <option value="{{ $user->id }}" {{ $data->user_id == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
@@ -85,10 +85,10 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="start_date">Tanggal Mulai Cuti</label>
+                                        <label for="start_date">Tanggal Mulai Cuti *</label>
                                         <div class="input-group date" id="start_date" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
-                                                data-target="#start_date" name="start_date" placeholder="Masukan Tanggal" value="{{ old('start_date', $data->start_date) }}">
+                                                data-target="#start_date" name="start_date" placeholder="Masukan Tanggal" value="{{ old('start_date', $data->start_date) }}" required>
                                             <div class="input-group-append" data-target="#start_date"
                                                 data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -99,10 +99,10 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="end_date">Tanggal Akhir Cuti</label>
+                                        <label for="end_date">Tanggal Akhir Cuti *</label>
                                         <div class="input-group date" id="end_date" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
-                                                data-target="#end_date" name="end_date" placeholder="Masukan Tanggal" value="{{ old('end_date', $data->end_date) }}">
+                                                data-target="#end_date" name="end_date" placeholder="Masukan Tanggal" value="{{ old('end_date', $data->end_date) }}" required>
                                             <div class="input-group-append" data-target="#end_date"
                                                 data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -113,9 +113,9 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="status">Status</label>
+                                        <label for="status">Status *</label>
                                         <select class="form-control" style="width: 100%;" data-select2-id="1"
-                                            tabindex="-1" aria-hidden="true" id="status" name="status">
+                                            tabindex="-1" aria-hidden="true" id="status" name="status" required>
                                             <option value="" selected>Pilih Status</option>
                                             <option value="pending" {{ old('status', $data->status) == 'pending' ? 'selected' : '' }}>Menunggu</option>
                                             <option value="approved" {{ old('status', $data->status) == 'approved' ? 'selected' : '' }}>Diterima</option>
@@ -133,6 +133,7 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @include('templates.form.required')
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
