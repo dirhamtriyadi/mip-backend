@@ -61,9 +61,9 @@
                                 <form action="{{ route('banks.store') }}" method="POST">
                                     @csrf
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="name">Nama Bank</label>
+                                        <label for="name">Nama Bank *</label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            placeholder="Masukkan Nama" value="{{ old('name') }}">
+                                            placeholder="Masukkan Nama" value="{{ old('name') }}" required>
                                         @error('name')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -76,6 +76,7 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @include('templates.form.required')
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
