@@ -318,7 +318,7 @@
                     {
                         "orderable": false,
                         "searchable": false,
-                        "targets": [10, 12, 13, 14]
+                        "targets": [11, 13, 14, 15, 16]
                     },
                     {
                         "targets": -1,

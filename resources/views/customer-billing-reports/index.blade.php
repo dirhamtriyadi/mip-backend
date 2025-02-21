@@ -235,7 +235,7 @@
                     {
                         "orderable": false,
                         "searchable": false,
-                        "targets": [10, 12, 13]
+                        "targets": [11, 13, 14, 15]
                     },
                     {
                         "targets": -1,
