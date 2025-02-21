@@ -63,9 +63,9 @@
                                     </div>
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="password">Password *</label>
+                                        <label for="password">Password</label>
                                         <input type="password" class="form-control" id="password" name="password"
-                                            placeholder="Masukkan Password" value="{{ old('password') }}" required>
+                                            placeholder="Masukkan Password" value="{{ old('password') }}">
 
                                         @error('password')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -73,10 +73,10 @@
                                     </div>
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="password_confirmation">Konfirmasi Password *</label>
+                                        <label for="password_confirmation">Konfirmasi Password</label>
                                         <input type="password" class="form-control" id="password_confirmation"
                                             name="password_confirmation" placeholder="Masukkan Konfirmasi Password"
-                                            value="{{ old('password') }}" required>
+                                            value="{{ old('password') }}">
 
                                         @error('password_confirmation')
                                             <div class="alert alert-danger">{{ $message }}</div>

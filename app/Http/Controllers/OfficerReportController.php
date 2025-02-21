@@ -28,11 +28,11 @@ class OfficerReportController extends Controller
         $end_date = $request->end_date ?? date('Y-m-t');
 
         // get all users with attendances between start_date and end_date with deleted_at and deteled_by is null
-        $users = User::with(['attendances' => function ($query) use ($start_date, $end_date) {
-            $query->whereBetween('date', [$start_date, $end_date]);
-        }, 'leaves' => function ($query) use ($start_date, $end_date) {
-            $query->whereBetween('start_date', [$start_date, $end_date]);
-        }])->get();
+        $users = User::with(['customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }, 'roles'])->whereHas('roles', function($query) {
+            $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
+        })->get();
 
         return DataTables::of($users)
             ->addIndexColumn()
