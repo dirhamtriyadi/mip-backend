@@ -109,7 +109,7 @@
                             class="nav-link {{ Route::is('attendances.*') | Route::is('attendance-reports.*') | Route::is('leaves.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-briefcase"></i>
                             <p>
-                                Absen
+                                Kehadiran
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -119,7 +119,7 @@
                                     <a href="{{ route('attendances.index') }}"
                                         class="nav-link {{ Route::is('attendances.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Absen</p>
+                                        <p>Kehadiran</p>
                                     </a>
                                 </li>
                             @endcan
@@ -170,7 +170,7 @@
                                 <a href="{{ route('attendance-reports.index') }}"
                                     class="nav-link {{ Route::is('attendance-reports.*') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Laporan Absen</p>
+                                    <p>Laporan Kehadiran</p>
                                 </a>
                             </li>
                         @endcan
