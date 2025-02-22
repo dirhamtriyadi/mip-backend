@@ -9,6 +9,7 @@ use App\Exports\OfficerReportExport;
 use App\Exports\OfficerReportByUserExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OfficerReportController extends Controller
 {
@@ -93,5 +94,26 @@ class OfficerReportController extends Controller
         }
 
         return Excel::download(new OfficerReportByUserExport($start_date, $end_date, $request->user_id), Carbon::now()->toDateString() . '-officer-reports-' . $user->name . '.xls');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        // get request start_date and end_date or set default this month
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
+        $officerReports = User::with(['customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }, 'roles'])->whereHas('roles', function($query) {
+            $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
+        })->get();
+
+        $pdf = Pdf::loadView('officer-reports.pdf', [
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'data' => $officerReports,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('pdf');
     }
 }

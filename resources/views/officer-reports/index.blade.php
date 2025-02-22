@@ -88,13 +88,29 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        {{-- Create to import data from excel --}}
-                                        <form action="{{ route('officer-reports.export') }}" method="get">
-                                            <input type="hidden" class="form-control" name="start_date" placeholder="Masukan Tanggal" value="{{ $start_date }}">
-                                            <input type="hidden" class="form-control" name="end_date" placeholder="Masukan Tanggal" value="{{ $end_date }}">
-                                            <button type="submit" class="btn btn-success mb-3 mr-1"><i class="fas fa-file-excel"></i> Export</button>
-                                        </form>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="d-flex flex-column justify-content-center">
+                                            {{-- Create to import data from excel --}}
+                                            <form action="{{ route('officer-reports.export') }}" method="get">
+                                                <input type="hidden" class="form-control" name="start_date"
+                                                    placeholder="Masukan Tanggal" value="{{ $start_date }}">
+                                                <input type="hidden" class="form-control" name="end_date"
+                                                    placeholder="Masukan Tanggal" value="{{ $end_date }}">
+                                                <button type="submit" class="btn btn-success mb-3 mr-1"><i
+                                                        class="fas fa-file-excel"></i> Export</button>
+                                            </form>
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            {{-- Create to import data from excel --}}
+                                            <form action="{{ route('officer-reports.exportPdf') }}" method="get">
+                                                <input type="hidden" class="form-control" name="start_date"
+                                                    placeholder="Masukan Tanggal" value="{{ $start_date }}">
+                                                <input type="hidden" class="form-control" name="end_date"
+                                                    placeholder="Masukan Tanggal" value="{{ $end_date }}">
+                                                <button type="submit" class="btn btn-danger mb-3 mr-1"><i
+                                                        class="fas fa-file-pdf"></i> Export</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
@@ -174,8 +190,8 @@
 
             // DataTables
             $("#table").DataTable({
-                "processing":true,
-                "serverSide":true,
+                "processing": true,
+                "serverSide": true,
                 "ajax": {
                     "url": "{{ route('officer-reports.index') }}/fetch-data-table",
                     "type": "post",
@@ -192,18 +208,33 @@
                     [10, 25, 50, 100, "All"]
                 ],
                 "autoWidth": false,
-                "columns": [
-                    { "data": "DT_RowIndex" },
-                    { "data": "name" },
-                    { "data": "visit" },
-                    { "data": "promise_to_pay" },
-                    { "data": "pay" },
-                    { "data": "total_pay" },
-                    { "data": "action" }
+                "columns": [{
+                        "data": "DT_RowIndex"
+                    },
+                    {
+                        "data": "name"
+                    },
+                    {
+                        "data": "visit"
+                    },
+                    {
+                        "data": "promise_to_pay"
+                    },
+                    {
+                        "data": "pay"
+                    },
+                    {
+                        "data": "total_pay"
+                    },
+                    {
+                        "data": "action"
+                    }
                 ],
-                "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 6] }
-                ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "searchable": false,
+                    "targets": [0, 6]
+                }],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
             });
