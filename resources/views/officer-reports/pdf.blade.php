@@ -85,7 +85,7 @@
     <div>
         <div>
             <h1>Laporan Petugas</h1>
-            <p>Tanggal : {{ $start_date }} s/d {{ $end_date }}</p>
+            <p>Periode: {{ $start_date }} s/d {{ $end_date }}</p>
         </div>
         <table>
             <thead>
