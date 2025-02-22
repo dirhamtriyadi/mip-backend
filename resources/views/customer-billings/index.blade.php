@@ -134,7 +134,7 @@
                 <form action="{{ route('customer-billings.import') }}" method="post" enctype="multipart/form-data">
                     <div class="modal-body">
                         @csrf
-                        <div class="form-group" id="form-mass-select-officer">
+                        <div class="form-group">
                             <label for="bank_id">Bank</label>
                             <select name="bank_id" id="bank_id" class="form-control">
                                 <option value="">Pilih Bank</option>
@@ -186,7 +186,7 @@
                 <form id="form-mass-select-officer">
                     <div class="modal-body">
                         @csrf
-                        <div class="form-group" id="form-mass-select-officer">
+                        <div class="form-group">
                             <label for="user_id">Petugas</label>
                             <select name="user_id" id="user_id" class="form-control">
                                 <option value="">Pilih Petugas</option>
