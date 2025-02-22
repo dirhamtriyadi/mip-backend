@@ -12,6 +12,7 @@ use App\Exports\AttendanceReportExport;
 use App\Exports\AttendanceReportByUserExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AttendanceReportController extends Controller implements HasMiddleware
 {
@@ -181,5 +182,26 @@ class AttendanceReportController extends Controller implements HasMiddleware
         }
 
         return Excel::download(new AttendanceReportByUserExport($start_date, $end_date, $request->user_id), Carbon::now()->toDateString() . '-attendance-reports-' . $user->name . '.xls');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        // get request start_date and end_date or set default this month
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
+        $attendanceReports = User::with(['customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }, 'roles'])->whereHas('roles', function($query) {
+            $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
+        })->get();
+
+        $pdf = Pdf::loadView('attendance-reports.pdf', [
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'data' => $attendanceReports,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('pdf');
     }
 }
