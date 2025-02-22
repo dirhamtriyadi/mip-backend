@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
+use App\Exports\OfficerReportExport;
+// use App\Exports\AttendanceReportByUserExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class OfficerReportController extends Controller
 {
@@ -67,14 +71,14 @@ class OfficerReportController extends Controller
             ->toJson();
     }
 
-    // public function export(Request $request)
-    // {
-    //     // get request start_date and end_date or set default this month
-    //     $start_date = $request->start_date ?? date('Y-m-01');
-    //     $end_date = $request->end_date ?? date('Y-m-t');
+    public function export(Request $request)
+    {
+        // get request start_date and end_date or set default this month
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
 
-    //     return Excel::download(new AttendanceReportExport($start_date, $end_date), Carbon::now()->toDateString() . '-attendance-reports.xls');
-    // }
+        return Excel::download(new OfficerReportExport($start_date, $end_date), Carbon::now()->toDateString() . '-officer-reports.xls');
+    }
 
     // public function exportByUser(Request $request)
     // {

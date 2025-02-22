@@ -71,10 +71,10 @@ Route::middleware('auth')->group(function () {
     Route::post('customer-billing-reports/fetch-data-table', [CustomerBillingReportController::class, 'fetchDataTable'])->name('customer-billing-reports.fetchDataTable');
     Route::get('customer-billing-reports/export', [CustomerBillingReportController::class, 'export'])->name('customer-billing-reports.export');
 
-    // Route laporan
+    // Route laporan petugas
     Route::get('officer-reports', [OfficerReportController::class, 'index'])->name('officer-reports.index');
     Route::post('officer-reports/fetch-data-table', [OfficerReportController::class, 'fetchDataTable'])->name('officer-reports.fetchDataTable');
-    // Route::get('officer-reports/export', [OfficerReportController::class, 'export'])->name('officer-reports.export');
+    Route::get('officer-reports/export', [OfficerReportController::class, 'export'])->name('officer-reports.export');
     // Route::get('officer-reports/export-by-user', [OfficerReportController::class, 'exportByUser'])->name('officer-reports.exportByUser');
 
     // Route user
