@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
 use App\Exports\OfficerReportExport;
-// use App\Exports\AttendanceReportByUserExport;
+use App\Exports\OfficerReportByUserExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 
@@ -55,19 +55,14 @@ class OfficerReportController extends Controller
             ->addColumn('total_pay', function ($user) {
                 return optional($user->customerBillingFollowups)->where('status', 'pay')->sum('payment_amount') ?? 0;
             })
-            ->addColumn('leave', function ($user) {
-                return view('attendance-reports.leave', [
-                    'value' => $user,
-                ]);
-            })
             ->addColumn('action', function ($user) use ($start_date, $end_date) {
-                return view('attendance-reports.action', [
+                return view('officer-reports.action', [
                     'start_date' => $start_date,
                     'end_date' => $end_date,
                     'value' => $user,
                 ]);
             })
-            ->rawColumns(['leave', 'action'])
+            ->rawColumns(['action'])
             ->toJson();
     }
 
@@ -80,23 +75,23 @@ class OfficerReportController extends Controller
         return Excel::download(new OfficerReportExport($start_date, $end_date), Carbon::now()->toDateString() . '-officer-reports.xls');
     }
 
-    // public function exportByUser(Request $request)
-    // {
-    //     // get request start_date and end_date or set default this month
-    //     $start_date = $request->start_date ?? date('Y-m-01');
-    //     $end_date = $request->end_date ?? date('Y-m-t');
-    //     $user_id = $request->user_id;
+    public function exportByUser(Request $request)
+    {
+        // get request start_date and end_date or set default this month
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+        $user_id = $request->user_id;
 
-    //     if(!$user_id){
-    //         return redirect()->back()->with('error', 'User id is required');
-    //     }
+        if(!$user_id){
+            return redirect()->back()->with('error', 'User id is required');
+        }
 
-    //     $user = User::find($user_id);
+        $user = User::find($user_id);
 
-    //     if(!$user){
-    //         return redirect()->back()->with('error', 'User not found');
-    //     }
+        if(!$user){
+            return redirect()->back()->with('error', 'User not found');
+        }
 
-    //     return Excel::download(new AttendanceReportByUserExport($start_date, $end_date, $request->user_id), Carbon::now()->toDateString() . '-attendance-reports-' . $user->name . '.xls');
-    // }
+        return Excel::download(new OfficerReportByUserExport($start_date, $end_date, $request->user_id), Carbon::now()->toDateString() . '-officer-reports-' . $user->name . '.xls');
+    }
 }
