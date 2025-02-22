@@ -22,10 +22,10 @@ class AttendanceController extends Controller implements HasMiddleware
         return [
             // 'auth',
             // new Middleware('subscribed', except: ['store']),
-            new Middleware('permission:absen.index', only: ['index']),
-            new Middleware('permission:absen.create', only: ['index', 'create', 'store']),
-            new Middleware('permission:absen.edit', only: ['index', 'edit', 'update']),
-            new Middleware('permission:absen.delete', only: ['index', 'destroy']),
+            new Middleware('permission:kehadiran.index', only: ['index']),
+            new Middleware('permission:kehadiran.create', only: ['index', 'create', 'store']),
+            new Middleware('permission:kehadiran.edit', only: ['index', 'edit', 'update']),
+            new Middleware('permission:kehadiran.delete', only: ['index', 'destroy']),
         ];
     }
 

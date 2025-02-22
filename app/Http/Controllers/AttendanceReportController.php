@@ -24,10 +24,10 @@ class AttendanceReportController extends Controller implements HasMiddleware
         return [
             // 'auth',
             // new Middleware('subscribed', except: ['store']),
-            new Middleware('permission:laporan-absen.index', only: ['index']),
-            new Middleware('permission:laporan-absen.create', only: ['index', 'create', 'store']),
-            new Middleware('permission:laporan-absen.edit', only: ['index', 'edit', 'update']),
-            new Middleware('permission:laporan-absen.delete', only: ['index', 'destroy']),
+            new Middleware('permission:laporan-kehadiran.index', only: ['index']),
+            new Middleware('permission:laporan-kehadiran.create', only: ['index', 'create', 'store']),
+            new Middleware('permission:laporan-kehadiran.edit', only: ['index', 'edit', 'update']),
+            new Middleware('permission:laporan-kehadiran.delete', only: ['index', 'destroy']),
         ];
     }
 
