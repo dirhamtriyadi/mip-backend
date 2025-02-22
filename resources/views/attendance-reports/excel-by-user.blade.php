@@ -7,7 +7,7 @@
     <tr>
         <td>NIK</td>
         <td>:</td>
-        <td>{{ $data->nik }}</td>
+        <td>{{ $data->detail_users->nik ?? '-' }}</td>
     </tr>
     <tr></tr>
     <thead>
