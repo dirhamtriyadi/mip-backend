@@ -80,28 +80,28 @@ class CustomerBillingReportController extends Controller
                 return optional($customerBilling->customer->bank)->name ?? '-';
             })
             ->editColumn('status', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->last())->status ? '<span class="badge badge-' . $customerBilling->latestBillingFollowups->last()->status->color() . '">' . $customerBilling->latestBillingFollowups->last()->status->label() . '</span>' : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->status ? '<span class="badge badge-' . $customerBilling->latestBillingFollowups->first()->status->color() . '">' . $customerBilling->latestBillingFollowups->first()->status->label() . '</span>' : '-';
             })
             ->addColumn('date_exec', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->last())->date_exec ? Carbon::parse($customerBilling->latestBillingFollowups->last()->date_exec)->format('d-m-Y') : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->date_exec ? Carbon::parse($customerBilling->latestBillingFollowups->first()->date_exec)->format('d-m-Y') : '-';
             })
             ->addColumn('promise_date', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->last())->promise_date ? Carbon::parse($customerBilling->latestBillingFollowups->last()->promise_date)->format('d-m-Y') : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->promise_date ? Carbon::parse($customerBilling->latestBillingFollowups->first()->promise_date)->format('d-m-Y') : '-';
             })
             ->addColumn('payment_amount', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->last())->payment_amount ?  'Rp ' . number_format($customerBilling->latestBillingFollowups->last()->payment_amount, 0, ',', '.') : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->payment_amount ?  'Rp ' . number_format($customerBilling->latestBillingFollowups->first()->payment_amount, 0, ',', '.') : '-';
             })
             ->addColumn('proof', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->last())->proof ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->last()->proof) . '" target="_blank">Lihat</a>' : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->proof ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->first()->proof) . '" target="_blank">Lihat</a>' : '-';
             })
             ->addColumn('description', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->last())->description ?? '-';
+                return optional($customerBilling->latestBillingFollowups->first())->description ?? '-';
             })
             ->addColumn('signature_officer', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->last())->signature_officer ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->last()->signature_officer) . '" target="_blank">Lihat</a>' : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->signature_officer ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->first()->signature_officer) . '" target="_blank">Lihat</a>' : '-';
             })
             ->addColumn('signature_customer', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->last())->signature_customer ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->last()->signature_customer) . '" target="_blank">Lihat</a>' : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->signature_customer ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->first()->signature_customer) . '" target="_blank">Lihat</a>' : '-';
             })
             ->addColumn('details', function ($customerBilling) {
                 return;
