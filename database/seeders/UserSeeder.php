@@ -55,6 +55,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin MIP',
             'email' => 'adminmip@gmail.com',
             'password' => bcrypt('password'),
+            'bank_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -74,6 +75,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin HIK',
             'email' => 'adminhik@gmail.com',
             'password' => bcrypt('password'),
+            'bank_id' => 2,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -93,6 +95,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin Almabrur',
             'email' => 'adminalmabrur@gmail.com',
             'password' => bcrypt('password'),
+            'bank_id' => 3,
             'created_at' => now(),
             'updated_at' => now()
         ]);
