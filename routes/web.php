@@ -14,6 +14,7 @@ use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\BankContoller;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ProfileController;
 
 // Route khusus guest
 Route::middleware(['guest'])->group(function () {
@@ -86,4 +87,9 @@ Route::middleware('auth')->group(function () {
     // Route roles
     Route::resource('roles', RoleController::class);
     Route::post('roles/fetch-data-table', [RoleController::class, 'fetchDataTable'])->name('roles.fetchDataTable');
+
+    // Route profile
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 });

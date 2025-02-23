@@ -134,8 +134,13 @@
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="far fa-user"></i>
             </a>
-            <div class="dropdown-menu">
-                {{-- logout --}}
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                {{-- Profile --}}
+                <a href="{{ route('profile.index') }}" class="dropdown-item text-center">
+                    <i class="fas fa-user-circle"></i> Profile
+                </a>
+                <div class="dropdown-divider"></div>
+                {{-- Logout --}}
                 <a href="{{ route('logout') }}" class="dropdown-item text-center">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
