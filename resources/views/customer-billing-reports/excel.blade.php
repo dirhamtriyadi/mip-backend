@@ -53,7 +53,7 @@
                 <td>{{ $value->latestBillingFollowups->last()->status ?? '-' }}</td>
                 <td>
                     @if ($latestFollowup && $latestFollowup->proof)
-                        {!! '<img src="' . $latestFollowup->proof . '" alt="Bukti Penagihan" width="100">' !!}
+                        {{ asset('images/customer-billings/' . $latestFollowup->proof) }}
                     @else
                         -
                     @endif
@@ -63,14 +63,14 @@
                 <td>{{ $value->latestBillingFollowups->last()->description ?? '-' }}</td>
                 <td>
                     @if ($latestFollowup && $latestFollowup->signature_officer)
-                        {!! '<img src="' . $latestFollowup->signature_officer . '" alt="TTD Petugas" width="100">' !!}
+                        {{ asset('images/customer-billings/' . $latestFollowup->signature_officer) }}
                     @else
                         -
                     @endif
                 </td>
                 <td>
                     @if ($latestFollowup && $latestFollowup->signature_customer)
-                        {!! '<img src="' . $latestFollowup->signature_customer . '" alt="TTD Nasabah" width="100">' !!}
+                        {{ asset('images/customer-billings/' . $latestFollowup->signature_customer) }}
                     @else
                         -
                     @endif
