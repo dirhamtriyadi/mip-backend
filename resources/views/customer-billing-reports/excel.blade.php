@@ -30,7 +30,7 @@
     <tbody>
         @foreach ($data as $item => $value)
             @php
-                $latestFollowup = $value->latestBillingFollowups->last() ?? null;
+                $latestFollowup = $value->latestBillingFollowups->first() ?? null;
             @endphp
             <tr>
                 <td>{{ $item + 1 }}</td>
@@ -48,9 +48,9 @@
                 <td>{{ $value->customer->installments ?? '-' }}</td>
                 <td>{{ $value->customer->month_arrears ?? '-' }}</td>
                 <td>{{ $value->customer->arrears ?? '-' }}</td>
-                <td>{{ $value->latestBillingFollowups->last()->date_exec ?? '-' }}</td>
+                <td>{{ $value->latestBillingFollowups->first()->date_exec ?? '-' }}</td>
                 <td>{{ $value->customer->bank->name ?? '-' }}</td>
-                <td>{{ $value->latestBillingFollowups->last()->status ?? '-' }}</td>
+                <td>{{ $value->latestBillingFollowups->first()->status ?? '-' }}</td>
                 <td>
                     @if ($latestFollowup && $latestFollowup->proof)
                         {{-- {{ asset('images/customer-billings/' . $latestFollowup->proof) }} --}}
@@ -59,9 +59,9 @@
                         -
                     @endif
                 </td>
-                <td>{{ $value->latestBillingFollowups->last()->promise_date ?? '-' }}</td>
-                <td>{{ $value->latestBillingFollowups->last()->payment_amount ?? '-' }}</td>
-                <td>{{ $value->latestBillingFollowups->last()->description ?? '-' }}</td>
+                <td>{{ $value->latestBillingFollowups->first()->promise_date ?? '-' }}</td>
+                <td>{{ $value->latestBillingFollowups->first()->payment_amount ?? '-' }}</td>
+                <td>{{ $value->latestBillingFollowups->first()->description ?? '-' }}</td>
                 <td>
                     @if ($latestFollowup && $latestFollowup->signature_officer)
                         {{-- {{ asset('images/customer-billings/' . $latestFollowup->signature_officer) }} --}}
