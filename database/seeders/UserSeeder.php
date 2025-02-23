@@ -34,6 +34,22 @@ class UserSeeder extends Seeder
 
         $superAdmin->assignRole($roleSuperAdmin);
 
+        // Create admin bank permissions
+        $roleAdminBankPermissions = [
+            'laporan-penagihan.index',
+            'laporan-penagihan.data-my-bank',
+            'laporan-penagihan.create',
+            'laporan-penagihan.edit',
+            'laporan-penagihan.delete',
+        ];
+
+        // Ensure permissions exist
+        foreach ($roleAdminBankPermissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+        }
+
+        $roleAdminBank = Permission::whereIn('name', $roleAdminBankPermissions)->get();
+
         // Create admin MIP
         $adminMIP = User::create([
             'name' => 'Admin MIP',
@@ -68,7 +84,7 @@ class UserSeeder extends Seeder
         ]);
 
         $roleAdminHIK = Role::create(['name' => 'Admin HIK']);
-        $roleAdminHIK->givePermissionTo(Permission::all());
+        $roleAdminHIK->givePermissionTo($roleAdminBank);
 
         $adminHIK->assignRole($roleAdminHIK);
 
@@ -87,7 +103,7 @@ class UserSeeder extends Seeder
         ]);
 
         $roleAdminAlmabrur = Role::create(['name' => 'Admin Almabrur']);
-        $roleAdminAlmabrur->givePermissionTo(Permission::all());
+        $roleAdminAlmabrur->givePermissionTo($roleAdminBank);
 
         $adminAlmabrur->assignRole($roleAdminAlmabrur);
 
@@ -104,5 +120,13 @@ class UserSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        $roleSurveyor = Role::create(['name' => 'Surveyor']);
+
+        $user->assignRole($roleSurveyor);
+
+        $rolePenagih = Role::create(['name' => 'Penagih']);
+
+        $user->assignRole($rolePenagih);
     }
 }
