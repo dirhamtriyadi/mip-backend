@@ -57,7 +57,7 @@
                                 <div class="d-flex justify-content-between">
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="start_date">Rentang Tanggal</label>
-                                        <form action="{{ route('billing-reports.index') }}" method="get">
+                                        <form action="{{ route('customer-billing-reports.index') }}" method="get">
                                             <div class="d-flex">
                                                 <div class="input-group date" id="start_date" data-target-input="nearest">
                                                     <input type="text" class="form-control datetimepicker-input"
