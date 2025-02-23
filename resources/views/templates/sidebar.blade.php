@@ -103,9 +103,9 @@
                 @canany(['kehadiran.index', 'kehadiran.create', 'kehadiran.edit', 'kehadiran.delete', 'cuti.index',
                     'cuti.create', 'cuti.edit', 'cuti.delete'])
                     <li
-                        class="nav-item {{ Route::is('attendances.*') | Route::is('attendance-reports.*') | Route::is('leaves.*') ? 'menu-open' : '' }}">
+                        class="nav-item {{ Route::is('attendances.*') | Route::is('leaves.*') ? 'menu-open' : '' }}">
                         <a href="#"
-                            class="nav-link {{ Route::is('attendances.*') | Route::is('attendance-reports.*') | Route::is('leaves.*') ? 'active' : '' }}">
+                            class="nav-link {{ Route::is('attendances.*') | Route::is('leaves.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-briefcase"></i>
                             <p>
                                 Kehadiran
