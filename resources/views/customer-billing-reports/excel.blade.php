@@ -53,7 +53,8 @@
                 <td>{{ $value->latestBillingFollowups->last()->status ?? '-' }}</td>
                 <td>
                     @if ($latestFollowup && $latestFollowup->proof)
-                        {{ asset('images/customer-billings/' . $latestFollowup->proof) }}
+                        {{-- {{ asset('images/customer-billings/' . $latestFollowup->proof) }} --}}
+                        <a href="{{ asset('images/customer-billings/' . $latestFollowup->proof) }}" target="_blank">Lihat</a>
                     @else
                         -
                     @endif
@@ -63,14 +64,16 @@
                 <td>{{ $value->latestBillingFollowups->last()->description ?? '-' }}</td>
                 <td>
                     @if ($latestFollowup && $latestFollowup->signature_officer)
-                        {{ asset('images/customer-billings/' . $latestFollowup->signature_officer) }}
+                        {{-- {{ asset('images/customer-billings/' . $latestFollowup->signature_officer) }} --}}
+                        <a href="{{ asset('images/customer-billings/' . $latestFollowup->signature_officer) }}" target="_blank">Lihat</a>
                     @else
                         -
                     @endif
                 </td>
                 <td>
                     @if ($latestFollowup && $latestFollowup->signature_customer)
-                        {{ asset('images/customer-billings/' . $latestFollowup->signature_customer) }}
+                        {{-- {{ asset('images/customer-billings/' . $latestFollowup->signature_customer) }} --}}
+                        <a href="{{ asset('images/customer-billings/' . $latestFollowup->signature_customer) }}" target="_blank">Lihat</a>
                     @else
                         -
                     @endif
