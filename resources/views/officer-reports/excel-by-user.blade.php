@@ -42,18 +42,30 @@
                 <td>{{ $value->date_exec }}</td>
                 <td>{{ $value->promise_date }}</td>
                 <td>{{ $value->payment_amount }}</td>
-                <td>{{ $value->proof }}</td>
+                <td>
+                    @if ($value->proof)
+                        {{-- {!! '<img src="' . $value->proof . '" alt="Bukti" width="100">' !!} --}}
+                        {{-- {{ asset('images/customer-billings/' . $value->proof) }} --}}
+                        <a href="{{ asset('images/customer-billings/' . $value->proof) }}" target="_blank">Lihat</a>
+                    @else
+                        -
+                    @endif
+                </td>
                 <td>{{ $value->description }}</td>
                 <td>
                     @if ($value->signature_officer)
-                        {!! '<img src="' . $value->signature_officer . '" alt="TTD Petugas" width="100">' !!}
+                        {{-- {!! '<img src="' . $value->signature_officer . '" alt="TTD Petugas" width="100">' !!} --}}
+                        {{-- {{ asset('images/customer-billings/' . $value->signature_officer) }} --}}
+                        <a href="{{ asset('images/customer-billings/' . $value->signature_officer) }}" target="_blank">Lihat</a>
                     @else
                         -
                     @endif
                 </td>
                 <td>
                     @if ($value->signature_customer)
-                        {!! '<img src="' . $value->signature_customer . '" alt="TTD Nasabah" width="100">' !!}
+                        {{-- {!! '<img src="' . $value->signature_customer . '" alt="TTD Nasabah" width="100">' !!} --}}
+                        {{-- {{ asset('images/customer-billings/' . $value->signature_customer) }} --}}
+                        <a href="{{ asset('images/customer-billings/' . $value->signature_customer) }}" target="_blank">Lihat</a>
                     @else
                         -
                     @endif
