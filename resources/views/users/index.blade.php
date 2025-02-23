@@ -63,6 +63,7 @@
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama</th>
+                                                <th>Bank</th>
                                                 <th>Email</th>
                                                 <th>NIK</th>
                                                 <th>Role</th>
@@ -139,6 +140,7 @@
                 "columns": [
                     { "data": "DT_RowIndex" },
                     { "data": "name" },
+                    { "data": "bank" },
                     { "data": "email" },
                     { "data": "nik" },
                     { "data": "role" },
