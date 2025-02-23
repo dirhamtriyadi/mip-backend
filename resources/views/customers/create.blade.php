@@ -361,6 +361,22 @@
                 // 'unmaskAsNumber': true,
                 'removeMaskOnSubmit': true
             });
+            // Input arrears to currency Rupiah
+            $('#arrears').inputmask('numeric', {
+                'alias': 'numeric',
+                'groupSeparator': '.',
+                'autoGroup': true,
+                'digits': 0,
+                'digitsOptional': false,
+                'prefix': 'Rp ',
+                'placeholder': '0',
+                'rightAlign': false,
+                'allowMinus': false,
+                'allowPlus': false,
+                // 'autoUnmask': true,
+                // 'unmaskAsNumber': true,
+                'removeMaskOnSubmit': true
+            });
         })
     </script>
 @endpush
