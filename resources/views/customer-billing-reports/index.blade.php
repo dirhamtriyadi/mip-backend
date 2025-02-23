@@ -160,7 +160,7 @@
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('customer-billings.index') }}/fetch-data-table",
+                    "url": "{{ route('customer-billing-reports.index') }}/fetch-data-table",
                     "type": "post",
                     "data": {
                         "_token": "{{ csrf_token() }}"

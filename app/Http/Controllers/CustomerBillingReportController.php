@@ -49,10 +49,20 @@ class CustomerBillingReportController extends Controller
         $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
-        $billings = CustomerBilling::with(['customer', 'user'])
-            ->get();
+        $customerBilling = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])->whereBetween('created_at', [$start_date, $end_date]);
+        if (auth()->user()->hasPermissionTo('laporan-penagihan.all-data')) {
+            $customerBilling->get();
+        } elseif (auth()->user()->hasPermissionTo('laporan-penagihan.data-my-bank')) {
+            $customerBilling = $customerBilling->whereHas('customer', function ($query) {
+                $query->where('bank_id', auth()->user()->bank_id);
+            })->get();
+        } elseif (auth()->user()->hasPermissionTo('laporan-penagihan.index')) {
+            $customerBilling = $customerBilling->where('user_id', auth()->user()->id)->get();
+        } else {
+            $customerBilling = $customerBilling->where('user_id', auth()->user()->id)->get();
+        }
 
-            return DataTables::of($customerBilling)
+        return DataTables::of($customerBilling)
             ->addColumn('select', function ($customerBilling) {
                 return '<input type="checkbox" class="checkbox" id="select-' . $customerBilling->id . '" name="checkbox[]" value="' . $customerBilling->id . '">';
             })

@@ -61,6 +61,7 @@ class PermissionTableSeeder extends Seeder
             'laporan-kehadiran.delete',
             'laporan-penagihan.index',
             'laporan-penagihan.all-data',
+            'laporan-penagihan.data-my-bank',
             'laporan-penagihan.create',
             'laporan-penagihan.edit',
             'laporan-penagihan.delete',
