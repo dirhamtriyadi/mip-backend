@@ -10,6 +10,7 @@ class Bank extends Model
 
     protected $fillable = [
         'name',
+        'branch_code',
     ];
 
     public function customers()

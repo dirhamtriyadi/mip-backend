@@ -43,11 +43,6 @@ class Customer extends Model
     //     return $this->belongsTo(User::class, 'user_id');
     // }
 
-    public function billing()
-    {
-        return $this->hasMany(Billing::class);
-    }
-
     public function customerAddress()
     {
         return $this->hasOne(CustomerAddress::class, 'customer_id');

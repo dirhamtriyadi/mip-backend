@@ -81,7 +81,7 @@ class CustomerBillingController extends Controller
     public function show(string $id)
     {
         $user = auth()->user();
-        $customerBilling = CustomerBilling::where('user_id', $user->id)->where('id', $id)->first();
+        $customerBilling = CustomerBilling::with('customer', 'customer.customerAddress')->where('user_id', $user->id)->where('id', $id)->first();
 
         if (!$customerBilling) {
             return response()->json([
