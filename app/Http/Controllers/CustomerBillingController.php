@@ -134,7 +134,21 @@ class CustomerBillingController extends Controller implements HasMiddleware
 
         $customer = Customer::findOrFail($validatedData['customer_id']);
         if ($validatedData['bill_number'] === null) {
-            $validatedData['bill_number'] = Carbon::now()->format('YmdHis') . $customer->no;
+            $datePrefix = Carbon::now()->format('Ymd'); // YYYYMMDD
+            $lastBill = CustomerBilling::where('bill_number', 'like', "$datePrefix%")
+                ->latest('bill_number')
+                ->first();
+
+            if ($lastBill) {
+                // Ambil nomor terakhir dan tambahkan 1
+                $lastNumber = (int) substr($lastBill->bill_number, -4);
+                $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+            } else {
+                // Jika belum ada, mulai dari 0001
+                $nextNumber = '0001';
+            }
+
+            $validatedData['bill_number'] = $datePrefix . $nextNumber;
         }
         $validatedData['created_by'] = auth()->id();
 

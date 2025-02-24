@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use App\Models\Customer;
 use Carbon\Carbon;
+use App\Models\CustomerBilling;
 
 class CustomerBillingImport implements ToModel, WithHeadingRow
 {
@@ -55,9 +56,25 @@ class CustomerBillingImport implements ToModel, WithHeadingRow
             'subdistrict' => $row['subdistrict'] ?? $row['kecamatan'] ?? null,
         ]);
 
+        $datePrefix = Carbon::now()->format('Ymd'); // YYYYMMDD
+        $lastBill = CustomerBilling::where('bill_number', 'like', "$datePrefix%")
+            ->latest('bill_number')
+            ->first();
+
+        if ($lastBill) {
+            // Ambil nomor terakhir dan tambahkan 1
+            $lastNumber = (int) substr($lastBill->bill_number, -4);
+            $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            // Jika belum ada, mulai dari 0001
+            $nextNumber = '0001';
+        }
+
+        // Buatkan Customer Billing baru jika nomor kontrak tidak sama dengan import yang baru
         $customerBilling = $customer->customerBilling()->firstOrCreate([
             'customer_id' => $customer->id,
-            'bill_number' => Carbon::now()->format('YmdHis') . $customer->no,
+        ], [
+            'bill_number' => $datePrefix . $nextNumber,
         ]);
 
         $customerBilling->update([
