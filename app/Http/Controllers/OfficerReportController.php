@@ -67,6 +67,23 @@ class OfficerReportController extends Controller
             ->toJson();
     }
 
+    public function show(Request $request, string $id)
+    {
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
+        // get all users with attendances between start_date and end_date with deleted_at and deteled_by is null
+        $officerReports = User::with(['customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('date_exec', [$start_date, $end_date]);
+        }, 'roles'])->whereHas('roles', function($query) {
+            $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
+        })->find($id);
+
+        return view('officer-reports.show', [
+            'officerReports' => $officerReports,
+        ]);
+    }
+
     public function export(Request $request)
     {
         // get request start_date and end_date or set default this month

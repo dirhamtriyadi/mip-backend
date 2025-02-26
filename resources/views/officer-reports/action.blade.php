@@ -1,8 +1,11 @@
 <div class="d-flex justify-content-center">
-    <button id="btn-detail" type="button" class="btn btn-sm btn-info" data-toggle="modal"
-        data-target="#modal-xl" data-officerReport="{{ $value }}">
-        <i class="fas fa-eye"></i>
-    </button>
+    <form action="{{ route('officer-reports.show', $value->id) }}" method="get">
+        <input type="hidden" class="form-control" name="start_date" placeholder="Masukan Tanggal" value="{{ $start_date }}">
+        <input type="hidden" class="form-control" name="end_date" placeholder="Masukan Tanggal" value="{{ $end_date }}">
+        <button type="submit" class="btn btn-sm btn-info">
+            <i class="fas fa-eye"></i>
+        </button>
+    </form>
     <form action="{{ route('officer-reports.exportByUser') }}" method="get">
         <input type="hidden" class="form-control" name="start_date" placeholder="Masukan Tanggal" value="{{ $start_date }}">
         <input type="hidden" class="form-control" name="end_date" placeholder="Masukan Tanggal" value="{{ $end_date }}">

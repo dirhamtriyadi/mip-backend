@@ -79,6 +79,7 @@ Route::middleware('auth')->group(function () {
     Route::get('officer-reports/export', [OfficerReportController::class, 'export'])->name('officer-reports.export');
     Route::get('officer-reports/export-by-user', [OfficerReportController::class, 'exportByUser'])->name('officer-reports.exportByUser');
     Route::get('officer-reports/export-pdf', [OfficerReportController::class, 'exportPdf'])->name('officer-reports.exportPdf');
+    Route::get('officer-reports/{id}', [OfficerReportController::class, 'show'])->name('officer-reports.show');
 
     // Route user
     Route::resource('users', UserController::class);
