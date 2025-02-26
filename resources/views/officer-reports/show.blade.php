@@ -115,7 +115,7 @@
                                                     <td>{{ $officerReport + 1 }}</td>
                                                     <td>{{ $value->date_exec }}</td>
                                                     <td>{{ $value->name }}</td>
-                                                    <td>{{ $value->status }}</td>
+                                                    <td><span class="badge badge-{{ $value->status->color() }}">{{ $value->status->label() }}</span></td>
                                                     <td>Rp. {{ number_format($value->payment_amount, 0, ',', '.') }}</td>
                                                 </tr>
                                             @empty
