@@ -224,7 +224,8 @@
                         "data": "pay"
                     },
                     {
-                        "data": "total_pay"
+                        "data": "total_pay",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
                     },
                     {
                         "data": "action"
