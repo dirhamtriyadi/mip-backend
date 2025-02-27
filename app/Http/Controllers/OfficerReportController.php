@@ -108,7 +108,7 @@ class OfficerReportController extends Controller
                 return $data->customerBilling->customer->name_customer ?? '-';
             })
             ->editColumn('status', function ($data) {
-                return $data->status ? '<span class="badge badge-' . $value->status->color() . '">' . $value->status->label() . '</span>' : '-' ;
+                return $data->status ? '<span class="badge badge-' . $data->status->color() . '">' . $data->status->label() . '</span>' : '-' ;
             })
             ->rawColumns(['status'])
             ->toJson();
