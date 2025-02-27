@@ -155,6 +155,47 @@ class AttendanceReportController extends Controller implements HasMiddleware
     //     ]);
     // }
 
+    public function show(Request $request, string $id)
+    {
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
+        $attendanceReport = User::with(['attendances' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('date', [$start_date, $end_date]);
+        }, 'leaves' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('start_date', [$start_date, $end_date]);
+        }])->findOrFail($id);
+
+        return view('attendance-reports.show', [
+            'attendanceReport' => $attendanceReport,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+        ]);
+    }
+
+    public function fetchDataTableByUser(Request $request)
+    {
+        // Ambil start_date dan end_date dari request atau set default ke bulan ini
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+        $id = $request->id;
+
+        // Query user dengan filtering role dan customerBillingFollowups
+        $attendanceReport = User::with(['attendances' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('date', [$start_date, $end_date]);
+        }, 'leaves' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('start_date', [$start_date, $end_date]);
+        }])->findOrFail($id);
+
+        return DataTables::of($attendanceReport->attendances)
+            ->addIndexColumn()
+            ->editColumn('date', function ($data) {
+                return $data->date ? Carbon::parse($data->date)->format('d/m/Y') : '-';
+            })
+            ->rawColumns(['status'])
+            ->toJson();
+    }
+
     public function export(Request $request)
     {
         // get request start_date and end_date or set default this month

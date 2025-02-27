@@ -52,6 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::get('attendance-reports/export', [AttendanceReportController::class, 'export'])->name('attendance-reports.export');
     Route::get('attendance-reports/export-by-user', [AttendanceReportController::class, 'exportByUser'])->name('attendance-reports.exportByUser');
     Route::get('attendance-reports/export-pdf', [AttendanceReportController::class, 'exportPdf'])->name('attendance-reports.exportPdf');
+    Route::post('attendance-reports/fetch-data-table-by-user', [AttendanceReportController::class, 'fetchDataTableByUser'])->name('attendance-reports.fetchDataTableByUser');
+    Route::get('attendance-reports/{id}', [AttendanceReportController::class, 'show'])->name('attendance-reports.show');
 
     // Route cuti
     Route::resource('leaves', LeaveController::class);

@@ -168,6 +168,15 @@ Breadcrumbs::for('attendance-reports', function (BreadcrumbTrail $trail) {
     $trail->push('Attendance Reports', route('attendance-reports.index'));
 });
 
+// Dashboard > Laporan > Attendance Reports > [Attendance Report] > Show
+Breadcrumbs::for('attendance-reports.show', function (BreadcrumbTrail $trail, $officerReport) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Attendance Reports', route('attendance-reports.index'));
+    $trail->push('Show');
+    $trail->push($officerReport->name, route('attendance-reports.show', $officerReport->id));
+});
+
 // Dashboard > Laporan > Customer Billing Reports
 Breadcrumbs::for('customer-billing-reports', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

@@ -144,31 +144,6 @@
         </section>
         <!-- /.content -->
     </div>
-    {{-- Modal XL --}}
-    <div class="modal fade" id="modal-xl">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Extra Large Modal</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>One fine body&hellip;</p>
-                </div>
-                <div class="modal-footer justify-content-end">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-                {{-- <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div> --}}
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
 @endsection
 
 @push('scripts')
@@ -185,81 +160,6 @@
             });
             $('#end_date').datetimepicker({
                 format: 'YYYY-MM-DD'
-            });
-            // Attach event listener to all buttons with id 'btn-detail'
-            // Attach event listener to all buttons with id 'btn-detail'
-            // Attach event listener to all buttons with id 'btn-detail'
-            $(document).on('click', '#btn-detail', function() {
-                let data = $(this).data('attendance');
-                // reset modal title and body
-                $('.modal-title').text('');
-                $('.modal-body').html('');
-                // open modal xl
-                $('#modal-xl').modal('show');
-                // set modal title
-                $('.modal-title').text(data.name);
-                // set modal body
-                let body = '';
-                body += '<div class="table-responsive">';
-                body += '<table class="table table-bordered table-hover table-striped">';
-                body += '<thead class="table-dark">';
-                body += '<tr>';
-                body += '<th>No</th>';
-                body += '<th>Kode Absen</th>';
-                body += '<th>Tanggal</th>';
-                body += '<th>Jam Masuk</th>';
-                body += '<th>Jam Pulang</th>';
-                body += '<th>Masuk Terlambat (menit)</th>';
-                body += '<th>Pulang Lebih Awal (menit)</th>';
-                body += '<th>Tipe Absen</th>';
-                body += '<th>Keterangan Masuk</th>';
-                body += '<th>Keterangan Pulang</th>';
-                body += '<th>Gambar</th>';
-                body += '<th>Lokasi</th>';
-                body += '</tr>';
-                body += '</thead>';
-                body += '<tbody>';
-                data.attendances.forEach((item, index) => {
-                    body += '<tr>';
-                    body += '<td>' + (index + 1) + '</td>';
-                    body += '<td>' + item.code + '</td>';
-                    body += '<td>' + moment(item.date).format('DD-MM-YYYY') + '</td>';
-                    body += '<td>' + moment(item.time_check_in, 'HH:mm:ss').format('HH:mm') + '</td>';
-                    body += '<td>' + item.late_duration + '</td>'
-                    body += '<td>' + (item.early_leave_duration ?? '-') + '</td>'
-                    body += '<td>' + (item.time_check_out ? moment(item.time_check_out, 'HH:mm:ss').format('HH:mm') : '-') + '</td>';
-                    body += '<td>' + (item.type == 'present' ? '<span class="badge badge-success">' + item.type + '</span>' : (item.type == 'sick' ? '<span class="badge badge-info">' + item.type + '</span>' : '<span class="badge badge-danger">' + item.type + '</span>')) + '</td>';
-                    body += '<td>' + (item.reason_late == null ? '-' : item.reason_late) + '</td>';
-                    body += '<td>' + (item.reason_early_out == null ? '-' : item.reason_early_out) + '</td>';
-                    body += `<td>` + (item.image_check_in ? `<a href='{{ asset('images/attendances/`+item.image_check_in+`') }}' target='_blank'>Masuk</a>` : '-') + (item.image_check_out ? ` | <a href='{{ asset('images/attendances/`+item.image_check_out+`') }}' target='_blank'>Pulang</a>` : '-') + `</td>`;
-                    let locationCheckIn = item.location_check_in ? item.location_check_in.split(',') : null;
-                    let locationCheckOut = item.location_check_out ? item.location_check_out.split(',') : null;
-                    if (locationCheckIn) {
-                        let latitudeCheckIn = locationCheckIn[0];
-                        let longitudeCheckIn = locationCheckIn[1];
-                        body += `<td><a href='https://www.google.com/maps/search/?api=1&query=` + latitudeCheckIn + ',' + longitudeCheckIn + `' target='_blank'>Masuk</a>`;
-                    } else {
-                        body += '<td>-';
-                    }
-                    if (locationCheckOut) {
-                        let latitudeCheckOut = locationCheckOut[0];
-                        let longitudeCheckOut = locationCheckOut[1];
-                        body += ` | <a href='https://www.google.com/maps/search/?api=1&query=` + latitudeCheckOut + ',' + longitudeCheckOut + `' target='_blank'>Pulang</a></td>`;
-                    } else {
-                        body += '<br>-</td>';
-                    }
-                    body += '</tr>';
-                });
-                body += '</tbody>';
-                body += '</table>';
-                body += '</div>';
-                $('.modal-body').html(body);
-            });
-
-            // Reset modal content when closed
-            $('#modal-xl').on('hidden.bs.modal', function () {
-                $('.modal-title').text('');
-                $('.modal-body').html('');
             });
 
             // DataTables
