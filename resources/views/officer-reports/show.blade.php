@@ -65,12 +65,12 @@
                                         <tr>
                                             <td><b>Nama</b></td>
                                             <td>:</td>
-                                            <td>{{ $officerReports->name }}</td>
+                                            <td>{{ $officerReport->name }}</td>
                                         </tr>
                                         <tr>
                                             <td><b>NIK</b></td>
                                             <td>:</td>
-                                            <td>{{ $officerReports->detail_users->nik ?? '-' }}</td>
+                                            <td>{{ $officerReport->detail_users->nik ?? '-' }}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -110,7 +110,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($officerReports->customerBillingFollowups as $officerReport => $value)
+                                            {{-- @forelse ($officerReports->customerBillingFollowups as $officerReport => $value)
                                                 <tr>
                                                     <td>{{ $officerReport + 1 }}</td>
                                                     <td>{{ $value->date_exec }}</td>
@@ -122,7 +122,7 @@
                                                 <tr>
                                                     <td colspan="5" class="text-center">Data tidak ditemukan</td>
                                                 </tr>
-                                            @endforelse
+                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -141,3 +141,54 @@
         <!-- /.content -->
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // DataTables
+        $("#table").DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "{{ route('officer-reports.index') }}/fetch-data-table-by-officer",
+                    "type": "post",
+                    "data": {
+                        "_token": "{{ csrf_token() }}",
+                        "id": "{{ $officerReport->id }}",
+                        "start_date": "{{ $start_date }}",
+                        "end_date": "{{ $end_date }}"
+                    }
+                },
+                "responsive": true,
+                // "lengthChange": false,
+                "lengthMenu": [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+                "autoWidth": false,
+                "columns": [{
+                        "data": "DT_RowIndex"
+                    },
+                    {
+                        "data": "date_exec"
+                    },
+                    {
+                        "data": "name_customer"
+                    },
+                    {
+                        "data": "status"
+                    },
+                    {
+                        "data": "payment_amount",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    }
+                ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "searchable": false,
+                    "targets": [0, 4]
+                }],
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+            });
+    </script>
+@endpush
