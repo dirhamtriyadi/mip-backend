@@ -110,7 +110,7 @@ class OfficerReportController extends Controller
             ->editColumn('status', function ($data) {
                 return $data->status ? '<span class="badge badge-{{ $value->status->color() }}">{{ $value->status->label() }}</span>' : '-' ;
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['status'])
             ->toJson();
     }
 
