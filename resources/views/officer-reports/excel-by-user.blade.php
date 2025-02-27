@@ -71,17 +71,6 @@
                     @endif
                 </td>
             </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td>Total</td>
-                <td></td>
-                <td>{{ $value->total_amount }}</td>
-                <td></td>
-                <td><a href="{{ asset('images/customer-billings/' . $value->proof) }}" target="_blank">Lihat</a></td>
-                <td></td>
-                <td colspan="2"></td>
-            </tr>
         @empty
 
         @endforelse
