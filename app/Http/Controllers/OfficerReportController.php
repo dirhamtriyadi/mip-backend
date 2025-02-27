@@ -96,18 +96,18 @@ class OfficerReportController extends Controller
         $officerReport = User::with([
             'customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
                 $query->whereBetween('date_exec', [$start_date, $end_date])
-                    ->orderBy('date_exec', 'asc') // Urutkan berdasarkan date_exec
-                    ->whereHas('customerBilling', function ($query) {
-                        $query->whereHas('customer', function ($query) {
-                            $query->orderBy('name_customer', 'asc'); // Urutkan berdasarkan name_customer
-                        });
-                    });
+                    ->whereHas('customerBilling.customer') // Pastikan customer ada
+                    ->join('customer_billings', 'billing_followups.customer_billing_id', '=', 'customer_billings.id')
+                    ->join('customers', 'customer_billings.customer_id', '=', 'customers.id')
+                    ->orderBy('customers.name_customer', 'asc') // Urutkan berdasarkan nama customer
+                    ->orderBy('billing_followups.date_exec', 'asc') // Urutkan berdasarkan date_exec
+                    ->select('billing_followups.*'); // Pilih hanya kolom dari billing_followups untuk menghindari duplikasi data
             },
             'customerBillingFollowups.customerBilling.customer', // Pastikan customer di-load
             'roles'
         ])
         ->whereHas('roles', function ($query) {
-            $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
+            $query->whereIn('name', ['Surveyor', 'Penagih']);
         })
         ->findOrFail($id); // Ambil user berdasarkan ID
 
