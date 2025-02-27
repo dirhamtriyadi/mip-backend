@@ -107,8 +107,6 @@
                                                 <th>Tipe Absensi</th>
                                                 <th>Masuk Terlambat (menit)</th>
                                                 <th>Pulang Lebih Awal (menit)</th>
-                                                <th>Sakit</th>
-                                                <th>Izin</th>
                                             </tr>
                                         </thead>
                                         <tbody>
