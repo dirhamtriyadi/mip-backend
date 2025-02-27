@@ -86,45 +86,45 @@ class OfficerReportController extends Controller
     }
 
     public function fetchDataTableByOfficer(Request $request)
-{
-    // get request start_date and end_date or set default this month
-    $start_date = $request->start_date ?? date('Y-m-01');
-    $end_date = $request->end_date ?? date('Y-m-t');
-    $id = $request->id;
+    {
+        // Ambil start_date dan end_date dari request atau set default ke bulan ini
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+        $id = $request->id;
 
-    // Get user by id with roles
-    $officerReport = User::with([
-        'customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
-            $query->whereBetween('date_exec', [$start_date, $end_date])
-                  ->orderBy('date_exec', 'asc') // Order by date_exec as second priority
-                  ->whereHas('customerBilling', function ($query) {
-                      $query->whereHas('customer', function ($query) {
-                          $query->orderBy('name_customer', 'asc'); // Order by name_customer as first priority
-                      });
-                  });
-        },
-        'customerBillingFollowups.customerBilling.customer',
-        'roles'
-    ])
-    ->whereHas('roles', function ($query) {
-        $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
-    })
-    ->findOrFail($id);
+        // Query user dengan filtering role dan customerBillingFollowups
+        $officerReport = User::with([
+            'customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
+                $query->whereBetween('date_exec', [$start_date, $end_date])
+                    ->orderBy('date_exec', 'asc') // Urutkan berdasarkan date_exec
+                    ->whereHas('customerBilling', function ($query) {
+                        $query->whereHas('customer', function ($query) {
+                            $query->orderBy('name_customer', 'asc'); // Urutkan berdasarkan name_customer
+                        });
+                    });
+            },
+            'customerBillingFollowups.customerBilling.customer', // Pastikan customer di-load
+            'roles'
+        ])
+        ->whereHas('roles', function ($query) {
+            $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
+        })
+        ->findOrFail($id); // Ambil user berdasarkan ID
 
-    return DataTables::of($officerReport->customerBillingFollowups)
-        ->addIndexColumn()
-        ->editColumn('date_exec', function ($data) {
-            return $data->date_exec ? Carbon::parse($data->date_exec)->format('d/m/Y') : '-';
-        })
-        ->addColumn('name_customer', function ($data) {
-            return $data->customerBilling->customer->name_customer ?? '-';
-        })
-        ->editColumn('status', function ($data) {
-            return $data->status ? '<span class="badge badge-' . $data->status->color() . '">' . $data->status->label() . '</span>' : '-';
-        })
-        ->rawColumns(['status'])
-        ->toJson();
-}
+        return DataTables::of($officerReport->customerBillingFollowups)
+            ->addIndexColumn()
+            ->editColumn('date_exec', function ($data) {
+                return $data->date_exec ? Carbon::parse($data->date_exec)->format('d/m/Y') : '-';
+            })
+            ->addColumn('name_customer', function ($data) {
+                return $data->customerBilling->customer->name_customer ?? '-';
+            })
+            ->editColumn('status', function ($data) {
+                return $data->status ? '<span class="badge badge-' . $data->status->color() . '">' . $data->status->label() . '</span>' : '-';
+            })
+            ->rawColumns(['status'])
+            ->toJson();
+    }
 
     public function export(Request $request)
     {
