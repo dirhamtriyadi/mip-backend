@@ -104,7 +104,7 @@
                                             <tr>
                                                 <th>No</th>
                                                 <th>Tanggal</th>
-                                                <th>Hadir</th>
+                                                <th>Tipe Absensi</th>
                                                 <th>Masuk Terlambat (menit)</th>
                                                 <th>Pulang Lebih Awal (menit)</th>
                                                 <th>Sakit</th>
@@ -161,19 +161,13 @@
                     "data": "date"
                 },
                 {
-                    "data": "present"
+                    "data": "type"
                 },
                 {
                     "data": "late_duration"
                 },
                 {
                     "data": "early_leave_duration"
-                },
-                {
-                    "data": "sick"
-                },
-                {
-                    "data": "permit"
                 }
             ],
             "columnDefs": [{
