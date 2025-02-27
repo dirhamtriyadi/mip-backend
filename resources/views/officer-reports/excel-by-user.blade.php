@@ -29,6 +29,7 @@
             <th>TTD Nasabah</th>
         </tr>
     </thead>
+    <tbody>
         @forelse ($data->customerBillingFollowups as $item => $value)
             <tr>
                 <td>{{ $item + 1 }}</td>
@@ -74,6 +75,5 @@
         @empty
 
         @endforelse
-    <tbody>
     </tbody>
 </table>
