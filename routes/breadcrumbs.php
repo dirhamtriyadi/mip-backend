@@ -145,11 +145,20 @@ Breadcrumbs::for('customer-billings.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('customer-billings.create'));
 });
 
-// Dashboard > Laporan > Attendance Reports
+// Dashboard > Laporan > Officer Reports
 Breadcrumbs::for('officer-reports', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
     $trail->push('Laporan');
     $trail->push('Officer Reports', route('officer-reports.index'));
+});
+
+// Dashboard > Laporan > Officer Reports > [Officer Report] > Show
+Breadcrumbs::for('officer-reports.show', function (BreadcrumbTrail $trail, $officerReport) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Officer Reports', route('officer-reports.index'));
+    $trail->push('Show');
+    $trail->push($officerReport->name, route('officer-reports.show', $officerReport->id));
 });
 
 // Dashboard > Laporan > Attendance Reports

@@ -16,7 +16,7 @@
                         <h1>Detail Laporan Petugas</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{ Breadcrumbs::render('officer-reports') }}
+                        {{ Breadcrumbs::render('officer-reports.show', $officerReport) }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
