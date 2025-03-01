@@ -15,24 +15,102 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@gmail.com',
+        // Create super admin
+        $superAdmin = User::create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@gmail.com',
             'password' => bcrypt('password'),
             'created_at' => now(),
             'updated_at' => now()
         ]);
-        $admin->detail_users()->create([
+        $superAdmin->detail_users()->create([
             'nik' => '1234567890',
             'created_at' => now(),
             'updated_at' => now()
         ]);
 
-        $roleAdmin = Role::create(['name' => 'admin']);
-        $roleAdmin->givePermissionTo(Permission::all());
+        $roleSuperAdmin = Role::create(['name' => 'Super Admin']);
+        $roleSuperAdmin->givePermissionTo(Permission::all());
 
-        $admin->assignRole($roleAdmin);
+        $superAdmin->assignRole($roleSuperAdmin);
 
+        // Create admin bank permissions
+        $roleAdminBankPermissions = [
+            'laporan-penagihan.index',
+            'laporan-penagihan.data-my-bank',
+            'laporan-penagihan.create',
+            'laporan-penagihan.edit',
+            'laporan-penagihan.delete',
+        ];
+
+        // Ensure permissions exist
+        foreach ($roleAdminBankPermissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+        }
+
+        $roleAdminBank = Permission::whereIn('name', $roleAdminBankPermissions)->get();
+
+        // Create admin MIP
+        $adminMIP = User::create([
+            'name' => 'Admin MIP',
+            'email' => 'adminmip@gmail.com',
+            'password' => bcrypt('password'),
+            'bank_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+        $adminMIP->detail_users()->create([
+            'nik' => '1234567891',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        $roleAdminMIP = Role::create(['name' => 'Admin MIP']);
+        $roleAdminMIP->givePermissionTo(Permission::all());
+
+        $adminMIP->assignRole($roleAdminMIP);
+
+        // Create admin HIK
+        $adminHIK = User::create([
+            'name' => 'Admin HIK',
+            'email' => 'adminhik@gmail.com',
+            'password' => bcrypt('password'),
+            'bank_id' => 2,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+        $adminHIK->detail_users()->create([
+            'nik' => '1234567892',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        $roleAdminHIK = Role::create(['name' => 'Admin HIK']);
+        $roleAdminHIK->givePermissionTo($roleAdminBank);
+
+        $adminHIK->assignRole($roleAdminHIK);
+
+        // Create admin Almabrur
+        $adminAlmabrur = User::create([
+            'name' => 'Admin Almabrur',
+            'email' => 'adminalmabrur@gmail.com',
+            'password' => bcrypt('password'),
+            'bank_id' => 3,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+        $adminAlmabrur->detail_users()->create([
+            'nik' => '1234567893',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        $roleAdminAlmabrur = Role::create(['name' => 'Admin Almabrur']);
+        $roleAdminAlmabrur->givePermissionTo($roleAdminBank);
+
+        $adminAlmabrur->assignRole($roleAdminAlmabrur);
+
+        // Create user
         $user = User::create([
             'name' => 'User',
             'email' => 'user@gmail.com',
@@ -45,5 +123,13 @@ class UserSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        $roleSurveyor = Role::create(['name' => 'Surveyor']);
+
+        $user->assignRole($roleSurveyor);
+
+        $rolePenagih = Role::create(['name' => 'Penagih']);
+
+        $user->assignRole($rolePenagih);
     }
 }

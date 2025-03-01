@@ -2,13 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Http\Request;
 use App\Models\AnnualHoliday;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 
-class AnnualHolidayController extends Controller
+class AnnualHolidayController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            // 'auth',
+            // new Middleware('subscribed', except: ['store']),
+            new Middleware('permission:hari-libur.index', only: ['index']),
+            new Middleware('permission:hari-libur.create', only: ['index', 'create', 'store']),
+            new Middleware('permission:hari-libur.edit', only: ['index', 'edit', 'update']),
+            new Middleware('permission:hari-libur.delete', only: ['index', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

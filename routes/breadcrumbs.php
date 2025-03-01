@@ -51,6 +51,25 @@ Breadcrumbs::for('annual-holidays.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('annual-holidays.create'));
 });
 
+// Dashboard > Master Data > Banks
+Breadcrumbs::for('banks', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Master Data');
+    $trail->push('Banks', route('banks.index'));
+});
+
+// Dashboard > Master Data > Banks > [Bank] > Edit
+Breadcrumbs::for('banks.edit', function (BreadcrumbTrail $trail, $bankAccount) {
+    $trail->parent('banks');
+    $trail->push('Edit', route('banks.edit', $bankAccount));
+});
+
+// Dashboard > Master Data > Banks > Create
+Breadcrumbs::for('banks.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('banks');
+    $trail->push('Create', route('banks.create'));
+});
+
 // Dashboard > Master Data > Customers
 Breadcrumbs::for('customers', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
@@ -89,13 +108,6 @@ Breadcrumbs::for('attendances.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('attendances.create'));
 });
 
-// Dashboard > Absen > Attendance Reports
-Breadcrumbs::for('attendance-reports', function (BreadcrumbTrail $trail) {
-    $trail->parent('dashboard');
-    $trail->push('Absen');
-    $trail->push('Attendance Reports', route('attendance-reports.index'));
-});
-
 // Dashboard > Absen > Leaves
 Breadcrumbs::for('leaves', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
@@ -115,22 +127,61 @@ Breadcrumbs::for('leaves.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('leaves.create'));
 });
 
-// Dashboard > Billings
-Breadcrumbs::for('billings', function (BreadcrumbTrail $trail) {
+// Dashboard > Customer Billings
+Breadcrumbs::for('customer-billings', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
-    $trail->push('Billings', route('billings.index'));
+    $trail->push('Customer Billings', route('customer-billings.index'));
 });
 
-// Dashboard > Billings > [Billing] > Edit
-Breadcrumbs::for('billings.edit', function (BreadcrumbTrail $trail, $role) {
-    $trail->parent('billings');
-    $trail->push('Edit', route('billings.edit', $role));
+// Dashboard > Customer Billings > [Billing] > Edit
+Breadcrumbs::for('customer-billings.edit', function (BreadcrumbTrail $trail, $role) {
+    $trail->parent('customer-billings');
+    $trail->push('Edit', route('customer-billings.edit', $role));
 });
 
-// Dashboard > Billings > Create
-Breadcrumbs::for('billings.create', function (BreadcrumbTrail $trail) {
-    $trail->parent('billings');
-    $trail->push('Create', route('billings.create'));
+// Dashboard > Customer Billings > Create
+Breadcrumbs::for('customer-billings.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('customer-billings');
+    $trail->push('Create', route('customer-billings.create'));
+});
+
+// Dashboard > Laporan > Officer Reports
+Breadcrumbs::for('officer-reports', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Officer Reports', route('officer-reports.index'));
+});
+
+// Dashboard > Laporan > Officer Reports > [Officer Report] > Show
+Breadcrumbs::for('officer-reports.show', function (BreadcrumbTrail $trail, $officerReport) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Officer Reports', route('officer-reports.index'));
+    $trail->push('Show');
+    $trail->push($officerReport->name, route('officer-reports.show', $officerReport->id));
+});
+
+// Dashboard > Laporan > Attendance Reports
+Breadcrumbs::for('attendance-reports', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Attendance Reports', route('attendance-reports.index'));
+});
+
+// Dashboard > Laporan > Attendance Reports > [Attendance Report] > Show
+Breadcrumbs::for('attendance-reports.show', function (BreadcrumbTrail $trail, $officerReport) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Attendance Reports', route('attendance-reports.index'));
+    $trail->push('Show');
+    $trail->push($officerReport->name, route('attendance-reports.show', $officerReport->id));
+});
+
+// Dashboard > Laporan > Customer Billing Reports
+Breadcrumbs::for('customer-billing-reports', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Customer Billing Reports', route('customer-billing-reports.index'));
 });
 
 // Dashboard > Roles

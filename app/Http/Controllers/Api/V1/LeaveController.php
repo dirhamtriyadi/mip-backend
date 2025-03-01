@@ -14,19 +14,24 @@ class LeaveController extends Controller
     {
         $leaves = Leave::with('user.detail_users')
             ->where('user_id', auth()->user()->id)
+            ->latest()
             ->first();
 
         if (!$leaves) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data not found.'
-            ], 200);
+                'message' => 'Data not found.',
+                'errors' => [
+                    'id' => 'Data not found.',
+                ],
+            ], 404);
         }
 
         return response()->json([
             'status' => 'success',
-            'data' => new LeaveResource($leaves)
-        ]);
+            'message' => 'Data retrieved successfully.',
+            'data' => new LeaveResource($leaves),
+        ], 200);
     }
 
     public function submission(Request $request)
@@ -39,8 +44,9 @@ class LeaveController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors()
-            ], 400);
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
         $validatedData = $validator->validated();
@@ -52,7 +58,7 @@ class LeaveController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Cuti berhasil diajukan',
-            'data' => $leave
-        ]);
+            'data' => new LeaveResource($leave),
+        ], 200);
     }
 }

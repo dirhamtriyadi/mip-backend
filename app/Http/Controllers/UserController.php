@@ -2,14 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Bank;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            // 'auth',
+            // new Middleware('subscribed', except: ['store']),
+            new Middleware('permission:user.index', only: ['index']),
+            new Middleware('permission:user.create', only: ['index', 'create', 'store']),
+            new Middleware('permission:user.edit', only: ['index', 'edit', 'update']),
+            new Middleware('permission:user.delete', only: ['index', 'destroy']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -26,6 +44,9 @@ class UserController extends Controller
 
         return DataTables::of($users)
             ->addIndexColumn()
+            ->addColumn('bank', function ($user) {
+                return $user->bank->name ?? '-';
+            })
             ->addColumn('nik', function ($user) {
                 return $user->detail_users->nik ?? '-';
             })
@@ -45,9 +66,11 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
+        $banks = Bank::all();
 
         return view("users.create", [
             "roles" => $roles,
+            "banks" => $banks,
         ]);
     }
 
@@ -61,6 +84,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'nik' => 'required|string|max:255|unique:detail_users,nik',
+            'bank_id' => 'nullable|exists:banks,id',
             'role' => 'nullable|exists:roles,name',
         ]);
 
@@ -68,6 +92,7 @@ class UserController extends Controller
         $user->name = $validatedData['name'];
         $user->email = $validatedData['email'];
         $user->password = Hash::make($validatedData['password']);
+        $user->bank_id = $validatedData['bank_id'];
         $user->save();
         $user->detail_users()->create([
             'nik' => $validatedData['nik'],
@@ -96,8 +121,14 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $roles = Role::all();
         $userRoles = $user->roles->pluck('name')->toArray();
+        $banks = Bank::all();
 
-        return view('users.edit', compact('user', 'roles', 'userRoles'));
+        return view('users.edit', [
+            'user' => $user,
+            'roles' => $roles,
+            'userRoles' => $userRoles,
+            'banks' => $banks,
+        ]);
     }
 
     /**
@@ -113,6 +144,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8|confirmed',
             'nik' => 'required|string|max:255|unique:detail_users,nik,' . $detailUserId,
+            'bank_id' => 'nullable|exists:banks,id',
             'role' => 'nullable|array',
             'role.*' => 'exists:roles,name',
         ]);
@@ -122,6 +154,7 @@ class UserController extends Controller
         if ($validatedData['password']) {
             $user->password = Hash::make($validatedData['password']);
         }
+        $user->bank_id = $validatedData['bank_id'];
         $user->save();
         $user->detail_users()->updateOrCreate(
             ['user_id' => $user->id],

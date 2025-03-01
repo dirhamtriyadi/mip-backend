@@ -21,8 +21,9 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors(),
-            ], 400);
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $data = $request->all();
@@ -50,8 +51,9 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors(),
-            ], 400);
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         // logic login

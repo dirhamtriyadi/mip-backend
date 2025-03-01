@@ -12,23 +12,50 @@ class Customer extends Model
     protected $table = 'customers';
 
     protected $fillable = [
-        'no',
+        'no_contract',
+        'bank_account_number',
         'name_customer',
+        'name_mother',
         'phone_number',
-        'address',
-        'name_bank',
-        'date',
-        'total_bill',
-        'installment',
-        'remaining_installment',
+        'status',
+        'bank_id',
+        // 'user_id',
+        'margin_start',
+        'os_start',
+        'margin_remaining',
+        'installments',
+        'month_arrears',
+        'arrears',
+        'due_date',
+        'description',
         'created_by',
         'updated_by',
         'deleted_by',
     ];
 
-    public function billing()
+    public function bank()
     {
-        return $this->hasMany(Billing::class);
+        return $this->belongsTo(Bank::class, 'bank_id');
+    }
+
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
+
+    public function customerAddress()
+    {
+        return $this->hasOne(CustomerAddress::class, 'customer_id');
+    }
+
+    public function customerBilling()
+    {
+        return $this->hasOne(CustomerBilling::class, 'customer_id');
+    }
+
+    public function latestCustomerBilling()
+    {
+        return $this->hasOne(CustomerBilling::class, 'customer_id')->latestOfMany();
     }
 
     public function createdBy()

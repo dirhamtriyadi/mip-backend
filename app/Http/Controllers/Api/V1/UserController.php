@@ -20,16 +20,8 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully.',
-            'data' => UserResource::collection($data)
+            'data' => UserResource::collection($data),
         ], 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -44,7 +36,11 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors(),
+            ], 400);
         }
 
         $user = User::create([
@@ -56,7 +52,7 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'User created successfully.',
-            'data' => new UserResource($user)
+            'data' => new UserResource($user),
         ], 201);
     }
 
@@ -79,14 +75,6 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
@@ -97,7 +85,11 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation Error.',
+                'errors' => $validator->errors(),
+            ], 400);
         }
 
         $user = User::find($id);
@@ -116,7 +108,7 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'User updated successfully.',
-            'data' => new UserResource($user)
+            'data' => new UserResource($user),
         ], 200);
     }
 
@@ -131,6 +123,7 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'User deleted successfully.',
+            'data' => new UserResource($user),
         ], 200);
     }
 }

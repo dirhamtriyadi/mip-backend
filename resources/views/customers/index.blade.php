@@ -10,7 +10,7 @@
                         <h1>Nasabah</h1>
                     </div>
                     <div class="col-sm-6">
-                        {{  Breadcrumbs::render('customers') }}
+                        {{ Breadcrumbs::render('customers') }}
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -22,6 +22,22 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        @session('success')
+                            <div class="alert alert-success">
+                                <h5><i class="icon fas fa-check"></i> Alert!</h5>
+                                {{ session('success') }}
+                            </div>
+                        @endsession
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
@@ -39,52 +55,37 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-end">
-                                    <a href="{{ route('customers.create') }}" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
+                                    <a href="{{ route('customers.create') }}" class="btn btn-primary mb-3"><i
+                                            class="fas fa-plus"></i> Tambah</a>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="table" class="table table-bordered table-hover table-striped">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Nomor Kontrak/Rekening</th>
+                                                <th>Nomor Kontrak</th>
+                                                <th>Nomor Rekening</th>
                                                 <th>Nama Nasabah</th>
+                                                <th>Nama Ibu</th>
                                                 <th>No HP</th>
                                                 <th>Alamat</th>
+                                                <th>Desa</th>
+                                                <th>Kecamatan</th>
                                                 <th>Nama Bank</th>
-                                                <th>Tanggal</th>
-                                                <th>Total Tagihan</th>
+                                                {{-- <th>Nama Petugas</th> --}}
+                                                <th>Margin Awal</th>
+                                                <th>Outstanding Awal</th>
+                                                <th>Margin Sisa</th>
                                                 <th>Angsuran</th>
-                                                {{-- <th>Sisa Angsuran</th> --}}
+                                                <th>Tunggak Bulan</th>
+                                                <th>Tunggakan</th>
+                                                <th>Tanggal Jatuh Tempo</th>
+                                                <th>Keterangan</th>
                                                 <th>Aksi</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {{-- @forelse ($data as $item => $value)
-                                                <tr>
-                                                    <td>{{ $item + 1 }}</td>
-                                                    <td>{{ $value->no }}</td>
-                                                    <td>{{ $value->name_customer }}</td>
-                                                    <td>{{ $value->address }}</td>
-                                                    <td>{{ $value->name_bank }}</td>
-                                                    <td class="total-bill">{{ $value->total_bill }}</td>
-                                                    <td class="installment">{{ $value->installment }}</td>
-                                                    <td>{{ $value->remaining_installment }}</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <a href="{{ route('customers.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                                                            <form action="{{ route('customers.destroy', $value->id) }}" class="ml-1" method="post">
-                                                                @csrf
-                                                                @method('delete')
-                                                                <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                                                            </form>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td class="text-center" colspan="9">Data tidak ditemukan</td>
-                                                </tr>
-                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -123,8 +124,8 @@
 
             // DataTables
             $("#table").DataTable({
-                "processing":true,
-                "serverSide":true,
+                "processing": true,
+                "serverSide": true,
                 "ajax": {
                     "url": "{{ route('customers.index') }}/fetch-data-table",
                     "type": "post",
@@ -132,28 +133,99 @@
                         "_token": "{{ csrf_token() }}"
                     }
                 },
-                "responsive": true,
+                "responsive": {
+                    details: {
+                        type: 'column',
+                        target: -1
+                    }
+                },
                 // "lengthChange": false,
                 "lengthMenu": [
                     [10, 25, 50, 100, -1],
                     [10, 25, 50, 100, "All"]
                 ],
                 "autoWidth": false,
-                "columns": [
-                    { "data": "DT_RowIndex" },
-                    { "data": "no" },
-                    { "data": "name_customer" },
-                    { "data": "phone_number" },
-                    { "data": "address" },
-                    { "data": "name_bank" },
-                    { "data": "date" },
-                    { "data": "total_bill", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp ') },
-                    { "data": "installment", "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp ') },
-                    { "data": "action" },
+                "columns": [{
+                        "data": "DT_RowIndex"
+                    },
+                    {
+                        "data": "no_contract"
+                    },
+                    {
+                        "data": "bank_account_number"
+                    },
+                    {
+                        "data": "name_customer"
+                    },
+                    {
+                        "data": "name_mother"
+                    },
+                    {
+                        "data": "phone_number"
+                    },
+                    {
+                        "data": "address"
+                    },
+                    {
+                        "data": "village"
+                    },
+                    {
+                        "data": "subdistrict"
+                    },
+                    {
+                        "data": "name_bank"
+                    },
+                    // {
+                    //     "data": "name_officer"
+                    // },
+                    {
+                        "data": "margin_start",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "os_start",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "margin_remaining",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "installments",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "month_arrears",
+                    },
+                    {
+                        "data": "arrears",
+                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                    },
+                    {
+                        "data": "due_date"
+                    },
+                    {
+                        "data": "description"
+                    },
+                    {
+                        "data": "action"
+                    },
+                    {
+                        "data": "details"
+                    }
                 ],
-                "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 9] },
-                ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "searchable": false,
+                    "targets": [0, 14]
+                },
+                {
+                    "targets": -1,
+                    "className": 'dtr-control arrow-right',
+                    "searchable": false,
+                    "orderable": false,
+                    "width": "10%",
+                }],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
             });

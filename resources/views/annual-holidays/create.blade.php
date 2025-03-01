@@ -50,10 +50,10 @@
                                     @csrf
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="holiday_date">Tanggal Libur</label>
+                                        <label for="holiday_date">Tanggal Libur *</label>
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
-                                                data-target="#reservationdate" name="holiday_date" placeholder="Masukan Tanggal" value="{{ old('holiday_date') }}">
+                                                data-target="#reservationdate" name="holiday_date" placeholder="Masukan Tanggal" value="{{ old('holiday_date') }}" required>
                                             <div class="input-group-append" data-target="#reservationdate"
                                                 data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -64,14 +64,15 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="description">Keterangan</label>
+                                        <label for="description">Keterangan *</label>
                                         <textarea class="form-control" name="description" id="description" rows="5"
-                                            placeholder="Masukan Keterangan">{{ old('description') }}</textarea>
+                                            placeholder="Masukan Keterangan" required>{{ old('description') }}</textarea>
 
                                         @error('description')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @include('templates.form.required')
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"

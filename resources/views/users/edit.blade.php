@@ -45,18 +45,18 @@
                                     @csrf
                                     @method('PUT')
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="name">Nama</label>
+                                        <label for="name">Nama *</label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            placeholder="Masukkan Nama" value="{{ old('name', $user->name) }}">
+                                            placeholder="Masukkan Nama" value="{{ old('name', $user->name) }}" required>
 
                                         @error('name')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="email">Email</label>
+                                        <label for="email">Email *</label>
                                         <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Masukkan Email" value="{{ old('email', $user->email) }}">
+                                            placeholder="Masukkan Email" value="{{ old('email', $user->email) }}" required>
 
                                         @error('email')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -84,12 +84,28 @@
                                     </div>
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="nik">NIK</label>
+                                        <label for="nik">NIK *</label>
                                         <input type="text" class="form-control" id="nik" name="nik"
                                             placeholder="Masukkan NIK"
-                                            value="{{ old('nik', $user->detail_users->nik ?? '') }}">
+                                            value="{{ old('nik', $user->detail_users->nik ?? '') }}" required>
 
                                         @error('nik')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="bank_id">Bank</label>
+                                        <select class="form-control select2" style="width: 100%;" id="bank_id"
+                                            name="bank_id">
+                                            <option value="" selected>Pilih Bank</option>
+                                            @foreach ($banks as $bank)
+                                                <option value="{{ $bank->id }}"
+                                                    {{ old('bank_id', $user->bank_id) == $bank->id ? 'selected' : '' }}>
+                                                    {{ $bank->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('bank_id')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -110,6 +126,7 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @include('templates.form.required')
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"
@@ -131,3 +148,23 @@
         <!-- /.content -->
     </div>
 @endsection
+
+@push('styles')
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+@endpush
+
+@push('scripts')
+    <!-- Select2 -->
+    <script src="{{ asset('adminlte') }}/plugins/select2/js/select2.full.min.js"></script>
+
+    <script>
+        $(function() {
+            //Initialize Select2 Elements
+            $('.select2').select2({
+                theme: 'bootstrap4'
+            });
+        });
+    </script>
+@endpush

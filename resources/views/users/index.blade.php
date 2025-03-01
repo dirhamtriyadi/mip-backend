@@ -22,6 +22,22 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        @session('success')
+                            <div class="alert alert-success">
+                                <h5><i class="icon fas fa-check"></i> Alert!</h5>
+                                {{ session('success') }}
+                            </div>
+                        @endsession
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
@@ -47,6 +63,7 @@
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama</th>
+                                                <th>Bank</th>
                                                 <th>Email</th>
                                                 <th>NIK</th>
                                                 <th>Role</th>
@@ -123,13 +140,14 @@
                 "columns": [
                     { "data": "DT_RowIndex" },
                     { "data": "name" },
+                    { "data": "bank" },
                     { "data": "email" },
                     { "data": "nik" },
                     { "data": "role" },
                     { "data": "action" }
                 ],
                 "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 5] }
+                    { "orderable": false, "searchable": false, "targets": [0, 6] }
                 ],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,

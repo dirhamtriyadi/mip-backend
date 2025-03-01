@@ -71,9 +71,9 @@
                                     @csrf
 
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="user_id">User</label>
+                                        <label for="user_id">User *</label>
                                         <select class="form-control select2" style="width: 100%;" data-select2-id="1"
-                                            tabindex="-1" aria-hidden="true" id="user_id" name="user_id">
+                                            tabindex="-1" aria-hidden="true" id="user_id" name="user_id" required>
                                             <option value="" selected>Pilih User</option>
                                             @foreach ($users as $user)
                                                 {{-- <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option> --}}
@@ -85,18 +85,18 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="code">Kode Absen</label>
+                                        <label for="code">Kode Absen *</label>
                                         <input type="text" class="form-control" id="code" name="code"
-                                            placeholder="Masukkan Nama" value="{{ old('code') }}">
+                                            placeholder="Masukkan Nama" value="{{ old('code') }}" required>
                                         @error('code')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="date">Tanggal</label>
+                                        <label for="date">Tanggal *</label>
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
-                                                data-target="#reservationdate" name="date" placeholder="Masukan Tanggal" value="{{ old('date') }}">
+                                                data-target="#reservationdate" name="date" placeholder="Masukan Tanggal" value="{{ old('date') }}" required>
                                             <div class="input-group-append" data-target="#reservationdate"
                                                 data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -107,10 +107,10 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="time_check_in">Jam Masuk</label>
+                                        <label for="time_check_in">Jam Masuk *</label>
                                         <div class="input-group date" id="time_check_in" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
-                                                data-target="#time_check_in" name="time_check_in" placeholder="Masukan Jam" value="{{ old('time_check_in') }}">
+                                                data-target="#time_check_in" name="time_check_in" placeholder="Masukan Jam" value="{{ old('time_check_in') }}" required>
                                             <div class="input-group-append" data-target="#time_check_in"
                                                 data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-clock"></i></div>
@@ -135,9 +135,9 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="type">Tipe Kehadiran</label>
+                                        <label for="type">Tipe Kehadiran *</label>
                                         <select class="form-control" style="width: 100%;" data-select2-id="1"
-                                            tabindex="-1" aria-hidden="true" id="type" name="type">
+                                            tabindex="-1" aria-hidden="true" id="type" name="type" required>
                                             <option value="" selected>Pilih Kehadiran</option>
                                             <option value="present" {{ old('type') == 'present' ? 'selected' : '' }}>Hadir</option>
                                             <option value="sick" {{ old('type') == 'sick' ? 'selected' : '' }}>Sakit</option>
@@ -213,6 +213,7 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @include('templates.form.required')
 
                                     <div class="mt-2 d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary"

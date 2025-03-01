@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             PermissionTableSeeder::class,
+            BankSeeder::class,
             UserSeeder::class,
             WorkScheduleSeeder::class,
         ]);
