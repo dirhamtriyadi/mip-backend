@@ -94,7 +94,10 @@ class ProspectiveCustomerController extends Controller
 
             // Hapus file jika sudah terlanjur disimpan
             if (!empty($validatedData['ktp'])) {
-                File::delete($path);
+                File::delete(public_path('images/prospective-customers/' . $validatedData['ktp']));
+            }
+            if (!empty($validatedData['kk'])) {
+                File::delete(public_path('images/prospective-customers/' . $validatedData['kk']));
             }
 
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
