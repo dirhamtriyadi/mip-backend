@@ -10,6 +10,7 @@ use App\Http\Controllers\CustomerBillingReportController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\OfficerReportController;
+use App\Http\Controllers\ProspectiveCustomerController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\BankContoller;
 use App\Http\Controllers\UserController;
@@ -54,6 +55,10 @@ Route::middleware('auth')->group(function () {
     Route::get('attendance-reports/export-pdf', [AttendanceReportController::class, 'exportPdf'])->name('attendance-reports.exportPdf');
     Route::post('attendance-reports/fetch-data-table-by-user', [AttendanceReportController::class, 'fetchDataTableByUser'])->name('attendance-reports.fetchDataTableByUser');
     Route::get('attendance-reports/{id}', [AttendanceReportController::class, 'show'])->name('attendance-reports.show');
+
+    // Route prospective customer
+    Route::resource('prospective-customers', ProspectiveCustomerController::class);
+    Route::post('prospective-customers/fetch-data-table', [ProspectiveCustomerController::class, 'fetchDataTable'])->name('prospective-customers.fetchDataTable');
 
     // Route cuti
     Route::resource('leaves', LeaveController::class);

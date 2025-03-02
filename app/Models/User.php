@@ -78,4 +78,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(BillingFollowup::class);
     }
+
+    public function prospectiveCustomers()
+    {
+        return $this->hasMany(ProspectiveCustomer::class);
+    }
 }

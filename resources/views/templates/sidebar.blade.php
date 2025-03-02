@@ -102,8 +102,7 @@
                 @endcan
                 @canany(['kehadiran.index', 'kehadiran.create', 'kehadiran.edit', 'kehadiran.delete', 'cuti.index',
                     'cuti.create', 'cuti.edit', 'cuti.delete'])
-                    <li
-                        class="nav-item {{ Route::is('attendances.*') | Route::is('leaves.*') ? 'menu-open' : '' }}">
+                    <li class="nav-item {{ Route::is('attendances.*') | Route::is('leaves.*') ? 'menu-open' : '' }}">
                         <a href="#"
                             class="nav-link {{ Route::is('attendances.*') | Route::is('leaves.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-briefcase"></i>
@@ -141,6 +140,17 @@
                             <i class="nav-icon fas fa-money-bill-wave"></i>
                             <p>
                                 Penagihan
+                            </p>
+                        </a>
+                    </li>
+                @endcan
+                @canany(['calon-nasabah.index', 'calon-nasabah.create', 'calon-nasabah.edit', 'calon-nasabah.delete'])
+                    <li class="nav-item {{ Route::is('prospective-customers.*') ? 'active' : '' }}">
+                        <a href="{{ route('prospective-customers.index') }}"
+                            class="nav-link {{ Route::is('prospective-customers.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-user-tie"></i>
+                            <p>
+                                Calon Nasabah
                             </p>
                         </a>
                     </li>
@@ -202,7 +212,8 @@
                 @endcan
                 @canany(['user.index', 'user.create', 'user.edit', 'user.delete'])
                     <li class="nav-item">
-                        <a href="{{ route('users.index') }}" class="nav-link {{ Route::is('users.*') ? 'active' : '' }}">
+                        <a href="{{ route('users.index') }}"
+                            class="nav-link {{ Route::is('users.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-users"></i>
                             <p>
                                 Users

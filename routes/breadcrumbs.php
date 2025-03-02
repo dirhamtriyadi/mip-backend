@@ -145,6 +145,31 @@ Breadcrumbs::for('customer-billings.create', function (BreadcrumbTrail $trail) {
     $trail->push('Create', route('customer-billings.create'));
 });
 
+// Dashboard > Prospective Customers
+Breadcrumbs::for('prospective-customers', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Prospective Customers', route('prospective-customers.index'));
+});
+
+// Dashboard > Prospective Customers > [Prospective Customer]
+// Breadcrumbs::for('prospective-customers.show', function (BreadcrumbTrail $trail, $prospectiveCustomer) {
+//     $trail->parent('prospective-customers');
+//     $trail->push($prospectiveCustomer->name, route('prospective-customers.show', $prospectiveCustomer));
+// });
+
+// Dashboard > Prospective Customers > [Prospective Customer] > Edit
+Breadcrumbs::for('prospective-customers.edit', function (BreadcrumbTrail $trail, $prospectiveCustomer) {
+    $trail->parent('prospective-customers', $prospectiveCustomer);
+    $trail->push('Edit', route('prospective-customers.edit', $prospectiveCustomer));
+    $trail->push($prospectiveCustomer->name, route('prospective-customers.show', $prospectiveCustomer));
+});
+
+// Dashboard > Prospective Customers > Create
+Breadcrumbs::for('prospective-customers.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('prospective-customers');
+    $trail->push('Create', route('prospective-customers.create'));
+});
+
 // Dashboard > Laporan > Officer Reports
 Breadcrumbs::for('officer-reports', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');
