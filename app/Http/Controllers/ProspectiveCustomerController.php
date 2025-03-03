@@ -47,10 +47,16 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             ->addColumn('user', function ($prospectiveCustomer) {
                 return $prospectiveCustomer->user->name ?? '-';
             })
+            ->editColumn('ktp', function($prospectiveCustomer) {
+                return $prospectiveCustomer->ktp ? '<a href="'.asset('images/prospective-customers/'.$prospectiveCustomer->ktp).'" target="_blank">Lihat</a>' : '-';
+            })
+            ->addColumn('kk', function($prospectiveCustomer) {
+                return $prospectiveCustomer->kk ? '<a href="'.asset('images/prospective-customers/'.$prospectiveCustomer->kk).'" target="_blank">Lihat</a>' : '-';
+            })
             ->addColumn('action', function ($user) {
                 return view('prospective-customers.action', ['value' => $user]);
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['ktp', 'kk', 'action'])
             ->toJson();
     }
 
