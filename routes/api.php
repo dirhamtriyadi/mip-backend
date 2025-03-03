@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\BillingFollowupController;
 use App\Http\Controllers\Api\V1\BillingStatusController;
 use App\Http\Controllers\Api\V1\BillingReportController;
 use App\Http\Controllers\Api\V1\CustomerBillingReportController;
+use App\Http\Controllers\Api\V1\ProspectiveCustomerController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
@@ -44,6 +45,9 @@ Route::prefix('v1')->group(function () {
         Route::get('customer-billing-reports', [CustomerBillingReportController::class, 'index'])->name('customer-billing-reports.index');
         Route::get('customer-billing-reports/export-pdf/by-user', [CustomerBillingReportController::class, 'exportPdfByUser'])->name('customer-billing-reports.export-pdf.by-user');
         Route::get('customer-billing-reports/export-pdf/by-customer', [CustomerBillingReportController::class, 'exportPdfByCustomer'])->name('customer-billing-reports.export-pdf.by-customer');
+
+        // Prospective Customer
+        Route::post('prospective-customers', [ProspectiveCustomerController::class, 'store'])->name('prospective-customers.store');
 
         // User
         Route::apiResource('users', UserController::class);
