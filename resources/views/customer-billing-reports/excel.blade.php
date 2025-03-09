@@ -6,6 +6,7 @@
             <th>Nomor Kontrak</th>
             <th>Nama Nasabah</th>
             <th>Nama Ibu</th>
+            <th>Jatuh Tempo</th>
             <th>No HP</th>
             <th>Nama Petugas</th>
             <th>Alamat</th>
@@ -38,6 +39,7 @@
                 <td>{{ $value->customer->no_contract }}</td>
                 <td>{{ $value->customer->name_customer }}</td>
                 <td>{{ $value->customer->name_mother ?? '-' }}</td>
+                <td>{{ $value->customer->due_date ?? '-' }}</td>
                 <td>{{ $value->customer->phone_number ?? '-' }}</td>
                 <td>{{ $value->user->name ?? '-' }}</td>
                 <td>{{ $value->customer->customerAddress->address ?? '-' }}</td>
