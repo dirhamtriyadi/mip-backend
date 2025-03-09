@@ -45,22 +45,31 @@ class CustomerBillingReportController extends Controller
 
     public function fetchDataTable(Request $request)
     {
-        // get request start_date and end_date or set default this month
         $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
-        $customerBilling = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])->whereBetween('created_at', [$start_date, $end_date]);
-        if (auth()->user()->hasPermissionTo('laporan-penagihan.all-data')) {
-            $customerBilling->get();
-        } elseif (auth()->user()->hasPermissionTo('laporan-penagihan.data-my-bank')) {
-            $customerBilling = $customerBilling->whereHas('customer', function ($query) {
-                $query->where('bank_id', auth()->user()->bank_id);
-            })->get();
-        } elseif (auth()->user()->hasPermissionTo('laporan-penagihan.index')) {
-            $customerBilling = $customerBilling->where('user_id', auth()->user()->id)->get();
-        } else {
-            $customerBilling = $customerBilling->where('user_id', auth()->user()->id)->get();
+        $user = auth()->user();
+
+        // Query dasar
+        $customerBilling = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
+            ->whereDate('created_at', '>=', $start_date)
+            ->whereDate('created_at', '<=', $end_date);
+
+        // Filter berdasarkan izin pengguna
+        if (!$user->hasPermissionTo('laporan-penagihan.all-data')) {
+            if ($user->hasPermissionTo('laporan-penagihan.data-my-bank')) {
+                // Filter berdasarkan bank_id
+                $customerBilling->whereHas('customer', function ($query) use ($user) {
+                    $query->where('bank_id', $user->bank_id);
+                });
+            } else {
+                // Jika tidak punya izin melihat semua data atau data bank, hanya tampilkan data miliknya
+                $customerBilling->where('user_id', $user->id);
+            }
         }
+
+        // Eksekusi query setelah semua filter diterapkan
+        $customerBilling = $customerBilling->get();
 
         return DataTables::of($customerBilling)
             ->addColumn('select', function ($customerBilling) {
@@ -80,28 +89,42 @@ class CustomerBillingReportController extends Controller
                 return optional($customerBilling->customer->bank)->name ?? '-';
             })
             ->editColumn('status', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->first())->status ? '<span class="badge badge-' . $customerBilling->latestBillingFollowups->first()->status->color() . '">' . $customerBilling->latestBillingFollowups->first()->status->label() . '</span>' : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->status
+                    ? '<span class="badge badge-' . $customerBilling->latestBillingFollowups->first()->status->color() . '">' . $customerBilling->latestBillingFollowups->first()->status->label() . '</span>'
+                    : '-';
             })
             ->addColumn('date_exec', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->first())->date_exec ? Carbon::parse($customerBilling->latestBillingFollowups->first()->date_exec)->format('d-m-Y') : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->date_exec
+                    ? Carbon::parse($customerBilling->latestBillingFollowups->first()->date_exec)->format('d-m-Y')
+                    : '-';
             })
             ->addColumn('promise_date', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->first())->promise_date ? Carbon::parse($customerBilling->latestBillingFollowups->first()->promise_date)->format('d-m-Y') : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->promise_date
+                    ? Carbon::parse($customerBilling->latestBillingFollowups->first()->promise_date)->format('d-m-Y')
+                    : '-';
             })
             ->addColumn('payment_amount', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->first())->payment_amount ?  'Rp ' . number_format($customerBilling->latestBillingFollowups->first()->payment_amount, 0, ',', '.') : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->payment_amount
+                    ? 'Rp ' . number_format($customerBilling->latestBillingFollowups->first()->payment_amount, 0, ',', '.')
+                    : '-';
             })
             ->addColumn('proof', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->first())->proof ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->first()->proof) . '" target="_blank">Lihat</a>' : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->proof
+                    ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->first()->proof) . '" target="_blank">Lihat</a>'
+                    : '-';
             })
             ->addColumn('description', function ($customerBilling) {
                 return optional($customerBilling->latestBillingFollowups->first())->description ?? '-';
             })
             ->addColumn('signature_officer', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->first())->signature_officer ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->first()->signature_officer) . '" target="_blank">Lihat</a>' : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->signature_officer
+                    ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->first()->signature_officer) . '" target="_blank">Lihat</a>'
+                    : '-';
             })
             ->addColumn('signature_customer', function ($customerBilling) {
-                return optional($customerBilling->latestBillingFollowups->first())->signature_customer ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->first()->signature_customer) . '" target="_blank">Lihat</a>' : '-';
+                return optional($customerBilling->latestBillingFollowups->first())->signature_customer
+                    ? '<a href="' . asset('images/customer-billings/' . $customerBilling->latestBillingFollowups->first()->signature_customer) . '" target="_blank">Lihat</a>'
+                    : '-';
             })
             ->addColumn('details', function ($customerBilling) {
                 return;
