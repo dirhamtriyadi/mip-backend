@@ -6,11 +6,10 @@
             <th>Nomor Kontrak</th>
             <th>Nama Nasabah</th>
             <th>Nama Ibu</th>
-            <th>Jatuh Tempo</th>
+            <th>Tanggal Valuta</th>
             <th>No HP</th>
             <th>Nama Petugas</th>
             <th>Alamat</th>
-            <th>Tanggal Jatuh Tempo</th>
             <th>Margin Awal</th>
             <th>Outstanding Awal</th>
             <th>Margin Sisa</th>
@@ -43,7 +42,6 @@
                 <td>{{ $value->customer->phone_number ?? '-' }}</td>
                 <td>{{ $value->user->name ?? '-' }}</td>
                 <td>{{ $value->customer->customerAddress->address ?? '-' }}</td>
-                <td>{{ $value->customer->due_date ?? '-' }}</td>
                 <td>{{ $value->customer->margin_start ?? '-' }}</td>
                 <td>{{ $value->customer->os_start ?? '-' }}</td>
                 <td>{{ $value->customer->margin_remaining ?? '-' }}</td>
