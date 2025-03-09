@@ -40,8 +40,11 @@ class CustomerBillingImport implements ToModel, WithHeadingRow
             'installments' => $row['installments'] ?? $row['angsuran'] ?? null,
             'month_arrears' => $row['month_arrears'] ?? $row['tgk_bln'] ?? null,
             'arrears' => $row['arrears'] ?? $row['tunggakan'] ?? null,
-            'due_date' => isset($row['due_date']) ? Carbon::parse($row['due_date'])->format('Y-m-d') :
-             (isset($row['jth_tempo']) ? Carbon::parse($row['jth_tempo'])->format('Y-m-d') : null),
+            'due_date' => isset($row['due_date']) && !empty($row['due_date'])
+                ? Carbon::parse($row['due_date'])->format('Y-m-d')
+                : (isset($row['jth_tempo']) && !empty($row['jth_tempo'])
+                    ? Carbon::parse($row['jth_tempo'])->format('Y-m-d')
+                    : null),
             'description' => $row['description'] ?? $row['keterangan'] ?? null,
             'created_by' => $user->id,
         ]);

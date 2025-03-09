@@ -11,27 +11,7 @@ class Customer extends Model
 
     protected $table = 'customers';
 
-    protected $fillable = [
-        'no_contract',
-        'bank_account_number',
-        'name_customer',
-        'name_mother',
-        'phone_number',
-        'status',
-        'bank_id',
-        // 'user_id',
-        'margin_start',
-        'os_start',
-        'margin_remaining',
-        'installments',
-        'month_arrears',
-        'arrears',
-        'due_date',
-        'description',
-        'created_by',
-        'updated_by',
-        'deleted_by',
-    ];
+    protected $guarded = [];
 
     public function bank()
     {
