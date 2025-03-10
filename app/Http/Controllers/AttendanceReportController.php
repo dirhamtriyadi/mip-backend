@@ -63,7 +63,7 @@ class AttendanceReportController extends Controller implements HasMiddleware
                 return $attendanceReport->name;
             })
             ->addColumn('present', function ($attendanceReport) {
-                return $attendanceReport->attendances->where('status', 'present')->count();
+                return $attendanceReport->attendances->where('type', 'present')->count();
             })
             ->addColumn('present_late', function ($attendanceReport) {
                 return $attendanceReport->attendances->where('type', 'present')->where('late_duration', '<', 0)->count();
@@ -72,10 +72,10 @@ class AttendanceReportController extends Controller implements HasMiddleware
                 return $attendanceReport->attendances->where('type', 'present')->where('early_leave_duration', '<', 0)->count();
             })
             ->addColumn('sick', function ($attendanceReport) {
-                return $attendanceReport->attendances->where('status', 'sick')->count();
+                return $attendanceReport->attendances->where('type', 'sick')->count();
             })
             ->addColumn('permit', function ($attendanceReport) {
-                return $attendanceReport->attendances->where('status', 'permit')->count();
+                return $attendanceReport->attendances->where('type', 'permit')->count();
             })
             ->addColumn('leave', function ($attendanceReport) {
                 return view('attendance-reports.leave', [
