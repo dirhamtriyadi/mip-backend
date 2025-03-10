@@ -61,7 +61,7 @@ class AttendanceController extends Controller implements HasMiddleware
                 return $attendance->time_check_out ? Carbon::parse($attendance->time_check_out)->format('H:i') : '-';
             })
             ->editColumn('type', function ($attendance) {
-                return view('attendances.type', ['value' => $attendance]);
+                return $attendance->type ? '<span class="badge badge-pill badge-' . $attendance->type->color() . '">' . $attendance->type->label() . '</span>' : '-';
             })
             ->addColumn('image', function ($attendance) {
                 return view('attendances.image', ['value' => $attendance]);

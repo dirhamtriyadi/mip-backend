@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Builder;
+use App\Enums\AttendanceTypeEnum;
 
 class Attendance extends Model
 {
@@ -14,6 +15,10 @@ class Attendance extends Model
     protected $table = 'attendances';
 
     protected $guarded = [];
+
+    protected $casts = [
+        'type' => AttendanceTypeEnum::class,
+    ];
 
     public function user()
     {

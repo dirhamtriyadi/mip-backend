@@ -12,4 +12,9 @@ return [
         'promise_to_pay' => 'Janji Bayar',
         'pay' => 'Bayar',
     ],
+    'attendanceType' => [
+        'present' => 'Hadir',
+        'sick' => 'Sakit',
+        'permit' => 'Izin',
+    ],
 ];

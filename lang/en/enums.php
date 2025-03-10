@@ -12,4 +12,9 @@ return [
         'promise_to_pay' => 'Promise to Pay',
         'pay' => 'Pay',
     ],
+    'attendanceType' => [
+        'present' => 'Present',
+        'sick' => 'Sick',
+        'permit' => 'Permit',
+    ],
 ];
