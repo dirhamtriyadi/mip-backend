@@ -72,7 +72,7 @@ class CustomerBillingController extends Controller implements HasMiddleware
             return optional($customerBilling->customer->bank)->name ?? '-';
         })
         ->editColumn('status', function ($customerBilling) {
-            return optional($customerBilling->latestBillingFollowups->first())->status ? '<span class="badge badge-' . $customerBilling->latestBillingFollowups->first()->status->color() . '">' . $customerBilling->latestBillingFollowups->first()->status->label() . '</span>' : '-';
+            return optional($customerBilling->latestBillingFollowups->first())->status ? '<span class="badge badge-pill badge-' . $customerBilling->latestBillingFollowups->first()->status->color() . '">' . $customerBilling->latestBillingFollowups->first()->status->label() . '</span>' : '-';
         })
         ->addColumn('date_exec', function ($customerBilling) {
             return optional($customerBilling->latestBillingFollowups->first())->date_exec ? Carbon::parse($customerBilling->latestBillingFollowups->first()->date_exec)->format('d-m-Y') : '-';
