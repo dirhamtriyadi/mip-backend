@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name') }} | {{ Route::currentRouteName() }}</title>
+    <title>{{ config('app.name') }} | {{ Route::currentRouteName() ? Str::replace('-', ' ', Str::title(Str::before(Route::currentRouteName(), '.'))) : '' }}</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
