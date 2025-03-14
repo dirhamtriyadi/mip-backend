@@ -86,7 +86,7 @@ class CustomerBillingReportController extends Controller
                 return optional($customerBilling->user)->name ?? '-';
             })
             ->addColumn('bank', function ($customerBilling) {
-                return optional($customerBilling->customer->bank)->name ?? '-';
+                return optional($customerBilling->customer)->bank->name ?? '-';
             })
             ->editColumn('status', function ($customerBilling) {
                 return optional($customerBilling->latestBillingFollowups->first())->status
