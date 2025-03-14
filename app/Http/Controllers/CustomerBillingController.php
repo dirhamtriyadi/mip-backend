@@ -69,7 +69,7 @@ class CustomerBillingController extends Controller implements HasMiddleware
             return optional($customerBilling->user)->name ?? '-';
         })
         ->addColumn('bank', function ($customerBilling) {
-            return optional($customerBilling->customer->bank)->name ?? '-';
+            return optional($customerBilling->customer)->bank->name ?? '-';
         })
         ->editColumn('status', function ($customerBilling) {
             return optional($customerBilling->latestBillingFollowups->first())->status ? '<span class="badge badge-pill badge-' . $customerBilling->latestBillingFollowups->first()->status->color() . '">' . $customerBilling->latestBillingFollowups->first()->status->label() . '</span>' : '-';
