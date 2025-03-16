@@ -118,7 +118,7 @@ class ProspectiveCustomerSurveyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         // Validasi data
         $validatedData = $request->validate([
@@ -135,9 +135,9 @@ class ProspectiveCustomerSurveyController extends Controller
             'job_level' => 'nullable|string',
             'employee_tenure' => 'nullable|string',
             'employee_status' => 'nullable|string',
-            'salary' => 'required|integer',
-            'other_business' => 'required|integer',
-            'monthly_living_expenses' => 'required|integer',
+            'salary' => 'nullable|integer',
+            'other_business' => 'nullable|integer',
+            'monthly_living_expenses' => 'nullable|integer',
             'children' => 'nullable|string',
             'wife' => 'nullable|string',
             'couple_jobs' => 'nullable|string',
@@ -236,7 +236,6 @@ class ProspectiveCustomerSurveyController extends Controller
             return redirect()->back()->with('error', 'Failed to create survey: ' . $e->getMessage());
         }
     }
-
 
     /**
      * Display the specified resource.
