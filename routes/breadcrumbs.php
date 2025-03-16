@@ -170,6 +170,24 @@ Breadcrumbs::for('prospective-customers.create', function (BreadcrumbTrail $trai
     $trail->push('Create', route('prospective-customers.create'));
 });
 
+// Dashboard > Prospective Customers Surveys
+Breadcrumbs::for('prospective-customer-surveys', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Prospective Sustomer Surveys', route('prospective-customer-surveys.index'));
+});
+
+// Dashboard > Prospective Customers Surveys > [Prospective Customers Survey] > Edit
+Breadcrumbs::for('prospective-customer-surveys.edit', function (BreadcrumbTrail $trail, $role) {
+    $trail->parent('prospective-customer-surveys');
+    $trail->push('Edit', route('prospective-customer-surveys.edit', $role));
+});
+
+// Dashboard > Prospective Customers Surveys > Create
+Breadcrumbs::for('prospective-customer-surveys.create', function (BreadcrumbTrail $trail) {
+    $trail->parent('prospective-customer-surveys');
+    $trail->push('Create', route('prospective-customer-surveys.create'));
+});
+
 // Dashboard > Laporan > Officer Reports
 Breadcrumbs::for('officer-reports', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

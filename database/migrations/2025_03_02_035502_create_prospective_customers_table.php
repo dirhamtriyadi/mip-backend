@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('bank')->comment('Bank calon nasabah');
             $table->string('ktp')->comment('Foto KTP calon nasabah');
             $table->string('kk')->comment('Foto KK calon nasabah');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending')->comment('Status calon nasabah');
+            $table->text('status_message')->nullable()->comment('Status pesan calon nasabah');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->comment('ID petugas');
             $table->timestamps();
         });

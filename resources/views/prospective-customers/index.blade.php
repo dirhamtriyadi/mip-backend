@@ -69,34 +69,12 @@
                                                 <th>KTP</th>
                                                 <th>KK</th>
                                                 <th>Nama Petugas</th>
+                                                <th>Status</th>
+                                                <th>Status Pesan</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {{-- @forelse ($data as $item => $value)
-                                                <tr>
-                                                    <td>{{ $item + 1 }}</td>
-                                                    <td>{{ $value->name }}</td>
-                                                    <td>{{ $value->no_ktp }}</td>
-                                                    <td>{{ $value->bank }}</td>
-                                                    <td>{{ $value->ktp }}</td>
-                                                    <td>{{ $value->kk }}</td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <a href="{{ route('users.edit', $value->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                                                            <form action="{{ route('users.destroy', $value->id) }}" class=" ml-1" method="post">
-                                                                @csrf
-                                                                @method('delete')
-                                                                <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                                                            </form>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td class="text-center" colspan="6">Data tidak ditemukan</td>
-                                                </tr>
-                                            @endforelse --}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -114,14 +92,129 @@
         </section>
         <!-- /.content -->
     </div>
+    <!-- Modal Select Officer -->
+    <div class="modal fade" id="modal-proccess-customer">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Proses Calon Nasabah</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('prospective-customers.proccessProspectiveCustomer') }}" method="post">
+                    <div class="modal-body">
+                        @csrf
+                        <input type="hidden" name="id" id="id">
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select name="status" id="status" class="form-control select2">
+                                <option value="approved" {{ old('status') == 'approved' ? 'selected' : '' }}>
+                                    Disetujui</option>
+                                <option value="rejected" {{ old('status') == 'rejected' ? 'selected' : '' }}>
+                                    Ditolak</option>
+                            </select>
+
+                            @error('status')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="status_message">Status Pesan</label>
+                            <textarea class="form-control" id="status_message" name="status_message" placeholder="Masukkan status pesan"
+                                rows="3">{{ old('status_message') }}</textarea>
+                            @error('status_message')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Nama Calon Nasabah</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                placeholder="Masukkan nama calon nasabah" value="{{ old('name') }}">
+                            @error('name')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Alamat Calon Nasabah</label>
+                            <textarea class="form-control" id="address" name="address" placeholder="Masukkan alamat calon nasabah" rows="3">{{ old('address') }}</textarea>
+                            @error('address')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="no_ktp">Nomor KTP Calon Nasabah</label>
+                            <input type="text" class="form-control" id="no_ktp" name="no_ktp"
+                                placeholder="Masukkan nomor ktp calon nasabah" value="{{ old('no_ktp') }}">
+                            @error('no_ktp')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="address_status">Status Alamat Calon Nasabah</label>
+                            <input type="text" class="form-control" id="address_status" name="address_status"
+                                placeholder="Masukkan status alamat calon nasabah" value="{{ old('address_status') }}">
+                            @error('address_status')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="phone_number">No Telepon Calon Nasabah</label>
+                            <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                placeholder="Masukkan nomor telepon calon nasabah" value="{{ old('phone_number') }}">
+                            @error('phone_number')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="npwp">NPWP Calon Nasabah</label>
+                            <input type="text" class="form-control" id="npwp" name="npwp"
+                                placeholder="Masukkan NPWP calon nasabah" value="{{ old('npwp') }}">
+                            @error('npwp')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="user_id">Petugas</label>
+                            <select name="user_id" id="user_id" class="form-control select2">
+                                <option value="">Pilih Petugas</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ old('user_id') ?? $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+
+                            @error('user_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 @endsection
 
 @push('styles')
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 @endpush
 
 @push('scripts')
+    <!-- Select2 -->
+    <script src="{{ asset('adminlte') }}/plugins/select2/js/select2.full.min.js"></script>
     <script>
         $(function() {
+            $('.select2').select2({
+                theme: 'bootstrap4'
+            });
+
             $("#table").DataTable({
                 "processing": true,
                 "serverSide": true,
@@ -161,6 +254,12 @@
                         "data": "user"
                     },
                     {
+                        "data": "status"
+                    },
+                    {
+                        "data": "status_message"
+                    },
+                    {
                         "data": "action"
                     }
                 ],
@@ -171,6 +270,43 @@
                 }],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+            });
+
+            function toggleFormFields(status) {
+                if (status === 'approved') {
+                    $('.form-group').show(); // Tampilkan semua input
+                } else if (status === 'rejected') {
+                    $('.form-group').hide(); // Sembunyikan semua input
+                    $('label[for="status"], #status').closest('.form-group').show(); // Tampilkan status
+                    $('label[for="status_message"], #status_message').closest('.form-group')
+                .show(); // Tampilkan status pesan
+                }
+            }
+
+            // Saat status berubah
+            $('#status').on('change', function() {
+                let selectedStatus = $(this).val();
+                toggleFormFields(selectedStatus);
+            });
+
+            // Event listener saat modal akan ditampilkan
+            $('#modal-proccess-customer').on('show.bs.modal', function(event) {
+                let button = $(event.relatedTarget);
+                let prospectiveCustomer = button.data('prospectivecustomer');
+
+                if (prospectiveCustomer) {
+                    $("#id").val(prospectiveCustomer.id);
+                    $("#name").val(prospectiveCustomer.name);
+                    $("#no_ktp").val(prospectiveCustomer.no_ktp);
+                    $("#address").val(prospectiveCustomer.address);
+                    $("#address_status").val(prospectiveCustomer.address_status);
+                    $("#phone_number").val(prospectiveCustomer.phone_number);
+                    $("#npwp").val(prospectiveCustomer.npwp);
+                    $("#user_id").val(prospectiveCustomer.user_id).trigger('change');
+                }
+
+                // Panggil fungsi untuk menyesuaikan tampilan input berdasarkan status saat modal dibuka
+                toggleFormFields($('#status').val());
             });
         });
     </script>

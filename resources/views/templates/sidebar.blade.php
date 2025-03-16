@@ -155,6 +155,17 @@
                         </a>
                     </li>
                 @endcan
+                @canany(['survei.index', 'survei.create', 'survei.edit', 'survei.delete'])
+                    <li class="nav-item {{ Route::is('prospective-customer-surveys.*') ? 'active' : '' }}">
+                        <a href="{{ route('prospective-customer-surveys.index') }}"
+                            class="nav-link {{ Route::is('prospective-customer-surveys.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-poll-h"></i>
+                            <p>
+                                Survei
+                            </p>
+                        </a>
+                    </li>
+                @endcan
                 @canany(['laporan-petugas.index', 'laporan-petugas.create', 'laporan-petugas.edit',
                     'laporan-petugas.delete', 'laporan-kehadiran.index', 'laporan-kehadiran.create',
                     'laporan-kehadiran.edit', 'laporan-kehadiran.delete', 'laporan-penagihan.index',

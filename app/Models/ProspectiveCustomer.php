@@ -21,4 +21,9 @@ class ProspectiveCustomer extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function prospectiveCustomerSurvey()
+    {
+        return $this->hasMany(ProspectiveCustomerSurvey::class);
+    }
 }

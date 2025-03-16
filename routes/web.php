@@ -11,6 +11,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\OfficerReportController;
 use App\Http\Controllers\ProspectiveCustomerController;
+use App\Http\Controllers\ProspectiveCustomerSurveyController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\BankContoller;
 use App\Http\Controllers\UserController;
@@ -59,6 +60,13 @@ Route::middleware('auth')->group(function () {
     // Route prospective customer
     Route::resource('prospective-customers', ProspectiveCustomerController::class);
     Route::post('prospective-customers/fetch-data-table', [ProspectiveCustomerController::class, 'fetchDataTable'])->name('prospective-customers.fetchDataTable');
+    Route::post('prospective-customers/proccess-prospective-customer', [ProspectiveCustomerController::class, 'proccessProspectiveCustomer'])->name('prospective-customers.proccessProspectiveCustomer');
+
+    // Route prospective customer survey
+    Route::resource('prospective-customer-surveys', ProspectiveCustomerSurveyController::class);
+    Route::post('prospective-customer-surveys/fetch-data-table', [ProspectiveCustomerSurveyController::class, 'fetchDataTable'])->name('prospective-customer-surveys.fetchDataTable');
+    Route::post('prospective-customer-surveys/mass-delete', [ProspectiveCustomerSurveyController::class, 'massDelete'])->name('prospective-customer-surveys.massDelete');
+    Route::post('prospective-customer-surveys/mass-select-officer', [ProspectiveCustomerSurveyController::class, 'massSelectOfficer'])->name('prospective-customer-surveys.massSelectOfficer');
 
     // Route cuti
     Route::resource('leaves', LeaveController::class);

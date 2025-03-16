@@ -33,7 +33,11 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        return view("prospective-customers.index");
+        $users = User::all();
+
+        return view('prospective-customers.index', [
+            'users' => $users,
+        ]);
     }
 
     // Fetch data for DataTable
@@ -79,7 +83,7 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'no_ktp' => 'required|numeric|max:255|unique:prospective_customers,no_ktp',
+            'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp',
             'bank' => 'required|string|max:255',
             'ktp' => 'required|file|mimes:jpg,png,jpeg|max:2048',
             'kk' => 'required|file|mimes:jpg,png,jpeg|max:2048',
@@ -156,7 +160,7 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'no_ktp' => 'required|numeric|max:255|unique:prospective_customers,no_ktp,' . $prospectiveCustomer->id,
+            'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp,' . $prospectiveCustomer->id,
             'bank' => 'required|string|max:255',
             'ktp' => 'required|file|mimes:jpg,png,jpeg|max:2048',
             'kk' => 'required|file|mimes:jpg,png,jpeg|max:2048',
@@ -220,5 +224,53 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
         $prospectiveCustomer->delete();
 
         return redirect()->route('prospective-customers.index')->with('success', 'Prospective Customer deleted successfully.');
+    }
+
+    public function proccessProspectiveCustomer(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|exists:prospective_customers,id',
+            'name' => 'required_if:status,approved|string|max:255',
+            'no_ktp' => 'required_if:status,approved|numeric|unique:prospective_customers,no_ktp,' . $request->id,
+            'address' => 'required_if:status,approved|string',
+            'address_status' => 'required_if:status,approved|string',
+            'phone_number' => 'required_if:status,approved|string',
+            'npwp' => 'required_if:status,approved|string',
+            'user_id' => 'nullable|exists:users,id',
+            'status' => 'required|in:approved,rejected',
+            'status_message' => 'required_if:status,rejected|nullable|string',
+        ]);
+
+        $prospectiveCustomer = ProspectiveCustomer::findOrFail($request->id);
+        $prospectiveCustomer->status = $request->status;
+
+        if ($request->status === 'approved') {
+            // $prospectiveCustomer->status_message = null;
+            $prospectiveCustomer->status_message = $request->status_message;
+            $prospectiveCustomer->fill($validatedData);
+        } else {
+            $prospectiveCustomer->status_message = $request->status_message;
+        }
+
+        $prospectiveCustomer->save();
+
+        if ($request->status === 'approved') {
+            $prospectiveCustomer->prospectiveCustomerSurvey()->updateOrCreate(
+                ['prospective_customer_id' => $prospectiveCustomer->id],
+                [
+                    'user_id' => $validatedData['user_id'] ?? null,
+                    'status' => $validatedData['user_id'] ? 'ongoing' : 'pending',
+                    'name' => $validatedData['name'] ?? $prospectiveCustomer->name,
+                    'address' => $validatedData['address'] ?? $prospectiveCustomer->address,
+                    'number_ktp' => $validatedData['no_ktp'] ?? $prospectiveCustomer->no_ktp,
+                    'address_status' => $validatedData['address_status'] ?? $prospectiveCustomer->address_status,
+                    'phone_number' => $validatedData['phone_number'] ?? $prospectiveCustomer->phone_number,
+                    'npwp' => $validatedData['npwp'] ?? $prospectiveCustomer->npwp,
+                ]
+            );
+        }
+
+        return redirect()->route('prospective-customers.index')
+            ->with('success', 'Prospective Customer updated successfully.');
     }
 }
