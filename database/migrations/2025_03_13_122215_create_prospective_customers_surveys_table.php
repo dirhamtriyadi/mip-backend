@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('employee_tenure')->nullable()->comment('Lama kerja');
             $table->string('employee_status')->nullable()->comment('Status karyawan');
             $table->bigInteger('salary')->nullable()->default(0)->comment('Gaji');
-            $table->bigInteger('other_business')->nullable()->default(0)->comment('Pendapatan usaha tambahan');
+            $table->string('other_business')->nullable()->default(0)->comment('Pendapatan usaha tambahan');
             $table->bigInteger('monthly_living_expenses')->nullable()->default(0)->comment('Biaya hidup per bulan');
             $table->string('children')->default(0)->comment('Tanggungan anak');
             $table->string('wife')->default(0)->comment('Tanggungan istri');
