@@ -238,15 +238,15 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
     {
         $validatedData = $request->validate([
             'id' => 'required|exists:prospective_customers,id',
-            'name' => 'required_if:status,approved|string|max:255',
-            'no_ktp' => 'required_if:status,approved|numeric|unique:prospective_customers,no_ktp,' . $request->id,
-            'address' => 'required_if:status,approved|string',
-            'address_status' => 'required_if:status,approved|string',
-            'phone_number' => 'required_if:status,approved|string',
-            'npwp' => 'required_if:status,approved|string',
+            'name' => 'nullable|string|max:255',
+            'no_ktp' => 'nullable|numeric|unique:prospective_customers,no_ktp,' . $request->id,
+            'address' => 'nullable|string',
+            'address_status' => 'nullable|string',
+            'phone_number' => 'nullable|string',
+            'npwp' => 'nullable|string',
             'user_id' => 'nullable|exists:users,id',
             'status' => 'required|in:approved,rejected',
-            'status_message' => 'required_if:status,rejected|nullable|string',
+            'status_message' => 'nullable|nullable|string',
         ]);
 
         $prospectiveCustomer = ProspectiveCustomer::findOrFail($request->id);
