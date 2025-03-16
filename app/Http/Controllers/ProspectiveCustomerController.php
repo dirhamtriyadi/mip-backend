@@ -87,7 +87,7 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             'bank' => 'required|string|max:255',
             'ktp' => 'required|file|mimes:jpg,png,jpeg|max:2048',
             'kk' => 'required|file|mimes:jpg,png,jpeg|max:2048',
-            'status' => 'nullable|in:approved,rejected',
+            'status' => 'nullable|in:pending,approved,rejected',
             'status_message' => 'nullable|string',
             'user_id' => 'nullable|exists:users,id',
         ]);
