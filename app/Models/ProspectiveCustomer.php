@@ -14,6 +14,8 @@ class ProspectiveCustomer extends Model
         'bank',
         'ktp',
         'kk',
+        'status',
+        'status_message',
         'user_id'
     ];
 

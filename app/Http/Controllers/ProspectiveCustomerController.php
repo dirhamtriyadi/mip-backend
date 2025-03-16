@@ -87,6 +87,8 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             'bank' => 'required|string|max:255',
             'ktp' => 'required|file|mimes:jpg,png,jpeg|max:2048',
             'kk' => 'required|file|mimes:jpg,png,jpeg|max:2048',
+            'status' => 'nullable|in:approved,rejected',
+            'status_message' => 'nullable|string',
             'user_id' => 'nullable|exists:users,id',
         ]);
 
@@ -160,10 +162,12 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp,' . $prospectiveCustomer->id,
+            'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp,' . $id,
             'bank' => 'required|string|max:255',
-            'ktp' => 'required|file|mimes:jpg,png,jpeg|max:2048',
-            'kk' => 'required|file|mimes:jpg,png,jpeg|max:2048',
+            'ktp' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
+            'kk' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
+            'status' => 'nullable|in:approved,rejected',
+            'status_message' => 'nullable|string',
             'user_id' => 'nullable|exists:users,id',
         ]);
 
@@ -181,6 +185,8 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             $fileName = $validatedData['name'] . '-' . 'ktp' . '-' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('images/prospective-customers'), $fileName);
             $validatedData['ktp'] = $fileName;
+        } else {
+            unset($validatedData['ktp']);
         }
 
         // save image check out
@@ -195,6 +201,8 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             $fileName = $validatedData['name'] . '-' . 'kk' . '-' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('images/prospective-customers'), $fileName);
             $validatedData['kk'] = $fileName;
+        } else {
+            unset($validatedData['kk']);
         }
 
         $validatedData['updated_by'] = auth()->id();

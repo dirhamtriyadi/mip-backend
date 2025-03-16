@@ -112,7 +112,30 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-
+                                    <div class="form-group">
+                                        <label for="status">Status</label>
+                                        <select class="form-control select2" style="width: 100%;" id="status"
+                                            name="status">
+                                            <option selected>Pilih Status Proses</option>
+                                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>
+                                                Menunggu</option>
+                                            <option value="approved" {{ old('status') == 'approved' ? 'selected' : '' }}>
+                                                Disetujui</option>
+                                            <option value="rejected" {{ old('status') == 'rejected' ? 'selected' : '' }}>
+                                                Ditolak</option>
+                                        </select>
+                                        @error('status')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="status_message">Status Pesan</label>
+                                        <textarea class="form-control" id="status_message" name="status_message" placeholder="Masukkan status pesan"
+                                            rows="3">{{ old('status_message') }}</textarea>
+                                        @error('status_message')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="user_id">Petugas</label>
                                         <select class="form-control select2" style="width: 100%;" id="user_id"
