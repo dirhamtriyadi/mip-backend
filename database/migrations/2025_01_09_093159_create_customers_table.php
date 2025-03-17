@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name_customer')->comment('Nama nasabah');
             $table->string('name_mother')->nullable()->comment('Nama ibu');
             $table->string('phone_number')->nullable()->comment('Nomor telepon');
-            $table->enum('status', ['paid', 'not_yet_paid'])->default('not_yet_paid')->comment('Status lunas');
+            $table->enum('status', ['paid', 'not_yet_paid'])->nullable()->default('not_yet_paid')->comment('Status lunas');
             $table->foreignId('bank_id')->nullable()->constrained('banks')->onDelete('cascade')->comment('ID bank');
             // $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->comment('ID petugas');
             $table->bigInteger('margin_start')->nullable()->default(0)->comment('Margin awal');
