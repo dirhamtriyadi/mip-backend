@@ -8,6 +8,7 @@
         "php": "^8.2",
         "barryvdh/laravel-debugbar": "^3.14",
         "barryvdh/laravel-dompdf": "^3.0",
+        "dedoc/scramble": "^0.12.12",
         "diglactic/laravel-breadcrumbs": "^9.0",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
