@@ -115,7 +115,24 @@ class CustomerController extends Controller implements HasMiddleware
         ]);
 
         $validatedData['created_by'] = auth()->id();
-        $customer = Customer::create($validatedData);
+        $customer = Customer::create([
+            'no_contract' => $validatedData['no_contract'],
+            'bank_account_number' => $validatedData['bank_account_number'],
+            'name_customer' => $validatedData['name_customer'],
+            'name_mother' => $validatedData['name_mother'],
+            'phone_number' => $validatedData['phone_number'],
+            'status' => $validatedData['status'] ?? null,
+            'bank_id' => $validatedData['bank_id'],
+            // 'user_id' => $validatedData['user_id'],
+            'margin_start' => $validatedData['margin_start'],
+            'os_start' => $validatedData['os_start'],
+            'margin_remaining' => $validatedData['margin_remaining'],
+            'installments' => $validatedData['installments'],
+            'month_arrears' => $validatedData['month_arrears'],
+            'arrears' => $validatedData['arrears'],
+            'due_date' => $validatedData['due_date'],
+            'description' => $validatedData['description']
+        ]);
         $customer->customerAddress()->updateOrCreate(['customer_id' => $customer->id], [
             'address' => $validatedData['address'],
             'village' => $validatedData['village'],
@@ -179,7 +196,24 @@ class CustomerController extends Controller implements HasMiddleware
         $validatedData['updated_by'] = auth()->id();
 
         $customer = Customer::findOrFail($id);
-        $customer->update($validatedData);
+        $customer->update([
+            'no_contract' => $validatedData['no_contract'],
+            'bank_account_number' => $validatedData['bank_account_number'],
+            'name_customer' => $validatedData['name_customer'],
+            'name_mother' => $validatedData['name_mother'],
+            'phone_number' => $validatedData['phone_number'],
+            'status' => $validatedData['status'] ?? null,
+            'bank_id' => $validatedData['bank_id'],
+            // 'user_id' => $validatedData['user_id'],
+            'margin_start' => $validatedData['margin_start'],
+            'os_start' => $validatedData['os_start'],
+            'margin_remaining' => $validatedData['margin_remaining'],
+            'installments' => $validatedData['installments'],
+            'month_arrears' => $validatedData['month_arrears'],
+            'arrears' => $validatedData['arrears'],
+            'due_date' => $validatedData['due_date'],
+            'description' => $validatedData['description']
+        ]);
 
         $customer->customerAddress()->updateOrCreate(['customer_id' => $customer->id], [
             'address' => $validatedData['address'],
