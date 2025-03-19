@@ -46,7 +46,7 @@ class CustomerController extends Controller implements HasMiddleware
         return DataTables::of($customers)
             ->addIndexColumn()
             ->addColumn('name_bank', function ($customer) {
-                return $customer->bank->name;
+                return $customer->bank->name ?? '-';
             })
             ->addColumn('name_officer', function ($customer) {
                 return $customer->user->name ?? '-';
