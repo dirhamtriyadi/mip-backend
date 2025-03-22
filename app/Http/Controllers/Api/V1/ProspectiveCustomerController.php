@@ -58,13 +58,13 @@ class ProspectiveCustomerController extends Controller
             }
 
             // Simpan ke database
-            ProspectiveCustomer::create($validatedData);
+            $prospectiveCustomer = ProspectiveCustomer::create($validatedData);
 
             DB::commit(); // Jika berhasil, simpan perubahan
             return response()->json([
                 'status' => 'success',
                 'message' => 'Data berhasil disimpan',
-                'data' => ProspectiveCustomerResource::collection(ProspectiveCustomer::all()),
+                'data' => new ProspectiveCustomerResource($prospectiveCustomer),
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack(); // Jika ada error, batalkan semua perubahan

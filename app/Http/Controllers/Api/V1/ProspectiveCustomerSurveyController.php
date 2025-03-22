@@ -1,0 +1,182 @@
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\Models\ProspectiveCustomerSurvey;
+use App\Http\Resources\Api\V1\ProspectiveCustomerSurveyResource;
+use Validator;
+use Illuminate\Support\Facades\DB;
+
+class ProspectiveCustomerSurveyController extends Controller
+{
+    public function index(Request $request)
+    {
+        $search = $request->search ?? null;
+        $start_date = $request->start_date ?? Carbon::now()->startOfMonth();
+        $end_date = $request->end_date ?? Carbon::now()->endOfMonth();
+
+        $user = auth()->user();
+
+        if ($request->start_date && $request->end_date) {
+            $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
+            $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
+        }
+
+        $surveys = ProspectiveCustomerSurvey::with(['user', 'prospectiveCustomer'])
+            ->where('user_id', $user->id)
+            ->whereBetween('created_at', [$start_date, $end_date])
+            ->get();
+
+        if ($search) {
+            $surveys = $surveys->where('name', 'like', '%' . $search . '%');
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data retrieved successfully',
+            'data' => ProspectiveCustomerSurveyResource::collection($surveys)
+        ]);
+    }
+
+    public function show(Request $request, string $id)
+    {
+        $survey = ProspectiveCustomerSurvey::findOrFail($id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data retrieved successfully',
+            'data' => ProspectiveCustomerSurveyResource::make($survey)
+        ]);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => 'nullable|in:pending,ongoing,done',
+            'user_id' => 'nullable|exists:users,id',
+            'name' => 'string',
+            'address' => 'string',
+            'number_ktp' => 'string|unique:prospective-customer-surveys,number_ktp,' . $id,
+            'address_status' => 'string',
+            'phone_number' => 'string',
+            'npwp' => 'nullable|string',
+            'job_type' => 'nullable|string',
+            'company_name' => 'nullable|string',
+            'job_level' => 'nullable|string',
+            'employee_tenure' => 'nullable|string',
+            'employee_status' => 'nullable|string',
+            'salary' => 'nullable|integer',
+            'other_business' => 'nullable|string',
+            'monthly_living_expenses' => 'nullable|integer',
+            'children' => 'nullable|string',
+            'wife' => 'nullable|string',
+            'couple_jobs' => 'nullable|string',
+            'couple_business' => 'nullable|string',
+            'couple_income' => 'nullable|integer',
+            'bank_debt' => 'nullable|integer',
+            'cooperative_debt' => 'nullable|integer',
+            'personal_debt' => 'nullable|integer',
+            'online_debt' => 'nullable|integer',
+            'customer_character_analysis' => 'nullable|string',
+            'financial_report_analysis' => 'nullable|string',
+            'slik_result' => 'nullable|string',
+            'info_provider_name' => 'nullable|string',
+            'info_provider_position' => 'nullable|string',
+            'workplace_condition' => 'nullable|string',
+            'employee_count' => 'nullable|string',
+            'business_duration' => 'nullable|string',
+            'office_address' => 'nullable|string',
+            'office_phone' => 'nullable|string',
+            'loan_application' => 'nullable|integer',
+            'recommendation_from_vendors' => 'nullable|string',
+            'recommendation_from_treasurer' => 'nullable|string',
+            'recommendation_from_other' => 'nullable|string',
+            'recommendation_pt' => 'nullable|in:yes,no',
+            'descriptionSurvey' => 'nullable|string',
+            'locationSurvey' => 'nullable|string',
+            'dateSurvey' => 'nullable|date',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
+            'locationString' => 'nullable|string',
+            'signature_officer' => 'nullable|image',
+            'signature_customer' => 'nullable|image',
+            'signature_couple' => 'nullable|image',
+            'workplace_image1' => 'nullable|image',
+            'workplace_image2' => 'nullable|image',
+            'customer_image' => 'nullable|image',
+            'ktp_image' => 'nullable|image',
+            'loan_guarantee_image1' => 'nullable|image',
+            'loan_guarantee_image2' => 'nullable|image',
+            'kk_image' => 'nullable|image',
+            'id_card_image' => 'nullable|image',
+            'salary_slip_image1' => 'nullable|image',
+            'salary_slip_image2' => 'nullable|image',
+        ]);
+
+        // Daftar field gambar
+        $imageFields = [
+            'signature_officer', 'signature_customer', 'signature_couple',
+            'workplace_image1', 'workplace_image2', 'customer_image',
+            'ktp_image', 'loan_guarantee_image1', 'loan_guarantee_image2',
+            'kk_image', 'id_card_image', 'salary_slip_image1', 'salary_slip_image2'
+        ];
+
+        // Simpan file yang diunggah untuk rollback jika ada error
+        $uploadedImages = [];
+        $oldImages = [];
+
+        DB::beginTransaction();
+        try {
+            $validatedData = $validator->validate();
+
+            foreach ($imageFields as $field) {
+                if ($request->hasFile($field)) {
+                    // Simpan file lama untuk dihapus jika upload sukses
+                    if ($prospectiveCustomerSurvey->$field) {
+                        $oldImages[$field] = $prospectiveCustomerSurvey->$field;
+                    }
+                    // Simpan file baru
+                    $path = $request->file($field)->store('survey', 'public');
+                    $validatedData[$field] = $path;
+                    $uploadedImages[$field] = $path;
+                }
+            }
+
+            $prospectiveCustomerSurvey = ProspectiveCustomerSurvey::findOrFail($id);
+            $prospectiveCustomerSurvey->update($validatedData);
+
+            // Hapus file lama jika update berhasil
+            foreach ($oldImages as $oldPath) {
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data updated successfully',
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            // Hapus file baru yang diunggah jika terjadi error
+            foreach ($uploadedImages as $newPath) {
+                if (Storage::disk('public')->exists($newPath)) {
+                    Storage::disk('public')->delete($newPath);
+                }
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan',
+                'errors' => [
+                    'message' => $th->getMessage(),
+                ],
+            ], 500);
+        }
+    }
+}

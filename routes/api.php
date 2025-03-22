@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\BillingStatusController;
 use App\Http\Controllers\Api\V1\BillingReportController;
 use App\Http\Controllers\Api\V1\CustomerBillingReportController;
 use App\Http\Controllers\Api\V1\ProspectiveCustomerController;
+use App\Http\Controllers\Api\V1\ProspectiveCustomerSurveyController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
@@ -48,6 +49,11 @@ Route::prefix('v1')->group(function () {
 
         // Prospective Customer
         Route::post('prospective-customers', [ProspectiveCustomerController::class, 'store'])->name('prospective-customers.store');
+
+        // Prospective Customer Survey
+        Route::get('prospective-customer-surveys', [ProspectiveCustomerSurveyController::class, 'index'])->name('prospective-customer-surveys.index');
+        Route::get('prospective-customer-surveys/{id}', [ProspectiveCustomerSurveyController::class, 'show'])->name('prospective-customer-surveys.show');
+        Route::put('prospective-customer-surveys/{id}', [ProspectiveCustomerSurveyController::class, 'update'])->name('prospective-customer-surveys.update');
 
         // User
         Route::apiResource('users', UserController::class);
