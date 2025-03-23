@@ -14,30 +14,48 @@ class ProspectiveCustomerSurveyController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->search ?? null;
-        $start_date = $request->start_date ?? Carbon::now()->startOfMonth();
-        $end_date = $request->end_date ?? Carbon::now()->endOfMonth();
-
         $user = auth()->user();
 
-        if ($request->start_date && $request->end_date) {
-            $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
-            $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
+        // Ambil parameter pencarian
+        $search = $request->search;
+
+        // Validasi start_date & end_date
+        try {
+            $start_date = $request->filled('start_date')
+                ? Carbon::parse($request->start_date)->format('Y-m-d')
+                : Carbon::now()->startOfMonth()->format('Y-m-d');
+
+            $end_date = $request->filled('end_date')
+                ? Carbon::parse($request->end_date)->format('Y-m-d')
+                : Carbon::now()->endOfMonth()->format('Y-m-d');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid date format',
+            ], 400);
         }
 
-        $surveys = ProspectiveCustomerSurvey::with(['user', 'prospectiveCustomer'])
+        // Query dengan filter user, tanggal, dan pencarian (jika ada)
+        $surveys = ProspectiveCustomerSurvey::query()
+            ->with(['user', 'prospectiveCustomer'])
             ->where('user_id', $user->id)
-            ->whereBetween('created_at', [$start_date, $end_date])
-            ->get();
+            ->whereBetween('created_at', [$start_date, $end_date]);
 
-        if ($search) {
-            $surveys = $surveys->where('name', 'like', '%' . $search . '%');
+        // Perbaikan logika pencarian agar OR tidak mempengaruhi query utama
+        if (!empty($search)) {
+            $surveys->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('number_ktp', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%")
+                    ->orWhere('address_status', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%");
+            });
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully',
-            'data' => ProspectiveCustomerSurveyResource::collection($surveys)
+            'data' => ProspectiveCustomerSurveyResource::collection($surveys->get())
         ]);
     }
 
