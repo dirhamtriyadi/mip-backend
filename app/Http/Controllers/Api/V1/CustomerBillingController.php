@@ -16,62 +16,62 @@ class CustomerBillingController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->search ?? null;
-        $start_date = $request->start_date ?? Carbon::now()->startOfMonth();
-        $end_date = $request->end_date ?? Carbon::now();
-
         $user = auth()->user();
+        $search = $request->search;
 
-        if ($request->start_date && $request->end_date) {
-            $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
-            $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
+        // Validasi & format tanggal agar tidak error
+        try {
+            $start_date = $request->filled('start_date')
+                ? Carbon::parse($request->start_date)->format('Y-m-d')
+                : Carbon::now()->startOfMonth()->format('Y-m-d');
+
+            $end_date = $request->filled('end_date')
+                ? Carbon::parse($request->end_date)->format('Y-m-d')
+                : Carbon::now()->format('Y-m-d');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid date format',
+            ], 400);
         }
 
-        $customerBillings = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
+        // Inisialisasi query utama
+        $customerBillings = CustomerBilling::query()
+            ->with(['customer', 'user', 'latestBillingFollowups'])
             ->where('user_id', $user->id)
             ->whereBetween('created_at', [$start_date, $end_date])
-            ->orWhereHas('latestBillingFollowups', function($q) use($search, $user, $start_date, $end_date) {
+            ->orWhereHas('latestBillingFollowups', function ($q) use ($user, $start_date, $end_date) {
                 $q->whereIn('status', ['visit', 'promise_to_pay', 'pay'])
-                  ->whereHas('customerBilling', function($q) use($user, $start_date, $end_date) {
-                      $q->whereBetween('date_exec', [$start_date, $end_date])
+                ->whereHas('customerBilling', function ($q) use ($user, $start_date, $end_date) {
+                    $q->whereBetween('date_exec', [$start_date, $end_date])
                         ->where('user_id', $user->id);
-                  });
-            })
-            ->get();
+                });
+            });
 
-        if ($search) {
-            // Cari enum yang cocok dengan pencarian
+        // Jika ada pencarian, tambahkan filter
+        if (!empty($search)) {
             $matchingStatuses = BillingFollowupEnum::search($search);
-
-            // Ambil nilai (`value`) dari hasil pencarian
             $matchingValues = array_map(fn ($status) => $status->value, $matchingStatuses);
-
-            // Pastikan $matchingValues adalah array yang valid untuk query
             if (empty($matchingValues)) {
-                $matchingValues = [null]; // Jika tidak ada pencocokan, kita bisa gunakan nilai default
+                $matchingValues = [null]; // Nilai default jika tidak ada hasil pencarian
             }
-            // dd($matchingValues);
 
-            $customerBillings = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
-            ->where('user_id', $user->id)
-            ->whereBetween('created_at', [$start_date, $end_date])
-            ->where(function($query) use ($search, $matchingValues) {
-                $query->where('bill_number', 'like', '%' . $search . '%')
-                      ->orWhereHas('customer', function($q) use ($search) {
-                          $q->where('name_customer', 'like', '%' . $search . '%')
-                            ->orWhere('no_contract', 'like', '%' . $search . '%');
-                      })
-                      ->orWhereHas('latestBillingFollowups', function($q) use ($matchingValues) {
-                          $q->whereIn('status', $matchingValues);
-                      });
-            })
-            ->get();
+            $customerBillings->where(function ($query) use ($search, $matchingValues) {
+                $query->where('bill_number', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name_customer', 'like', "%{$search}%")
+                            ->orWhere('no_contract', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('latestBillingFollowups', function ($q) use ($matchingValues) {
+                        $q->whereIn('status', $matchingValues);
+                    });
+            });
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully.',
-            'data' => CustomerBillingResource::collection($customerBillings),
+            'data' => CustomerBillingResource::collection($customerBillings->get()),
         ], 200);
     }
 
