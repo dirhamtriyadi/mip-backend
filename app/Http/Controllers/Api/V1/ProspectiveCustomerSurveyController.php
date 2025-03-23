@@ -9,6 +9,7 @@ use App\Models\ProspectiveCustomerSurvey;
 use App\Http\Resources\Api\V1\ProspectiveCustomerSurveyResource;
 use Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProspectiveCustomerSurveyController extends Controller
 {
