@@ -10,6 +10,7 @@ use App\Http\Resources\Api\V1\ProspectiveCustomerSurveyResource;
 use Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProspectiveCustomerSurveyController extends Controller
 {
@@ -198,5 +199,16 @@ class ProspectiveCustomerSurveyController extends Controller
                 ],
             ], 500);
         }
+    }
+
+    public function exportPdfByCustomer(string $id)
+    {
+        $survey = ProspectiveCustomerSurvey::findOrFail($id);
+
+        $pdf = Pdf::loadView('prospective-customer-surveys.pdf-by-customer', [
+            'data' => $survey,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('pdf');
     }
 }
