@@ -9,6 +9,8 @@
     <form action="{{ route('prospective-customer-surveys.destroy', $value->id) }}" method="post">
         @csrf
         @method('delete')
-        <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
+        <button type="submit" class="btn btn-sm btn-danger ml-1"><i class="fas fa-trash"></i> Delete</button>
     </form>
+    <a href="{{ route('prospective-customer-surveys.exportPdfByCustomer', $value->id) }}"
+        class="btn btn-sm btn-success ml-1"><i class="fas fa-file-pdf"></i> Export PDF</a>
 </div>

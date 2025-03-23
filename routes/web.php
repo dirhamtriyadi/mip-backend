@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::post('prospective-customer-surveys/fetch-data-table', [ProspectiveCustomerSurveyController::class, 'fetchDataTable'])->name('prospective-customer-surveys.fetchDataTable');
     Route::post('prospective-customer-surveys/mass-delete', [ProspectiveCustomerSurveyController::class, 'massDelete'])->name('prospective-customer-surveys.massDelete');
     Route::post('prospective-customer-surveys/mass-select-officer', [ProspectiveCustomerSurveyController::class, 'massSelectOfficer'])->name('prospective-customer-surveys.massSelectOfficer');
+    Route::get('prospective-customer-surveys/{id}/export-pdf-by-customer', [ProspectiveCustomerSurveyController::class, 'exportPdfByCustomer'])->name('prospective-customer-surveys.exportPdfByCustomer');
 
     // Route cuti
     Route::resource('leaves', LeaveController::class);

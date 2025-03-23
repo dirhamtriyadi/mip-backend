@@ -8,6 +8,7 @@ use App\Models\ProspectiveCustomerSurvey;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProspectiveCustomerSurveyController extends Controller
 {
@@ -433,5 +434,16 @@ class ProspectiveCustomerSurveyController extends Controller
         }
 
         return redirect()->route('prospective-customer-surveys.index')->with('success', 'Data berhasil ditandatangani');
+    }
+
+    public function exportPdfByCustomer(string $id)
+    {
+        $survey = ProspectiveCustomerSurvey::findOrFail($id);
+
+        $pdf = Pdf::loadView('prospective-customer-surveys.pdf-by-customer', [
+            'data' => $survey,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->stream('pdf');
     }
 }
