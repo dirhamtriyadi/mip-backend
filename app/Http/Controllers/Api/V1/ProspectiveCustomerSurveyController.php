@@ -150,6 +150,8 @@ class ProspectiveCustomerSurveyController extends Controller
         try {
             $validatedData = $validator->validate();
 
+            $prospectiveCustomerSurvey = ProspectiveCustomerSurvey::findOrFail($id);
+
             foreach ($imageFields as $field) {
                 if ($request->hasFile($field)) {
                     // Simpan file lama untuk dihapus jika upload sukses
@@ -163,7 +165,6 @@ class ProspectiveCustomerSurveyController extends Controller
                 }
             }
 
-            $prospectiveCustomerSurvey = ProspectiveCustomerSurvey::findOrFail($id);
             $prospectiveCustomerSurvey->update($validatedData);
 
             // Hapus file lama jika update berhasil
