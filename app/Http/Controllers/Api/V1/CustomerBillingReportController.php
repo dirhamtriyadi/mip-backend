@@ -32,7 +32,8 @@ class CustomerBillingReportController extends Controller
         $customerBillings = CustomerBilling::with(['customer', 'user', 'billingFollowups'])
             ->where('user_id', $user->id)
             ->whereBetween('created_at', [$start_date, $end_date])
-            ->orWhereHas('billingFollowups', function($q) use($search, $user, $start_date, $end_date) {
+            // ->orWhereHas('billingFollowups', function($q) use($search, $user, $start_date, $end_date) {
+            ->orWhereHas('latestBillingFollowups', function($q) use($search, $user, $start_date, $end_date) {
                 $q->whereIn('status', ['visit', 'promise_to_pay', 'pay'])
                   ->whereHas('customerBilling', function($q) use($user, $start_date, $end_date) {
                       $q->whereBetween('created_at', [$start_date, $end_date])
