@@ -36,42 +36,59 @@ class CustomerBillingController extends Controller
         }
 
         // Inisialisasi query utama
-        $customerBillings = CustomerBilling::query()
-            ->with(['customer', 'user', 'latestBillingFollowups'])
+        $customerBillings = CustomerBilling::with(['customer', 'user', 'billingFollowups'])
             ->where('user_id', $user->id)
             ->whereBetween('created_at', [$start_date, $end_date])
-            ->orWhereHas('latestBillingFollowups', function ($q) use ($user, $start_date, $end_date) {
+            // ->orWhereHas('billingFollowups', function($q) use($search, $user, $start_date, $end_date) {
+            ->orWhereHas('latestBillingFollowups', function($q) use($search, $user, $start_date, $end_date) {
                 $q->whereIn('status', ['visit', 'promise_to_pay', 'pay'])
-                ->whereHas('customerBilling', function ($q) use ($user, $start_date, $end_date) {
-                    $q->whereBetween('date_exec', [$start_date, $end_date])
+                  ->whereHas('customerBilling', function($q) use($user, $start_date, $end_date) {
+                      $q->whereBetween('created_at', [$start_date, $end_date])
                         ->where('user_id', $user->id);
-                });
-            });
+                  });
+            })
+            ->orderBy(
+                BillingFollowup::select('status')
+                    ->whereColumn('customer_billing_id', 'customer_billings.id')
+                    ->orderBy('created_at', 'desc')
+                    ->limit(1)
+            )
+            ->get();
 
         // Jika ada pencarian, tambahkan filter
-        if (!empty($search)) {
+        if ($search) {
+            // Cari enum yang cocok dengan pencarian
             $matchingStatuses = BillingFollowupEnum::search($search);
-            $matchingValues = array_map(fn ($status) => $status->value, $matchingStatuses);
-            if (empty($matchingValues)) {
-                $matchingValues = [null]; // Nilai default jika tidak ada hasil pencarian
-            }
 
-            $customerBillings->where(function ($query) use ($search, $matchingValues) {
-                $query->where('bill_number', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($q) use ($search) {
-                        $q->where('name_customer', 'like', "%{$search}%")
-                            ->orWhere('no_contract', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('latestBillingFollowups', function ($q) use ($matchingValues) {
-                        $q->whereIn('status', $matchingValues);
-                    });
-            });
+            // Ambil nilai (`value`) dari hasil pencarian
+            $matchingValues = array_map(fn ($status) => $status->value, $matchingStatuses);
+
+            // Pastikan $matchingValues adalah array yang valid untuk query
+            if (empty($matchingValues)) {
+                $matchingValues = [null]; // Jika tidak ada pencocokan, kita bisa gunakan nilai default
+            }
+            // dd($matchingValues);
+
+            $customerBillings = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
+            ->where('user_id', $user->id)
+            ->whereBetween('created_at', [$start_date, $end_date])
+            ->where(function($query) use ($search, $matchingValues) {
+                $query->where('bill_number', 'like', '%' . $search . '%')
+                        ->orWhereHas('customer', function($q) use ($search) {
+                            $q->where('name_customer', 'like', '%' . $search . '%')
+                            ->orWhere('no_contract', 'like', '%' . $search . '%');
+                        })
+                        ->orWhereHas('latestBillingFollowups', function($q) use ($matchingValues) {
+                            $q->whereIn('status', $matchingValues);
+                        });
+            })
+            ->get();
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully.',
-            'data' => CustomerBillingResource::collection($customerBillings->get()),
+            'data' => CustomerBillingResource::collection($customerBillings),
         ], 200);
     }
 
