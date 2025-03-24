@@ -17,26 +17,17 @@ class CustomerBillingController extends Controller
      */
     public function index(Request $request)
     {
+        $search = $request->search ?? null;
+        $start_date = $request->start_date ?? Carbon::now()->startOfMonth();
+        $end_date = $request->end_date ?? Carbon::now();
+
         $user = auth()->user();
-        $search = $request->search;
 
-        // Validasi & format tanggal agar tidak error
-        try {
-            $start_date = $request->filled('start_date')
-                ? Carbon::parse($request->start_date)->format('Y-m-d')
-                : Carbon::now()->startOfMonth()->format('Y-m-d');
-
-            $end_date = $request->filled('end_date')
-                ? Carbon::parse($request->end_date)->format('Y-m-d')
-                : Carbon::now()->format('Y-m-d');
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid date format',
-            ], 400);
+        if ($request->start_date && $request->end_date) {
+            $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
+            $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
         }
 
-        // Inisialisasi query utama
         $customerBillings = CustomerBilling::with(['customer', 'user', 'billingFollowups'])
             ->where('user_id', $user->id)
             ->whereBetween('created_at', [$start_date, $end_date])
@@ -56,7 +47,6 @@ class CustomerBillingController extends Controller
             )
             ->get();
 
-        // Jika ada pencarian, tambahkan filter
         if ($search) {
             // Cari enum yang cocok dengan pencarian
             $matchingStatuses = BillingFollowupEnum::search($search);
