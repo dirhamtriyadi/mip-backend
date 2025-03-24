@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\CustomerBilling;
 use App\Enums\BillingFollowupEnum;
 use App\Http\Resources\Api\V1\CustomerBillingResource;
+use App\Models\BillingFollowup;
 
 class CustomerBillingController extends Controller
 {
