@@ -9,7 +9,7 @@ use App\Models\BillingFollowup;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Resources\Api\V1\CustomerBillingResource;
 use Carbon\Carbon;
-use App\Models\BillingFollowupEnum;
+use App\Enums\BillingFollowupEnum;
 
 class CustomerBillingReportController extends Controller
 {
