@@ -53,7 +53,8 @@ class CustomerBillingReportController extends Controller
         // Query dasar
         $customerBilling = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
             ->whereDate('created_at', '>=', $start_date)
-            ->whereDate('created_at', '<=', $end_date);
+            ->whereDate('created_at', '<=', $end_date)
+            ->whereHas('billingFollowups');
 
         // Filter berdasarkan izin pengguna
         if (!$user->hasPermissionTo('laporan-penagihan.all-data')) {
