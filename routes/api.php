@@ -44,6 +44,7 @@ Route::prefix('v1')->group(function () {
 
         // Customer Billing Report
         Route::get('customer-billing-reports', [CustomerBillingReportController::class, 'index'])->name('customer-billing-reports.index');
+        Route::get('customer-billing-reports/{id}', [CustomerBillingReportController::class, 'show'])->name('customer-billing-reports.show');
         Route::get('customer-billing-reports/export-pdf/by-user', [CustomerBillingReportController::class, 'exportPdfByUser'])->name('customer-billing-reports.export-pdf.by-user');
         Route::get('customer-billing-reports/export-pdf/by-customer', [CustomerBillingReportController::class, 'exportPdfByCustomer'])->name('customer-billing-reports.export-pdf.by-customer');
 

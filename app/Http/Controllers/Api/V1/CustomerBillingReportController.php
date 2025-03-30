@@ -84,6 +84,31 @@ class CustomerBillingReportController extends Controller
         ], 200);
     }
 
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $user = auth()->user();
+        $customerBilling = CustomerBilling::with(['customer', 'customer.customerAddress', 'billingFollowups'])->where('user_id', $user->id)->where('id', $id)->first();
+
+        if (!$customerBilling) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data not found.',
+                'errors' => [
+                    'id' => 'Data not found.',
+                ],
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data retrieved successfully.',
+            'data' => new CustomerBillingResource($customerBilling),
+        ], 200);
+    }
+
     public function exportPdfByUser(Request $request)
     {
         $user = auth()->user();
