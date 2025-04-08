@@ -11,9 +11,10 @@ use App\Models\CustomerBilling;
 
 class CustomerBillingImport implements ToModel, WithHeadingRow
 {
-    public function __construct(int $bank_id)
+    public function __construct(int $bank_id, int $user_id)
     {
         $this->bank_id = $bank_id;
+        $this->user_id = $user_id;
     }
 
     /**
@@ -81,7 +82,7 @@ class CustomerBillingImport implements ToModel, WithHeadingRow
         ]);
 
         $customerBilling->update([
-            'user_id' => $row['user_id'] ?? $row['officer_id'] ?? null,
+            'user_id' => $this->user_id ?? $row['user_id'] ?? $row['officer_id'] ?? null,
             'created_by' => $user->id,
         ]);
     }

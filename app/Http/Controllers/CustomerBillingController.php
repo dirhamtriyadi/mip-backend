@@ -225,10 +225,11 @@ class CustomerBillingController extends Controller implements HasMiddleware
         $validatedData = $request->validate([
             'file' => 'required|file|mimes:xlsx,xls',
             'bank_id' => 'required|numeric',
+            'user_id' => 'nullable|numeric',
         ]);
 
         $file = $request->file('file');
-        Excel::import(new CustomerBillingImport($validatedData['bank_id']), $file);
+        Excel::import(new CustomerBillingImport($validatedData['bank_id'], $validatedData['user_id']), $file);
 
         return redirect()->route('customer-billings.index')->with('success', 'Data berhasil diimport');
     }

@@ -72,8 +72,9 @@
                                             <i class="fas fa-file-excel"></i> Import
                                         </button>
                                         {{-- Create to download template import excel --}}
-                                        <a href="{{ route('customer-billings.templateImport') }}" class="btn btn-info mb-3 mr-1"><i
-                                                class="fas fa-download"></i> Template Import</a>
+                                        <a href="{{ route('customer-billings.templateImport') }}"
+                                            class="btn btn-info mb-3 mr-1"><i class="fas fa-download"></i> Template
+                                            Import</a>
                                         {{-- Create to add new data --}}
                                         <a href="{{ route('customer-billings.create') }}"
                                             class="btn btn-primary mb-3 mr-1"><i class="fas fa-plus"></i> Tambah</a>
@@ -135,7 +136,7 @@
                     <div class="modal-body">
                         @csrf
                         <div class="form-group">
-                            <label for="bank_id">Bank</label>
+                            <label for="bank_id">Bank *</label>
                             <select name="bank_id" id="bank_id" class="form-control">
                                 <option value="">Pilih Bank</option>
                                 @foreach ($banks as $bank)
@@ -144,6 +145,19 @@
                             </select>
 
                             @error('bank_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="user_id">Petugas</label>
+                            <select name="user_id" id="user_id" class="form-control">
+                                <option value="">Pilih Petugas</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ old('user_id') ?? $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+
+                            @error('user_id')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -159,6 +173,7 @@
                                 <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
+                        @include('templates.form.required')
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
