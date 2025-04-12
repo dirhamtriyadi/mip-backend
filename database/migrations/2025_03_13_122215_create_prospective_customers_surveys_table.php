@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name')->comment('Nama calon nasabah');
             $table->text('address')->comment('Alamat calon nasabah');
             $table->string('number_ktp')->unique()->comment('Nomor KTP calon nasabah');
-            $table->string('address_status')->comment('Status alamat calon nasabah');
+            $table->string('address_status')->nullable()->comment('Status alamat calon nasabah');
             $table->string('phone_number')->nullable()->comment('Nomor telepon calon nasabah');
             $table->string('npwp')->nullable()->comment('NPWP calon nasabah');
             $table->string('job_type')->nullable()->comment('Jenis pekerjaan');

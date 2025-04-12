@@ -107,7 +107,7 @@
                         @csrf
                         <input type="hidden" name="id" id="id">
                         <div class="form-group">
-                            <label for="status">Status</label>
+                            <label for="status">Status *</label>
                             <select name="status" id="status" class="form-control select2">
                                 <option value="approved" {{ old('status') == 'approved' ? 'selected' : '' }}>
                                     Disetujui</option>
@@ -120,7 +120,7 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="status_message">Status Pesan</label>
+                            <label for="status_message">Status Pesan *</label>
                             <textarea class="form-control" id="status_message" name="status_message" placeholder="Masukkan status pesan"
                                 rows="3">{{ old('status_message') }}</textarea>
                             @error('status_message')
@@ -128,24 +128,24 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="name">Nama Calon Nasabah</label>
+                            <label for="name">Nama Calon Nasabah *</label>
                             <input type="text" class="form-control" id="name" name="name"
-                                placeholder="Masukkan nama calon nasabah" value="{{ old('name') }}">
+                                placeholder="Masukkan nama calon nasabah" value="{{ old('name') }}" readonly>
                             @error('name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="address">Alamat Calon Nasabah</label>
+                            <label for="address">Alamat Calon Nasabah *</label>
                             <textarea class="form-control" id="address" name="address" placeholder="Masukkan alamat calon nasabah" rows="3">{{ old('address') }}</textarea>
                             @error('address')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="no_ktp">Nomor KTP Calon Nasabah</label>
+                            <label for="no_ktp">Nomor KTP Calon Nasabah *</label>
                             <input type="text" class="form-control" id="no_ktp" name="no_ktp"
-                                placeholder="Masukkan nomor ktp calon nasabah" value="{{ old('no_ktp') }}">
+                                placeholder="Masukkan nomor ktp calon nasabah" value="{{ old('no_ktp') }}" readonly>
                             @error('no_ktp')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -187,6 +187,7 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        @include('templates.form.required')
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
