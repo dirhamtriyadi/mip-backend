@@ -127,7 +127,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="address_status">Status alamat calon nasabah *</label>
+                                        <label for="address_status">Status alamat calon nasabah</label>
                                         <input type="text" class="form-control" id="address_status" name="address_status"
                                             placeholder="Masukkan status alamat calon nasabah"
                                             value="{{ old('address_status', $data->address_status) }}">
@@ -136,7 +136,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="phone_number">No telepon calon nasabah *</label>
+                                        <label for="phone_number">No telepon calon nasabah</label>
                                         <input type="text" class="form-control" id="phone_number" name="phone_number"
                                             placeholder="Masukkan nomor telepon calon nasabah"
                                             value="{{ old('phone_number', $data->phone_number) }}">
@@ -213,7 +213,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="salary">Gaji *</label>
+                                        <label for="salary">Gaji</label>
                                         <input type="text" class="form-control" id="salary" name="salary"
                                             placeholder="Masukkan gaji" value="{{ old('salary', $data->salary) }}">
                                         @error('salary')
@@ -221,7 +221,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="other_business">Usaha Tambahan *</label>
+                                        <label for="other_business">Usaha Tambahan</label>
                                         <input type="text" class="form-control" id="other_business"
                                             name="other_business" placeholder="Masukkan usaha tambahan"
                                             value="{{ old('other_business', $data->other_business) }}">
@@ -230,7 +230,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="monthly_living_expenses">Biaya hidup per bulan *</label>
+                                        <label for="monthly_living_expenses">Biaya hidup per bulan</label>
                                         <input type="text" class="form-control" id="monthly_living_expenses"
                                             name="monthly_living_expenses" placeholder="Masukkan biaya hidup per bulan"
                                             value="{{ old('monthly_living_expenses', $data->monthly_living_expenses) }}">
