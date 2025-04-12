@@ -82,7 +82,7 @@
                                                 <th>Nama</th>
                                                 <th>Alamat</th>
                                                 <th>No. KTP</th>
-                                                <th>Alamat KTP</th>
+                                                <th>Status Alamat KTP</th>
                                                 <th>No Telp</th>
                                                 <th>NPWP</th>
                                                 <th>Jenis Pekerjaan</th>

@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('prospective-customer-surveys', function (Blueprint $table) {
             $table->id();
             $table->foreignId('prospective_customer_id')->nullable()->constrained('prospective_customers')->comment('ID calon nasabah');
-            $table->enum('status', ['pending', 'ongoing', 'done'])->default('pending')->comment('Status survei');
+            $table->enum('status', ['pending', 'ongoing', 'done'])->nullable()->default('pending')->comment('Status survei');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade')->comment('ID petugas');
             $table->string('name')->comment('Nama calon nasabah');
             $table->text('address')->comment('Alamat calon nasabah');
             $table->string('number_ktp')->unique()->comment('Nomor KTP calon nasabah');
             $table->string('address_status')->comment('Status alamat calon nasabah');
-            $table->string('phone_number')->comment('Nomor telepon calon nasabah');
+            $table->string('phone_number')->nullable()->comment('Nomor telepon calon nasabah');
             $table->string('npwp')->nullable()->comment('NPWP calon nasabah');
             $table->string('job_type')->nullable()->comment('Jenis pekerjaan');
             $table->string('company_name')->nullable()->comment('Nama perusahaan');

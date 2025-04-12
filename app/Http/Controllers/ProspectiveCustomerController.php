@@ -241,12 +241,12 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             'name' => 'required|string|max:255',
             'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp,' . $request->id,
             'address' => 'required|string',
-            'address_status' => 'required|string',
-            'phone_number' => 'required|string',
-            'npwp' => 'required|string',
+            'address_status' => 'nullable|string',
+            'phone_number' => 'nullable|string',
+            'npwp' => 'nullable|string',
             'user_id' => 'nullable|exists:users,id',
             'status' => 'required|in:approved,rejected',
-            'status_message' => 'nullable|nullable|string',
+            'status_message' => 'nullable|string',
         ]);
 
         $prospectiveCustomer = ProspectiveCustomer::findOrFail($request->id);
