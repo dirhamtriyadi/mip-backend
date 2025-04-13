@@ -25,21 +25,23 @@ class CustomerBillingReportController extends Controller
         $user = auth()->user();
 
         if ($request->start_date && $request->end_date) {
-            $start_date = Carbon::parse($request->start_date)->format('Y-m-d');
-            $end_date = Carbon::parse($request->end_date)->format('Y-m-d');
+            $start_date = Carbon::parse($request->start_date)->startOfDay()->format('Y-m-d H:i:s');
+            $end_date = Carbon::parse($request->end_date)->endOfDay()->format('Y-m-d H:i:s');
+        } else {
+            $start_date = Carbon::now()->startOfMonth()->startOfDay()->format('Y-m-d H:i:s');
+            $end_date = Carbon::now()->endOfMonth()->endOfDay()->format('Y-m-d H:i:s');
         }
 
         $customerBillings = CustomerBilling::with(['customer', 'user', 'billingFollowups'])
             ->where('user_id', $user->id)
             ->whereBetween('created_at', [$start_date, $end_date])
             ->whereHas('billingFollowups')
-            // ->orWhereHas('billingFollowups', function($q) use($search, $user, $start_date, $end_date) {
             ->orWhereHas('latestBillingFollowups', function($q) use($search, $user, $start_date, $end_date) {
                 $q->whereIn('status', ['visit', 'promise_to_pay', 'pay'])
-                  ->whereHas('customerBilling', function($q) use($user, $start_date, $end_date) {
-                      $q->whereBetween('created_at', [$start_date, $end_date])
+                ->whereHas('customerBilling', function($q) use($user, $start_date, $end_date) {
+                    $q->whereBetween('created_at', [$start_date, $end_date])
                         ->where('user_id', $user->id);
-                  });
+                });
             })
             ->orderBy(
                 BillingFollowup::select('status')
