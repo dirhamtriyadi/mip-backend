@@ -104,6 +104,10 @@ return new class extends Migration
             $table->text('id_card_image')->nullable()->comment('Gambar ID card');
             $table->text('salary_slip_image1')->nullable()->comment('Gambar bukti gaji 1');
             $table->text('salary_slip_image2')->nullable()->comment('Gambar bukti gaji 2');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

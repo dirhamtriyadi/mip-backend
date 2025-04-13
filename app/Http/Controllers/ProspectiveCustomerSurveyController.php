@@ -429,7 +429,7 @@ class ProspectiveCustomerSurveyController extends Controller
         foreach ($ids as $id) {
             $survey = ProspectiveCustomerSurvey::findOrFail($id);
             $survey->user_id = $validatedData['user_id'];
-            $survey->updated_by = $user->id;
+            // $survey->updated_by = $user->id;
             $survey->save();
         }
 
