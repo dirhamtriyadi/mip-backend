@@ -470,30 +470,30 @@
         </tr>
         <tr>
             @if (!empty($data->signature_officer))
-                <td style="width: 33.33%; height: 150px; text-align: center; vertical-align: middle;">
+                <td style="width: 33.33%; height: 120px; text-align: center; vertical-align: middle;">
                     <img src="{{ public_path('storage/' . $data->signature_officer) }}" alt="TTD Petugas"
                         style="width: 100px; height: 100px;">
                 </td>
             @else
-                <td style="width: 33.33%; height: 150px; text-align: center; vertical-align: middle;"></td>
+                <td style="width: 33.33%; height: 120px; text-align: center; vertical-align: middle;"></td>
             @endif
 
             @if (!empty($data->signature_customer))
-                <td style="width: 33.33%; height: 150px; text-align: center; vertical-align: middle;">
+                <td style="width: 33.33%; height: 120px; text-align: center; vertical-align: middle;">
                     <img src="{{ public_path('storage/' . $data->signature_customer) }}" alt="TTD Customer"
                         style="width: 100px; height: 100px;">
                 </td>
             @else
-                <td style="width: 33.33%; height: 150px; text-align: center; vertical-align: middle;"></td>
+                <td style="width: 33.33%; height: 120px; text-align: center; vertical-align: middle;"></td>
             @endif
 
             @if (!empty($data->signature_couple))
-                <td style="width: 33.33%; height: 150px; text-align: center; vertical-align: middle;">
+                <td style="width: 33.33%; height: 120px; text-align: center; vertical-align: middle;">
                     <img src="{{ public_path('storage/' . $data->signature_couple) }}" alt="TTD Couple"
                         style="width: 100px; height: 100px;">
                 </td>
             @else
-                <td style="width: 33.33%; height: 150px; text-align: center; vertical-align: middle;"></td>
+                <td style="width: 33.33%; height: 120px; text-align: center; vertical-align: middle;"></td>
             @endif
         </tr>
         <tr>
