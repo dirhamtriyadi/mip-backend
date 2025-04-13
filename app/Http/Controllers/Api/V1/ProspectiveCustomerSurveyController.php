@@ -24,12 +24,12 @@ class ProspectiveCustomerSurveyController extends Controller
         // Validasi start_date & end_date
         try {
             $start_date = $request->filled('start_date')
-                ? Carbon::parse($request->start_date)->format('Y-m-d')
-                : Carbon::now()->startOfMonth()->format('Y-m-d');
+                ? Carbon::parse($request->start_date)->startOfDay()->format('Y-m-d H:i:s')
+                : Carbon::now()->startOfMonth()->startOfDay()->format('Y-m-d H:i:s');
 
             $end_date = $request->filled('end_date')
-                ? Carbon::parse($request->end_date)->format('Y-m-d')
-                : Carbon::now()->endOfMonth()->format('Y-m-d');
+                ? Carbon::parse($request->end_date)->endOfDay()->format('Y-m-d H:i:s')
+                : Carbon::now()->endOfMonth()->endOfDay()->format('Y-m-d H:i:s');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
