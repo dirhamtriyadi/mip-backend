@@ -54,9 +54,40 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="d-flex justify-content-end">
-                                    <a href="{{ route('prospective-customers.create') }}" class="btn btn-primary mb-3"><i
-                                            class="fas fa-plus"></i> Tambah</a>
+                                <div class="d-flex justify-content-between">
+                                    <div class="form-group" style="margin-top: 10px;">
+                                        <label for="start_date">Rentang Tanggal</label>
+                                        <form action="{{ route('prospective-customers.index') }}" method="get">
+                                            <div class="d-flex">
+                                                <div class="input-group date" id="start_date" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input"
+                                                        data-target="#start_date" name="start_date"
+                                                        placeholder="Masukan Tanggal" value="{{ $start_date }}">
+                                                    <div class="input-group-append" data-target="#start_date"
+                                                        data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                                <span class="input-group-text">s/d</span>
+                                                <div class="input-group date" id="end_date" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input"
+                                                        data-target="#end_date" name="end_date"
+                                                        placeholder="Masukan Tanggal" value="{{ $end_date }}">
+                                                    <div class="input-group-append" data-target="#end_date"
+                                                        data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary ml-2">Filter</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <div class="d-flex justify-content-end">
+                                            <a href="{{ route('prospective-customers.create') }}"
+                                                class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah</a>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="table" class="table table-bordered table-hover table-striped">
@@ -137,7 +168,8 @@
                         </div>
                         <div class="form-group">
                             <label for="address">Alamat Calon Nasabah *</label>
-                            <textarea class="form-control" id="address" name="address" placeholder="Masukkan alamat calon nasabah" rows="3">{{ old('address') }}</textarea>
+                            <textarea class="form-control" id="address" name="address" placeholder="Masukkan alamat calon nasabah"
+                                rows="3">{{ old('address') }}</textarea>
                             @error('address')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -205,13 +237,29 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet"
+        href="{{ asset('adminlte') }}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
 @endpush
 
 @push('scripts')
+    <!-- InputMask -->
+    <script src="{{ asset('adminlte') }}/plugins/moment/moment.min.js"></script>
+    <script src="{{ asset('adminlte') }}/plugins/inputmask/jquery.inputmask.min.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ asset('adminlte') }}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
     <!-- Select2 -->
     <script src="{{ asset('adminlte') }}/plugins/select2/js/select2.full.min.js"></script>
     <script>
         $(function() {
+            //Date range picker
+            $('#start_date').datetimepicker({
+                format: 'YYYY-MM-DD'
+            });
+            $('#end_date').datetimepicker({
+                format: 'YYYY-MM-DD'
+            });
+
             $('.select2').select2({
                 theme: 'bootstrap4'
             });
@@ -223,7 +271,9 @@
                     "url": "{{ route('prospective-customers.index') }}/fetch-data-table",
                     "type": "post",
                     "data": {
-                        "_token": "{{ csrf_token() }}"
+                        "_token": "{{ csrf_token() }}",
+                        "start_date": "{{ $start_date }}",
+                        "end_date": "{{ $end_date }}"
                     }
                 },
                 "responsive": true,
@@ -280,7 +330,7 @@
                     $('.form-group').hide(); // Sembunyikan semua input
                     $('label[for="status"], #status').closest('.form-group').show(); // Tampilkan status
                     $('label[for="status_message"], #status_message').closest('.form-group')
-                .show(); // Tampilkan status pesan
+                        .show(); // Tampilkan status pesan
                 }
             }
 

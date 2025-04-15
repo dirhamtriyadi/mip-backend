@@ -35,16 +35,27 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
     {
         $users = User::all();
 
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
         return view('prospective-customers.index', [
             'users' => $users,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
         ]);
     }
 
     // Fetch data for DataTable
     public function fetchDataTable(Request $request)
     {
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
         // load all users with their detail_users and roles
-        $prospectiveCustomers = ProspectiveCustomer::with('user')->latest();
+        $prospectiveCustomers = ProspectiveCustomer::with('user')
+            ->whereDate('created_at', '>=', $start_date)
+            ->whereDate('created_at', '<=', $end_date)
+            ->latest();
 
         return DataTables::of($prospectiveCustomers)
             ->addIndexColumn()
