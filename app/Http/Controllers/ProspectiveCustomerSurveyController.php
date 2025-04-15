@@ -34,16 +34,26 @@ class ProspectiveCustomerSurveyController extends Controller
     {
         $users = User::all();
 
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
         return view('prospective-customer-surveys.index', [
             'users' => $users,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
         ]);
     }
 
     // Fetch data for DataTable
     public function fetchDataTable(Request $request)
     {
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
         // load all billings priority user_id is null and destination is visit
         $prospectiveCustomerSurvey = ProspectiveCustomerSurvey::with(['user'])
+            ->whereDate('created_at', '>=', $start_date)
+            ->whereDate('created_at', '<=', $end_date)
             ->orderByRaw('CASE WHEN user_id IS NULL THEN 0 ELSE 1 END')
             ->get();
 
