@@ -34,22 +34,32 @@ class CustomerBillingController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $users = User::all();
         $banks = Bank::all();
 
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
         return view('customer-billings.index', [
             'users' => $users,
             'banks' => $banks,
+            'start_date' => $start_date,
+            'end_date' => $end_date,
         ]);
     }
 
     // Fetch data for DataTable
     public function fetchDataTable(Request $request)
     {
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
         // load all billings priority user_id is null and destination is visit
         $customerBilling = CustomerBilling::with(['user', 'customer.bank', 'latestBillingFollowups'])
+            ->whereDate('created_at', '>=', $start_date)
+            ->whereDate('created_at', '<=', $end_date)
             ->orderByRaw('CASE WHEN user_id IS NULL THEN 0 ELSE 1 END')
             ->get();
             // dd($customerBilling);
