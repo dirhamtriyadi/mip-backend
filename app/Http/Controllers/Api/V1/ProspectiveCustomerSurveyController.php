@@ -211,4 +211,38 @@ class ProspectiveCustomerSurveyController extends Controller
 
         return $pdf->download('pdf');
     }
+
+    public function updateStatus(Request $request, string $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:pending,ongoing,done',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $survey = ProspectiveCustomerSurvey::findOrFail($id);
+            $survey->update($request->only('status'));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Status updated successfully',
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error updating status',
+                'errors' => [
+                    'message' => $th->getMessage(),
+                ],
+            ], 500);
+        }
+
+    }
 }

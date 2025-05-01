@@ -278,7 +278,7 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
                 ['prospective_customer_id' => $prospectiveCustomer->id],
                 [
                     'user_id' => $validatedData['user_id'] ?? null,
-                    'status' => $validatedData['user_id'] ? 'ongoing' : 'pending',
+                    'status' => 'pending',
                     'name' => $validatedData['name'] ?? $prospectiveCustomer->name,
                     'address' => $validatedData['address'] ?? $prospectiveCustomer->address,
                     'number_ktp' => $validatedData['no_ktp'] ?? $prospectiveCustomer->no_ktp,

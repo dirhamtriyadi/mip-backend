@@ -35,7 +35,7 @@ class OfficerReportController extends Controller
         // get all users with attendances between start_date and end_date with deleted_at and deteled_by is null
         $users = User::with(['customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
             $query->whereBetween('created_at', [$start_date, $end_date]);
-        }, 'roles'])->whereHas('roles', function($query) {
+        }, 'prospectiveCustomerSurveys', 'roles'])->whereHas('roles', function($query) {
             $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
         })->get();
 
@@ -56,6 +56,21 @@ class OfficerReportController extends Controller
             ->addColumn('total_pay', function ($user) {
                 return optional($user->customerBillingFollowups)->where('status', 'pay')->sum('payment_amount') ?? 0;
             })
+            ->addColumn('surveys', function ($user) use ($start_date, $end_date) {
+                $doneCount = $user->prospectiveCustomerSurveys()
+                    ->whereBetween('created_at', [$start_date, $end_date])
+                    ->where('status', 'done')
+                    ->count();
+
+                $pendingOrOngoingCount = $user->prospectiveCustomerSurveys()
+                    ->whereBetween('created_at', [$start_date, $end_date])
+                    ->where(function ($query) {
+                        $query->where('status', 'pending')->orWhere('status', 'ongoing');
+                    })
+                    ->count();
+
+                return 'Selesai: <a href="' . route('prospective-customer-surveys.index', ['user_id' => $user->id, 'start_date' => $start_date, 'end_date' => $end_date]) . '" class="btn btn-primary">' . $doneCount . '</a> <br/> Belum Selesai: <a href="' . route('prospective-customer-surveys.index', ['user_id' => $user->id, 'start_date' => $start_date, 'end_date' => $end_date]) . '" class="btn btn-danger">' . $pendingOrOngoingCount . '</a>';
+            })
             ->addColumn('action', function ($user) use ($start_date, $end_date) {
                 return view('officer-reports.action', [
                     'start_date' => $start_date,
@@ -63,7 +78,7 @@ class OfficerReportController extends Controller
                     'value' => $user,
                 ]);
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['surveys', 'action'])
             ->toJson();
     }
 

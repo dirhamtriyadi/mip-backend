@@ -83,4 +83,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProspectiveCustomer::class);
     }
+
+    public function prospectiveCustomerSurveys()
+    {
+        return $this->hasMany(ProspectiveCustomerSurvey::class);
+    }
 }

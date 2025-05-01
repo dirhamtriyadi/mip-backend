@@ -17,6 +17,7 @@ class ProspectiveCustomerSurveyResource extends JsonResource
         // return parent::toArray($request);
         return [
             'id' => $this->id,
+            'status' => $this->status,
             'name' => $this->name,
             'address' => $this->address,
             'number_ktp' => $this->number_ktp,

@@ -123,6 +123,7 @@
                                                 <th>Janji Bayar</th>
                                                 <th>Bayar</th>
                                                 <th>Total Bayar</th>
+                                                <th>Survei</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -203,13 +204,16 @@
                         "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
                     },
                     {
+                        "data": "surveys"
+                    },
+                    {
                         "data": "action"
                     }
                 ],
                 "columnDefs": [{
                     "orderable": false,
                     "searchable": false,
-                    "targets": [0, 6]
+                    "targets": [0, 7]
                 }],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,

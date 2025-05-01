@@ -56,6 +56,7 @@ Route::prefix('v1')->group(function () {
         Route::get('prospective-customer-surveys/{id}', [ProspectiveCustomerSurveyController::class, 'show'])->name('prospective-customer-surveys.show');
         Route::put('prospective-customer-surveys/{id}', [ProspectiveCustomerSurveyController::class, 'update'])->name('prospective-customer-surveys.update');
         Route::get('prospective-customer-surveys/{id}/export-pdf-by-customer', [ProspectiveCustomerSurveyController::class, 'exportPdfByCustomer']);
+        Route::put('prospective-customer-surveys/{id}/update-status', [ProspectiveCustomerSurveyController::class, 'updateStatus'])->name('prospective-customer-surveys.update-status');
 
         // User
         Route::apiResource('users', UserController::class);
