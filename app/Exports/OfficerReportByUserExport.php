@@ -23,6 +23,8 @@ class OfficerReportByUserExport implements FromView
 
         $officerReportsByUser = User::with(['customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
             $query->whereBetween('created_at', [$start_date, $end_date]);
+        }, 'prospectiveCustomerSurveys' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('created_at', [$start_date, $end_date]);
         }, 'roles'])->whereHas('roles', function($query) {
             $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
         })->where('id', $user_id)->first();
