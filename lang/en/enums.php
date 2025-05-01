@@ -17,4 +17,9 @@ return [
         'sick' => 'Sick',
         'permit' => 'Permit',
     ],
+    'prospective_customer_surveys_status' => [
+        'pending' => 'Pending',
+        'ongoing' => 'Ongoing',
+        'done' => 'Done',
+    ]
 ];

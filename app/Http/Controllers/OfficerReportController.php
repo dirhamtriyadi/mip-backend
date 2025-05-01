@@ -141,6 +141,38 @@ class OfficerReportController extends Controller
             ->toJson();
     }
 
+    public function fetchDataTableByOfficerSurvey(Request $request)
+    {
+        // Ambil start_date dan end_date dari request atau set default ke bulan ini
+        $start_date = $request->start_date ?? date('Y-m-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+        $id = $request->id;
+
+        // Query user dengan filtering role dan customerBillingFollowups
+        $officerReport = User::with([
+            'prospectiveCustomerSurveys',
+            'roles'
+        ])
+        ->whereHas('roles', function ($query) {
+            $query->whereIn('name', ['Surveyor', 'Penagih']);
+        })
+        ->findOrFail($id); // Ambil user berdasarkan ID
+
+        return DataTables::of($officerReport->prospectiveCustomerSurveys)
+            ->addIndexColumn()
+            ->editColumn('updated_at', function ($data) {
+                return $data->updated_at ? Carbon::parse($data->updated_at)->format('d/m/Y') : '-';
+            })
+            ->addColumn('name', function ($data) {
+                return $data->name ?? '-';
+            })
+            ->editColumn('status', function ($data) {
+                return $data->status ? '<span class="badge badge-' . $data->status->color() . '">' . $data->status->label() . '</span>' : '-';
+            })
+            ->rawColumns(['status'])
+            ->toJson();
+    }
+
     public function export(Request $request)
     {
         // get request start_date and end_date or set default this month
@@ -178,6 +210,8 @@ class OfficerReportController extends Controller
 
         $officerReports = User::with(['customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
             $query->whereBetween('created_at', [$start_date, $end_date]);
+        }, 'prospectiveCustomerSurveys' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('created_at', [$start_date, $end_date]);
         }, 'roles'])->whereHas('roles', function($query) {
             $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
         })->get();
@@ -188,6 +222,6 @@ class OfficerReportController extends Controller
             'data' => $officerReports,
         ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('pdf');
+        return $pdf->download('laporan-petugas-' . Carbon::now()->toDateString() . '.pdf');
     }
 }

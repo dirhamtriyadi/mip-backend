@@ -85,7 +85,7 @@
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Detail Laporan</h3>
+                                <h3 class="card-title">Detail Laporan Penagihan</h3>
 
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"
@@ -99,7 +99,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table id="table" class="table table-bordered table-hover table-striped">
+                                    <table id="table-penagihan" class="table table-bordered table-hover table-striped">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
@@ -134,6 +134,56 @@
                             <!-- /.card-footer-->
                         </div>
                         <!-- /.card -->
+                        <!-- Default box -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Detail Laporan Survey</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"
+                                        title="Collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="table-survey" class="table table-bordered table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Tanggal</th>
+                                                <th>Nama Nasabah</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{-- @forelse ($officerReports->customerBillingFollowups as $officerReport => $value)
+                                                <tr>
+                                                    <td>{{ $officerReport + 1 }}</td>
+                                                    <td>{{ $value->date_exec }}</td>
+                                                    <td>{{ $value->customerBilling->customer->name_customer }}</td>
+                                                    <td><span class="badge badge-{{ $value->status->color() }}">{{ $value->status->label() }}</span></td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="5" class="text-center">Data tidak ditemukan</td>
+                                                </tr>
+                                            @endforelse --}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                Footer
+                            </div>
+                            <!-- /.card-footer-->
+                        </div>
+                        <!-- /.card -->
                     </div>
                 </div>
             </div>
@@ -145,50 +195,92 @@
 @push('scripts')
     <script>
         // DataTables
-        $("#table").DataTable({
-                "processing": true,
-                "serverSide": true,
-                "ajax": {
-                    "url": "{{ route('officer-reports.index') }}/fetch-data-table-by-officer",
-                    "type": "post",
-                    "data": {
-                        "_token": "{{ csrf_token() }}",
-                        "id": "{{ $officerReport->id }}",
-                        "start_date": "{{ $start_date }}",
-                        "end_date": "{{ $end_date }}"
-                    }
+        $("#table-penagihan").DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{ route('officer-reports.index') }}/fetch-data-table-by-officer",
+                "type": "post",
+                "data": {
+                    "_token": "{{ csrf_token() }}",
+                    "id": "{{ $officerReport->id }}",
+                    "start_date": "{{ $start_date }}",
+                    "end_date": "{{ $end_date }}"
+                }
+            },
+            "responsive": true,
+            // "lengthChange": false,
+            "lengthMenu": [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "All"]
+            ],
+            "autoWidth": false,
+            "columns": [{
+                    "data": "DT_RowIndex"
                 },
-                "responsive": true,
-                // "lengthChange": false,
-                "lengthMenu": [
-                    [10, 25, 50, 100, -1],
-                    [10, 25, 50, 100, "All"]
-                ],
-                "autoWidth": false,
-                "columns": [{
-                        "data": "DT_RowIndex"
-                    },
-                    {
-                        "data": "date_exec"
-                    },
-                    {
-                        "data": "name_customer"
-                    },
-                    {
-                        "data": "status"
-                    },
-                    {
-                        "data": "payment_amount",
-                        "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
-                    }
-                ],
-                "columnDefs": [{
-                    "orderable": false,
-                    "searchable": false,
-                    "targets": [0, 4]
-                }],
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-                "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
-            });
+                {
+                    "data": "date_exec"
+                },
+                {
+                    "data": "name_customer"
+                },
+                {
+                    "data": "status"
+                },
+                {
+                    "data": "payment_amount",
+                    "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                }
+            ],
+            "columnDefs": [{
+                "orderable": false,
+                "searchable": false,
+                "targets": [0, 4]
+            }],
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+            "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+        });
+
+        $("#table-survey").DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{ route('officer-reports.index') }}/fetch-data-table-by-officer-survey",
+                "type": "post",
+                "data": {
+                    "_token": "{{ csrf_token() }}",
+                    "id": "{{ $officerReport->id }}",
+                    "start_date": "{{ $start_date }}",
+                    "end_date": "{{ $end_date }}"
+                }
+            },
+            "responsive": true,
+            // "lengthChange": false,
+            "lengthMenu": [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "All"]
+            ],
+            "autoWidth": false,
+            "columns": [{
+                    "data": "DT_RowIndex"
+                },
+                {
+                    "data": "updated_at"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "status"
+                },
+            ],
+            "columnDefs": [{
+                "orderable": false,
+                "searchable": false,
+                "targets": [0, 3]
+            }],
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+            "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
+        });
     </script>
 @endpush

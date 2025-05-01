@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Enums\ProspectiveCustomerSurveyStatusEnum;
 
 class ProspectiveCustomerSurvey extends Model
 {
@@ -12,6 +13,10 @@ class ProspectiveCustomerSurvey extends Model
     // use SoftDeletes;
 
     protected $table = 'prospective-customer-surveys';
+
+    protected $casts = [
+        'status' => ProspectiveCustomerSurveyStatusEnum::class,
+    ];
 
     protected $fillable = [
         'prospective_customer_id',

@@ -17,4 +17,9 @@ return [
         'sick' => 'Sakit',
         'permit' => 'Izin',
     ],
+    'prospective_customer_surveys_status' => [
+        'pending' => 'Menunggu',
+        'ongoing' => 'Sedang Berlangsung',
+        'done' => 'Selesai',
+    ]
 ];
