@@ -39,7 +39,7 @@ class CustomerBillingController extends Controller implements HasMiddleware
         $users = User::all();
         $banks = Bank::all();
 
-        $start_date = $request->start_date ?? date('Y-m-01');
+        $start_date = $request->start_date ?? date('Y-01-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         return view('customer-billings.index', [
@@ -53,7 +53,7 @@ class CustomerBillingController extends Controller implements HasMiddleware
     // Fetch data for DataTable
     public function fetchDataTable(Request $request)
     {
-        $start_date = $request->start_date ?? date('Y-m-01');
+        $start_date = $request->start_date ?? date('Y-01-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         // load all billings priority user_id is null and destination is visit

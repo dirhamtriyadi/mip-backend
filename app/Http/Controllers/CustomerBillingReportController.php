@@ -34,7 +34,7 @@ class CustomerBillingReportController extends Controller
     public function index(Request $request)
     {
         // get request start_date and end_date or set default this month
-        $start_date = $request->start_date ?? date('Y-m-01');
+        $start_date = $request->start_date ?? date('Y-01-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         return view('customer-billing-reports.index', [
@@ -45,7 +45,7 @@ class CustomerBillingReportController extends Controller
 
     public function fetchDataTable(Request $request)
     {
-        $start_date = $request->start_date ?? date('Y-m-01');
+        $start_date = $request->start_date ?? date('Y-01-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         $user = auth()->user();
