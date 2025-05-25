@@ -35,7 +35,7 @@ class BillingFollowupController extends Controller
             'date_exec' => 'required|date',
             // 'bank_account_id' => 'required|exists:bank_accounts,id',
             // 'user_id' => 'required|exists:users,id',
-            'description' => 'nullable',
+            'description' => 'required',
             'proof' => 'nullable',
             // 'proof' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'promise_date' => 'required_if:status,promise_to_pay',
