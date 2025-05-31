@@ -61,6 +61,18 @@ class MarkAbsentEmployees extends Command
                 'type' => 'absent',
             ]);
         }
+        // kirim info ke log laravel
+        \Log::info('Karyawan yang tidak presensi hari ini telah ditandai sebagai absen.', [
+            'date' => $today->toDateString(),
+            'absent_count' => $absentEmployees->count(),
+            'total_employees' => User::count(),
+        ]);
+        // kirim info ke log sistem
+        \Log::info('Perintah app:mark-absent-employees telah dijalankan.', [
+            'date' => Carbon::now()->toDateTimeString(),
+            'absent_count' => $absentEmployees->count(),
+            'total_employees' => User::count(),
+        ]);
         $this->info('Karyawan yang tidak presensi hari ini telah ditandai sebagai absen.');
         $this->line('Jumlah karyawan yang ditandai sebagai absen: ' . $absentEmployees->count());
         $this->line('Tanggal: ' . $today->toDateString());
