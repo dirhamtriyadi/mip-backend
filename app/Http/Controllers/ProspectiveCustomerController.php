@@ -63,6 +63,9 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             ->addColumn('user', function ($prospectiveCustomer) {
                 return $prospectiveCustomer->user->name ?? '-';
             })
+            ->editColumn('status', function ($prospectiveCustomer) {
+                return '<span class="badge bg-' . $prospectiveCustomer->status->color() . '">' . $prospectiveCustomer->status->label() . '</span>';
+            })
             ->addColumn('bank', function ($prospectiveCustomer) {
                 return $prospectiveCustomer->bank->name ?? '-';
             })
@@ -75,7 +78,7 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             ->addColumn('action', function ($user) {
                 return view('prospective-customers.action', ['value' => $user]);
             })
-            ->rawColumns(['ktp', 'kk', 'action'])
+            ->rawColumns(['ktp', 'status', 'kk', 'action'])
             ->toJson();
     }
 

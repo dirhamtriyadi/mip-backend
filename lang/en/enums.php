@@ -17,6 +17,11 @@ return [
         'sick' => 'Sick',
         'permit' => 'Permit',
     ],
+    'prospective_customer_status' => [
+        'pending' => 'Pending',
+        'approved' => 'Approved',
+        'rejected' => 'Rejected',
+    ],
     'prospective_customer_surveys_status' => [
         'pending' => 'Pending',
         'ongoing' => 'Ongoing',

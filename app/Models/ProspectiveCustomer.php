@@ -3,10 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\ProspectiveCustomerStatusEnum;
 
 class ProspectiveCustomer extends Model
 {
     protected $table = 'prospective_customers';
+
+    protected $casts = [
+        'status' => ProspectiveCustomerStatusEnum::class,
+    ];
 
     protected $fillable = [
         'name',
