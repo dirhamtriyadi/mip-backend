@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('model:prune')->daily();
+Schedule::command('app:mark-absent-employees')->dailyAt('23:59')->timezone('Asia/Jakarta')->withoutOverlapping();

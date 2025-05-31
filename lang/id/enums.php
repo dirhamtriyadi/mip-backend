@@ -16,6 +16,7 @@ return [
         'present' => 'Hadir',
         'sick' => 'Sakit',
         'permit' => 'Izin',
+        'absent' => 'Tidak Hadir',
     ],
     'prospective_customer_status' => [
         'pending' => 'Menunggu',

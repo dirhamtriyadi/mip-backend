@@ -7,6 +7,7 @@ enum AttendanceTypeEnum: string
     case Present = 'present';
     case Sick = 'sick';
     case Permit = 'permit';
+    case Absent = 'absent';
 
     public function label(): string
     {
@@ -14,15 +15,17 @@ enum AttendanceTypeEnum: string
             self::Present => __('enums.attendanceType.present'),
             self::Sick => __('enums.attendanceType.sick'),
             self::Permit => __('enums.attendanceType.permit'),
+            self::Absent => __('enums.attendanceType.absent'),
         };
     }
 
     public function color(): string
     {
         return match ($this) {
-            self::Present => "info",
+            self::Present => "success",
             self::Sick => "warning",
-            self::Permit => "success",
+            self::Permit => "info",
+            self::Absent => "danger",
         };
     }
 
