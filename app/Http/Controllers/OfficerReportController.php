@@ -65,11 +65,28 @@ class OfficerReportController extends Controller
                 $pendingOrOngoingCount = $user->prospectiveCustomerSurveys()
                     ->whereBetween('created_at', [$start_date, $end_date])
                     ->where(function ($query) {
-                        $query->where('status', 'pending')->orWhere('status', 'ongoing');
+                        $query->where('status', 'pending')
+                              ->orWhere('status', 'ongoing');
                     })
                     ->count();
 
-                return 'Selesai: <a href="' . route('prospective-customer-surveys.index', ['user_id' => $user->id, 'start_date' => $start_date, 'end_date' => $end_date]) . '" class="btn btn-primary">' . $doneCount . '</a> <br/> Belum Selesai: <a href="' . route('prospective-customer-surveys.index', ['user_id' => $user->id, 'start_date' => $start_date, 'end_date' => $end_date]) . '" class="btn btn-danger">' . $pendingOrOngoingCount . '</a>';
+                $doneUrl = route('prospective-customer-surveys.index', [
+                    'user_id'    => $user->id,
+                    'start_date' => $start_date,
+                    'end_date'   => $end_date
+                ]);
+                $pendingUrl = $doneUrl;
+
+                return '
+                    <div style="display: flex; gap: 2px;">
+                        <a href="' . $doneUrl . '" class="btn btn-success btn-xs" title="Selesai">
+                            <i class="fa fa-check"></i> <span style="font-size:11px;">Selesai: ' . $doneCount . '</span>
+                        </a>
+                        <a href="' . $pendingUrl . '" class="btn btn-danger btn-xs" title="Belum Selesai">
+                            <i class="fa fa-times"></i> <span style="font-size:11px;">Belum: ' . $pendingOrOngoingCount . '</span>
+                        </a>
+                    </div>
+                ';
             })
             ->addColumn('action', function ($user) use ($start_date, $end_date) {
                 return view('officer-reports.action', [
