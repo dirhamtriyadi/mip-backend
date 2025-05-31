@@ -92,9 +92,12 @@
                                         <div class="d-flex flex-column justify-content-center">
                                             {{-- Create to import data from excel --}}
                                             <form action="{{ route('attendance-reports.export') }}" method="get">
-                                                <input type="hidden" class="form-control" name="start_date" placeholder="Masukan Tanggal" value="{{ $start_date }}">
-                                                <input type="hidden" class="form-control" name="end_date" placeholder="Masukan Tanggal" value="{{ $end_date }}">
-                                                <button type="submit" class="btn btn-success mb-3 mr-1"><i class="fas fa-file-excel"></i> Export</button>
+                                                <input type="hidden" class="form-control" name="start_date"
+                                                    placeholder="Masukan Tanggal" value="{{ $start_date }}">
+                                                <input type="hidden" class="form-control" name="end_date"
+                                                    placeholder="Masukan Tanggal" value="{{ $end_date }}">
+                                                <button type="submit" class="btn btn-success mb-3 mr-1"><i
+                                                        class="fas fa-file-excel"></i> Export</button>
                                             </form>
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
@@ -117,6 +120,7 @@
                                                 <th>No</th>
                                                 <th>Nama</th>
                                                 <th>Hadir</th>
+                                                <th>Tidak Hadir</th>
                                                 <th>Masuk Terlambat</th>
                                                 <th>Pulang Lebih Awal</th>
                                                 <th>Sakit</th>
@@ -164,8 +168,8 @@
 
             // DataTables
             $("#table").DataTable({
-                "processing":true,
-                "serverSide":true,
+                "processing": true,
+                "serverSide": true,
                 "ajax": {
                     "url": "{{ route('attendance-reports.index') }}/fetch-data-table",
                     "type": "post",
@@ -182,20 +186,42 @@
                     [10, 25, 50, 100, "All"]
                 ],
                 "autoWidth": false,
-                "columns": [
-                    { "data": "DT_RowIndex" },
-                    { "data": "name" },
-                    { "data": "present" },
-                    { "data": "present_late" },
-                    { "data": "present_early_leave" },
-                    { "data": "sick" },
-                    { "data": "permit" },
-                    { "data": "leave" },
-                    { "data": "action" }
+                "columns": [{
+                        "data": "DT_RowIndex"
+                    },
+                    {
+                        "data": "name"
+                    },
+                    {
+                        "data": "present"
+                    },
+                    {
+                        "data": "absent"
+                    },
+                    {
+                        "data": "present_late"
+                    },
+                    {
+                        "data": "present_early_leave"
+                    },
+                    {
+                        "data": "sick"
+                    },
+                    {
+                        "data": "permit"
+                    },
+                    {
+                        "data": "leave"
+                    },
+                    {
+                        "data": "action"
+                    }
                 ],
-                "columnDefs": [
-                    { "orderable": false, "searchable": false, "targets": [0, 8] }
-                ],
+                "columnDefs": [{
+                    "orderable": false,
+                    "searchable": false,
+                    "targets": [0, 9]
+                }],
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
                 "dom": `<<"d-flex justify-content-between"lf>Brt<"d-flex justify-content-between"ip>>`,
             });

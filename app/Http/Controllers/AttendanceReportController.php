@@ -63,19 +63,22 @@ class AttendanceReportController extends Controller implements HasMiddleware
                 return $attendanceReport->name;
             })
             ->addColumn('present', function ($attendanceReport) {
-                return $attendanceReport->attendances->where('type', 'present')->count();
+                return '<p class="text-success">' . $attendanceReport->attendances->where('type', 'present')->count() . '</p>';
+            })
+            ->addColumn('absent', function ($attendanceReport) {
+                return '<p class="text-danger">' . $attendanceReport->attendances->where('type', 'absent')->count() . '</p>';
             })
             ->addColumn('present_late', function ($attendanceReport) {
-                return $attendanceReport->attendances->where('type', 'present')->where('late_duration', '<', 0)->count();
+                return '<p class="text-warning">' . $attendanceReport->attendances->where('type', 'present')->where('late_duration', '>', 0)->count() . '</p>';
             })
             ->addColumn('present_early_leave', function ($attendanceReport) {
-                return $attendanceReport->attendances->where('type', 'present')->where('early_leave_duration', '<', 0)->count();
+                return '<p class="text-warning">' . $attendanceReport->attendances->where('type', 'present')->where('early_leave_duration', '>', 0)->count() . '</p>';
             })
             ->addColumn('sick', function ($attendanceReport) {
-                return $attendanceReport->attendances->where('type', 'sick')->count();
+                return '<p class="text-primary">' . $attendanceReport->attendances->where('type', 'sick')->count() . '</p>';
             })
             ->addColumn('permit', function ($attendanceReport) {
-                return $attendanceReport->attendances->where('type', 'permit')->count();
+                return '<p class="text-secondary">' . $attendanceReport->attendances->where('type', 'permit')->count() . '</p>';
             })
             ->addColumn('leave', function ($attendanceReport) {
                 return view('attendance-reports.leave', [
@@ -89,7 +92,7 @@ class AttendanceReportController extends Controller implements HasMiddleware
                     'value' => $attendanceReport,
                 ]);
             })
-            ->rawColumns(['leave', 'action'])
+            ->rawColumns(['present', 'absent', 'present_late', 'present_early_leave', 'sick', 'permit', 'leave', 'action'])
             ->toJson();
     }
 
