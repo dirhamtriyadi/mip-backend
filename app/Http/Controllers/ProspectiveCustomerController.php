@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\ProspectiveCustomer;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\User;
+use App\Models\Bank;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
@@ -52,7 +53,7 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
         $end_date = $request->end_date ?? date('Y-m-t');
 
         // load all users with their detail_users and roles
-        $prospectiveCustomers = ProspectiveCustomer::with('user')
+        $prospectiveCustomers = ProspectiveCustomer::with(['user', 'bank'])
             ->whereDate('created_at', '>=', $start_date)
             ->whereDate('created_at', '<=', $end_date)
             ->latest();
@@ -61,6 +62,9 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             ->addIndexColumn()
             ->addColumn('user', function ($prospectiveCustomer) {
                 return $prospectiveCustomer->user->name ?? '-';
+            })
+            ->addColumn('bank', function ($prospectiveCustomer) {
+                return $prospectiveCustomer->bank->name ?? '-';
             })
             ->editColumn('ktp', function($prospectiveCustomer) {
                 return $prospectiveCustomer->ktp ? '<a href="'.asset('images/prospective-customers/'.$prospectiveCustomer->ktp).'" target="_blank">Lihat</a>' : '-';
@@ -81,9 +85,11 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
     public function create()
     {
         $users = User::all();
+        $banks = Bank::all();
 
         return view("prospective-customers.create", [
             "users" => $users,
+            "banks" => $banks,
         ]);
     }
 
@@ -101,6 +107,7 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             'status' => 'nullable|in:pending,approved,rejected',
             'status_message' => 'nullable|string',
             'user_id' => 'nullable|exists:users,id',
+            'bank_id' => 'nullable|exists:banks,id',
         ]);
 
         DB::beginTransaction(); // Mulai transaksi database
@@ -159,10 +166,12 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
     {
         $prospectiveCustomer = ProspectiveCustomer::findOrFail($id);
         $users = User::all();
+        $banks = Bank::all();
 
         return view('prospective-customers.edit', [
             'prospectiveCustomer' => $prospectiveCustomer,
             'users' => $users,
+            'banks' => $banks,
         ]);
     }
 
@@ -174,12 +183,12 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp,' . $id,
-            'bank' => 'required|string|max:255',
             'ktp' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
             'kk' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
             'status' => 'nullable|in:approved,rejected',
             'status_message' => 'nullable|string',
             'user_id' => 'nullable|exists:users,id',
+            'bank_id' => 'nullable|exists:banks,id',
         ]);
 
         $prospectiveCustomer = ProspectiveCustomer::findOrFail($id);

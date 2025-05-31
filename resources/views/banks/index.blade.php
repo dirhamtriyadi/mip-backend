@@ -67,6 +67,7 @@
                                                 <th>Kode Cabang</th>
                                                 <th>ID</th>
                                                 <th>Total Nasabah</th>
+                                                <th>Total Calon Nasabah</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -139,6 +140,9 @@
                     },
                     {
                         "data": "total_customer"
+                    },
+                    {
+                        "data": "total_prospective_customers"
                     },
                     {
                         "data": "action"

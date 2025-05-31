@@ -80,11 +80,17 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="bank">Bank *</label>
-                                        <input type="text" class="form-control" id="bank" name="bank"
-                                            placeholder="Masukkan Nama Bank" value="{{ old('bank') }}" required>
-
-                                        @error('bank')
+                                        <label for="bank_id">Bank *</label>
+                                        <select class="form-control select2" style="width: 100%;" id="bank_id"
+                                            name="bank_id">
+                                            <option value="" selected>Pilih Bank</option>
+                                            @foreach ($banks as $bank)
+                                                <option value="{{ $bank->id }}"
+                                                    {{ old('bank_id') == $bank->id ? 'selected' : '' }}>
+                                                    {{ $bank->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('bank_id')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>

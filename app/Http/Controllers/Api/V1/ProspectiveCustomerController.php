@@ -20,10 +20,10 @@ class ProspectiveCustomerController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp',
-            'bank' => 'required|string|max:255',
             'ktp' => 'required|file|mimes:jpg,png,jpeg|max:2048',
             'kk' => 'required|file|mimes:jpg,png,jpeg|max:2048',
             'user_id' => 'nullable|exists:users,id',
+            'bank_id' => 'nullable|exists:banks,id',
         ]);
 
         if ($validator->fails()) {

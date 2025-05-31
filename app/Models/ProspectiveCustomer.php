@@ -11,17 +11,22 @@ class ProspectiveCustomer extends Model
     protected $fillable = [
         'name',
         'no_ktp',
-        'bank',
         'ktp',
         'kk',
         'status',
         'status_message',
-        'user_id'
+        'user_id',
+        'bank_id'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class);
     }
 
     public function prospectiveCustomerSurvey()

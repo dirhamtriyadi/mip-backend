@@ -22,4 +22,9 @@ class Bank extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function prospectiveCustomers()
+    {
+        return $this->hasMany(ProspectiveCustomer::class);
+    }
 }

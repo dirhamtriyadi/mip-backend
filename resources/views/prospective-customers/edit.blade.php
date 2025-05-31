@@ -66,13 +66,19 @@
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="form-group" style="margin-top: 10px;">
-                                        <label for="bank">Bank *</label>
-                                        <input type="text" class="form-control" id="bank" name="bank"
-                                            placeholder="Masukkan Nama Bank"
-                                            value="{{ old('bank', $prospectiveCustomer->bank) }}" required>
-
-                                        @error('bank')
+                                    <div class="form-group">
+                                        <label for="bank_id">Bank *</label>
+                                        <select class="form-control select2" style="width: 100%;" id="bank_id"
+                                            name="bank_id">
+                                            <option value="">Pilih Bank</option>
+                                            @foreach ($banks as $bank)
+                                                <option value="{{ $bank->id }}"
+                                                    {{ old('bank_id', $prospectiveCustomer->bank_id) == $bank->id ? 'selected' : '' }}>
+                                                    {{ $bank->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('bank_id')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -127,11 +133,14 @@
                                         <select class="form-control select2" style="width: 100%;" id="status"
                                             name="status">
                                             <option selected>Pilih Status Proses</option>
-                                            <option value="pending" {{ old('status', $prospectiveCustomer->status) == 'pending' ? 'selected' : '' }}>
+                                            <option value="pending"
+                                                {{ old('status', $prospectiveCustomer->status) == 'pending' ? 'selected' : '' }}>
                                                 Menunggu</option>
-                                            <option value="approved" {{ old('status', $prospectiveCustomer->status) == 'approved' ? 'selected' : '' }}>
+                                            <option value="approved"
+                                                {{ old('status', $prospectiveCustomer->status) == 'approved' ? 'selected' : '' }}>
                                                 Disetujui</option>
-                                            <option value="rejected" {{ old('status', $prospectiveCustomer->status) == 'rejected' ? 'selected' : '' }}>
+                                            <option value="rejected"
+                                                {{ old('status', $prospectiveCustomer->status) == 'rejected' ? 'selected' : '' }}>
                                                 Ditolak</option>
                                         </select>
                                         @error('status')

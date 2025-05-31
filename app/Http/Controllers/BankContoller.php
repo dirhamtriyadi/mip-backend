@@ -50,10 +50,13 @@ class BankContoller extends Controller implements HasMiddleware
             ->addColumn('total_customer', function ($bank) {
                 return '<a href="' . route('customers.index') . '">' . $bank->customers()->count() . '</a>';
             })
+            ->addColumn('total_prospective_customers', function ($bank) {
+                return '<a href="' . route('prospective-customers.index') . '">' . $bank->prospectiveCustomers()->count() . '</a>';
+            })
             ->addColumn('action', function ($customer) {
                 return view('banks.action', ['value' => $customer]);
             })
-            ->rawColumns(['total_customer', 'action'])
+            ->rawColumns(['total_customer', 'total_prospective_customers', 'action'])
             ->toJson();
     }
 
