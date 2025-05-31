@@ -65,6 +65,9 @@ class ProspectiveCustomerSurveyController extends Controller
         ->addColumn('user', function ($prospectiveCustomerSurvey) {
             return optional($prospectiveCustomerSurvey->user)->name ?? '-';
         })
+        ->editColumn('status', function ($prospectiveCustomerSurvey) {
+            return $prospectiveCustomerSurvey->status ? '<span class="badge badge-' . $prospectiveCustomerSurvey->status->color() . '">' . $prospectiveCustomerSurvey->status->label() . '</span>' : '-';
+        })
         ->editColumn('signature_officer', function ($prospectiveCustomerSurvey) {
             return '<img src="' . asset('storage/' . $prospectiveCustomerSurvey->signature_officer) . '" alt="signature_officer" style="width: 100px; height: 100px;">';
         })
@@ -110,7 +113,7 @@ class ProspectiveCustomerSurveyController extends Controller
         ->addColumn('details', function ($prospectiveCustomerSurvey) {
             return;
         })
-        ->rawColumns(['select', 'signature_officer', 'signature_customer', 'signature_couple', 'workplace_image', 'customer_and_ktp_image', 'loan_guarantee_image', 'kk_and_id_card_image', 'salary_slip_image', 'action'])
+        ->rawColumns(['select', 'status', 'signature_officer', 'signature_customer', 'signature_couple', 'workplace_image', 'customer_and_ktp_image', 'loan_guarantee_image', 'kk_and_id_card_image', 'salary_slip_image', 'action'])
         ->toJson();
     }
 
