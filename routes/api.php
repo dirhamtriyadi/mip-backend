@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\ProspectiveCustomerController;
 use App\Http\Controllers\Api\V1\ProspectiveCustomerSurveyController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProfileController;
+use App\Http\Controllers\Api\V1\BankController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -24,6 +25,10 @@ Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
 
     Route::middleware('auth:sanctum')->group(function () {
+        // Banks
+        Route::get('banks/all', [BankController::class, 'allBanks'])->name('banks.all');
+        Route::apiResource('banks', BankController::class);
+
         // Attendance
         Route::get('attendances/work-schedules', [AttendanceController::class, 'workSchedules'])->name('attendances.work-schedules');
         Route::post('attendances/check-in', [AttendanceController::class, 'checkIn'])->name('attendances.check-in');
