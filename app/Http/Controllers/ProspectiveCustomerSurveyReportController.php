@@ -49,9 +49,9 @@ class ProspectiveCustomerSurveyReportController extends Controller
             ->addColumn('total_surveys', function ($user) {
                 return '<span class="badge badge-info">' . $user->prospectiveCustomerSurveys()->count() . '</span>';
             })
-            ->addColumn('total_pending_surveys', function ($user) {
+            ->addColumn('total_pending_and_ongoing_surveys', function ($user) {
                 return '<span class="badge badge-warning">' . $user->prospectiveCustomerSurveys()
-                    ->where('status', 'pending')
+                    ->whereIn('status', ['pending', 'ongoing'])
                     ->count() . '</span>';
             })
             ->addColumn('total_done_surveys', function ($user) {
@@ -66,7 +66,7 @@ class ProspectiveCustomerSurveyReportController extends Controller
                     'value' => $user,
                 ]);
             })
-            ->rawColumns(['total_surveys', 'total_pending_surveys', 'total_done_surveys', 'action'])
+            ->rawColumns(['total_surveys', 'total_pending_and_ongoing_surveys', 'total_done_surveys', 'action'])
             ->toJson();
     }
 

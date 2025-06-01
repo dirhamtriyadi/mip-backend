@@ -195,7 +195,7 @@
                         "data": "total_surveys"
                     },
                     {
-                        "data": "total_pending_surveys"
+                        "data": "total_pending_and_ongoing_surveys"
                     },
                     {
                         "data": "total_done_surveys"
