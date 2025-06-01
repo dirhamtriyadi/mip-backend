@@ -221,7 +221,7 @@
                                         class="nav-link {{ Route::is('prospective-customer-survey-reports.*') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>
-                                            Laporan Survey
+                                            Laporan Survei
                                         </p>
                                     </a>
                                 </li>
