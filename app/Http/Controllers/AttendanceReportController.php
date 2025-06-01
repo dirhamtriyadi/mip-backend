@@ -63,22 +63,22 @@ class AttendanceReportController extends Controller implements HasMiddleware
                 return $attendanceReport->name;
             })
             ->addColumn('present', function ($attendanceReport) {
-                return '<p class="text-success">' . $attendanceReport->attendances->where('type', 'present')->count() . '</p>';
+                return '<span class="badge badge-success">' . $attendanceReport->attendances->where('type', 'present')->count() . '</span>';
             })
             ->addColumn('absent', function ($attendanceReport) {
-                return '<p class="text-danger">' . $attendanceReport->attendances->where('type', 'absent')->count() . '</p>';
+                return '<span class="badge badge-danger">' . $attendanceReport->attendances->where('type', 'absent')->count() . '</span>';
             })
             ->addColumn('present_late', function ($attendanceReport) {
-                return '<p class="text-warning">' . $attendanceReport->attendances->where('type', 'present')->where('late_duration', '>', 0)->count() . '</p>';
+                return '<span class="badge badge-warning">' . $attendanceReport->attendances->where('type', 'present')->where('late_duration', '>', 0)->count() . '</span>';
             })
             ->addColumn('present_early_leave', function ($attendanceReport) {
-                return '<p class="text-warning">' . $attendanceReport->attendances->where('type', 'present')->where('early_leave_duration', '>', 0)->count() . '</p>';
+                return '<span class="badge badge-warning">' . $attendanceReport->attendances->where('type', 'present')->where('early_leave_duration', '>', 0)->count() . '</span>';
             })
             ->addColumn('sick', function ($attendanceReport) {
-                return '<p class="text-primary">' . $attendanceReport->attendances->where('type', 'sick')->count() . '</p>';
+                return '<span class="badge badge-primary">' . $attendanceReport->attendances->where('type', 'sick')->count() . '</span>';
             })
             ->addColumn('permit', function ($attendanceReport) {
-                return '<p class="text-secondary">' . $attendanceReport->attendances->where('type', 'permit')->count() . '</p>';
+                return '<span class="badge badge-secondary">' . $attendanceReport->attendances->where('type', 'permit')->count() . '</span>';
             })
             ->addColumn('leave', function ($attendanceReport) {
                 return view('attendance-reports.leave', [
