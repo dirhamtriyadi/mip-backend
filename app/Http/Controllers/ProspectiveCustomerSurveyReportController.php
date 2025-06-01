@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
+use App\Exports\ProspectiveCustomerSurveyExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProspectiveCustomerSurveyReportController extends Controller
 {
@@ -158,5 +160,13 @@ class ProspectiveCustomerSurveyReportController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function export(Request $request)
+    {
+        $start_date = $request->start_date ?? date('Y-01-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
+        return Excel::download(new ProspectiveCustomerSurveyExport($start_date, $end_date), Carbon::now()->toDateString() . 'prospective_customer_survey_report.xlsx');
     }
 }
