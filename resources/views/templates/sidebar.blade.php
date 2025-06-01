@@ -1,8 +1,8 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="{{ asset('assets/logo.png') }}" alt="AdminLTE Logo"
-            class="brand-image img-circle elevation-3" style="opacity: .8">
+        <img src="{{ asset('assets/logo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            style="opacity: .8">
         <span class="brand-text font-weight-light">{{ config('app.name') }}</span>
     </a>
 
@@ -169,11 +169,12 @@
                 @canany(['laporan-petugas.index', 'laporan-petugas.create', 'laporan-petugas.edit',
                     'laporan-petugas.delete', 'laporan-kehadiran.index', 'laporan-kehadiran.create',
                     'laporan-kehadiran.edit', 'laporan-kehadiran.delete', 'laporan-penagihan.index',
-                    'laporan-penagihan.create', 'laporan-penagihan.edit', 'laporan-penagihan.delete'])
+                    'laporan-penagihan.create', 'laporan-penagihan.edit', 'laporan-penagihan.delete',
+                    'laporan-survei.index', 'laporan-survei.create', 'laporan-survei.edit', 'laporan-survei.delete'])
                     <li
-                        class="nav-item {{ Route::is('officer-reports.*') | Route::is('attendance-reports.*') | Route::is('customer-billing-reports.*') ? 'menu-open' : '' }}">
+                        class="nav-item {{ Route::is('officer-reports.*') | Route::is('attendance-reports.*') | Route::is('customer-billing-reports.*') | Route::is('prospective-customer-survey-reports.*') ? 'menu-open' : '' }}">
                         <a href="#"
-                            class="nav-link {{ Route::is('officer-reports.*') | Route::is('attendance-reports.*') | Route::is('customer-billing-reports.*') ? 'active' : '' }}">
+                            class="nav-link {{ Route::is('officer-reports.*') | Route::is('attendance-reports.*') | Route::is('customer-billing-reports.*') | Route::is('prospective-customer-survey-reports.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-file-alt"></i>
                             <p>
                                 Laporan
@@ -213,12 +214,25 @@
                                     </a>
                                 </li>
                             @endcan
+                            @canany(['laporan-survei.index', 'laporan-survei.create', 'laporan-survei.edit',
+                                'laporan-survei.delete'])
+                                <li class="nav-item">
+                                    <a href="{{ route('prospective-customer-survey-reports.index') }}"
+                                        class="nav-link {{ Route::is('prospective-customer-survey-reports.*') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>
+                                            Laporan Survey
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
                 @endcanany
                 @canany(['role.index', 'role.create', 'role.edit', 'role.delete'])
                     <li class="nav-item">
-                        <a href="{{ route('roles.index') }}" class="nav-link {{ Route::is('roles.*') ? 'active' : '' }}">
+                        <a href="{{ route('roles.index') }}"
+                            class="nav-link {{ Route::is('roles.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-user-shield"></i>
                             <p>
                                 Roles

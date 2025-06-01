@@ -204,6 +204,22 @@ Breadcrumbs::for('officer-reports.show', function (BreadcrumbTrail $trail, $offi
     $trail->push($officerReport->name, route('officer-reports.show', $officerReport->id));
 });
 
+// Dashboard > Laporan > Prospective Customer Surveys
+Breadcrumbs::for('prospective-customer-survey-reports', function (BreadcrumbTrail $trail) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Prospective Customer Surveys', route('prospective-customer-survey-reports.index'));
+});
+
+// Dashboard > Laporan > Prospective Customer Surveys > [Prospective Customer Survey] > Show
+Breadcrumbs::for('prospective-customer-survey-reports.show', function (BreadcrumbTrail $trail, $officerReport) {
+    $trail->parent('dashboard');
+    $trail->push('Laporan');
+    $trail->push('Prospective Customer Surveys', route('prospective-customer-survey-reports.index'));
+    $trail->push('Show');
+    $trail->push($officerReport->name, route('prospective-customer-survey-reports.show', $officerReport->id));
+});
+
 // Dashboard > Laporan > Attendance Reports
 Breadcrumbs::for('attendance-reports', function (BreadcrumbTrail $trail) {
     $trail->parent('dashboard');

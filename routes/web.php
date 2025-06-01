@@ -12,6 +12,7 @@ use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\OfficerReportController;
 use App\Http\Controllers\ProspectiveCustomerController;
 use App\Http\Controllers\ProspectiveCustomerSurveyController;
+use App\Http\Controllers\ProspectiveCustomerSurveyReportController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\BankContoller;
 use App\Http\Controllers\UserController;
@@ -98,6 +99,14 @@ Route::middleware('auth')->group(function () {
     Route::post('officer-reports/fetch-data-table-by-officer', [OfficerReportController::class, 'fetchDataTableByOfficer'])->name('officer-reports.fetchDataTableByOfficer');
     Route::post('officer-reports/fetch-data-table-by-officer-survey', [OfficerReportController::class, 'fetchDataTableByOfficerSurvey'])->name('officer-reports.fetchDataTableByOfficerSurvey');
     Route::get('officer-reports/{id}', [OfficerReportController::class, 'show'])->name('officer-reports.show');
+
+    // Route laporan survei
+    Route::post('prospective-customer-survey-reports/fetch-data-table', [ProspectiveCustomerSurveyReportController::class, 'fetchDataTable'])->name('prospective-customer-survey-reports.fetchDataTable');
+    Route::get('prospective-customer-survey-reports/export', [ProspectiveCustomerSurveyReportController::class, 'export'])->name('prospective-customer-survey-reports.export');
+    Route::get('prospective-customer-survey-reports/export-by-user', [ProspectiveCustomerSurveyReportController::class, 'exportByUser'])->name('prospective-customer-survey-reports.exportByUser');
+    Route::get('prospective-customer-survey-reports/export-pdf', [ProspectiveCustomerSurveyReportController::class, 'exportPdf'])->name('prospective-customer-survey-reports.exportPdf');
+    Route::post('prospective-customer-survey-reports/fetch-data-table-by-officer-survey', [ProspectiveCustomerSurveyReportController::class, 'fetchDataTableByOfficerSurvey'])->name('prospective-customer-survey-reports.fetchDataTableByOfficerSurvey');
+    Route::resource('prospective-customer-survey-reports', ProspectiveCustomerSurveyReportController::class)->parameters(['prospective-customer-survey-reports' => 'report']);
 
     // Route user
     Route::resource('users', UserController::class);
