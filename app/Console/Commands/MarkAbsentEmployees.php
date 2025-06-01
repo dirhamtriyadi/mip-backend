@@ -35,18 +35,28 @@ class MarkAbsentEmployees extends Command
         $isHoliday = AnnualHoliday::whereDate('holiday_date', $today)->exists();
         if ($isHoliday) {
             $this->info('Hari ini adalah hari libur nasional. Tidak ada karyawan yang ditandai sebagai absen.');
+            \Log::info('Hari ini adalah hari libur nasional. Tidak ada karyawan yang ditandai sebagai absen.', [
+                'date' => $today->toDateString(),
+            ]);
             return self::SUCCESS;
         }
 
         $workSchedule = WorkSchedule::first();
         if (!$workSchedule) {
             $this->error('Jadwal kerja tidak ditemukan. Pastikan jadwal kerja telah diatur.');
+            \Log::error('Jadwal kerja tidak ditemukan. Pastikan jadwal kerja telah diatur.', [
+                'date' => $today->toDateString(),
+            ]);
             return self::FAILURE;
         }
 
         $dayOfWeek = Carbon::parse($today)->format('l');
         if (!in_array($dayOfWeek, $workSchedule->working_days)) {
             $this->info('Hari ini adalah hari libur kerja. Tidak ada karyawan yang ditandai sebagai absen.');
+            \Log::info('Hari ini adalah hari libur kerja. Tidak ada karyawan yang ditandai sebagai absen.', [
+                'date' => $today->toDateString(),
+                'working_days' => $workSchedule->working_days,
+            ]);
             return self::SUCCESS;
         }
 
