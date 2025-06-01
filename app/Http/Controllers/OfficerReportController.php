@@ -45,13 +45,16 @@ class OfficerReportController extends Controller
                 return $user->name;
             })
             ->addColumn('visit', function ($user) {
-                return optional($user->customerBillingFollowups)->where('status', 'visit')->count() ?? 0;
+                $count = optional($user->customerBillingFollowups)->where('status', 'visit')->count() ?? 0;
+                return '<span class="badge badge-info">' . $count . '</span>';
             })
             ->addColumn('promise_to_pay', function ($user) {
-                return optional($user->customerBillingFollowups)->where('status', 'promise_to_pay')->count() ?? 0;
+                $count = optional($user->customerBillingFollowups)->where('status', 'promise_to_pay')->count() ?? 0;
+                return '<span class="badge badge-warning">' . $count . '</span>';
             })
             ->addColumn('pay', function ($user) {
-                return optional($user->customerBillingFollowups)->where('status', 'pay')->count() ?? 0;
+                $count = optional($user->customerBillingFollowups)->where('status', 'pay')->count() ?? 0;
+                return '<span class="badge badge-success">' . $count . '</span>';
             })
             ->addColumn('total_pay', function ($user) {
                 return optional($user->customerBillingFollowups)->where('status', 'pay')->sum('payment_amount') ?? 0;
@@ -95,7 +98,7 @@ class OfficerReportController extends Controller
                     'value' => $user,
                 ]);
             })
-            ->rawColumns(['surveys', 'action'])
+            ->rawColumns(['visit', 'promise_to_pay', 'pay', 'surveys', 'action'])
             ->toJson();
     }
 
