@@ -122,9 +122,9 @@
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama</th>
-                                                <th>Total Survei</th>
                                                 <th>Total Survei Belum Selesai</th>
                                                 <th>Total Survei Selesai</th>
+                                                <th>Total Survei</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -192,13 +192,13 @@
                         "data": "name"
                     },
                     {
-                        "data": "total_surveys"
-                    },
-                    {
                         "data": "total_pending_and_ongoing_surveys"
                     },
                     {
                         "data": "total_done_surveys"
+                    },
+                    {
+                        "data": "total_surveys"
                     },
                     {
                         "data": "action"
