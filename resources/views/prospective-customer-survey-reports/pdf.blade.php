@@ -1,3 +1,6 @@
+@php
+    use App\Enums\ProspectiveCustomerSurveyStatusEnum;
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 
@@ -84,7 +87,7 @@
 <body>
     <div>
         <div>
-            <h1>Laporan Petugas</h1>
+            <h1>Laporan Survei</h1>
             <p>Periode: {{ $start_date }} s/d {{ $end_date }}</p>
         </div>
         <table>
@@ -92,36 +95,21 @@
                 <tr>
                     <th>No</th>
                     <th>Nama Petugas</th>
-                    <th>Visit</th>
-                    <th>Janji Bayar</th>
-                    <th>Bayar</th>
-                    <th>Total Bayar</th>
-                    <th>Survey</th>
+                    <th>Total Survei Belum Selesai</th>
+                    <th>Total Survei Selesai</th>
+                    <th>Total Survei</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($data as $item => $value)
-                    @php
-                        $doneCount = $value->prospectiveCustomerSurveys()->where('status', 'done')->count();
-
-                        $pendingOrOngoingCount = $value
-                            ->prospectiveCustomerSurveys()
-                            ->where(function ($query) {
-                                $query->where('status', 'pending')->orWhere('status', 'ongoing');
-                            })
-                            ->count();
-                    @endphp
                     <tr>
                         <td>{{ $item + 1 }}</td>
                         <td>{{ $value->name }}</td>
-                        <td>{{ $value->customerBillingFollowups->where('status', 'visit')->count() ?? 0 }}</td>
-                        <td>{{ $value->customerBillingFollowups->where('status', 'promise_to_pay')->count() ?? 0 }}</td>
-                        <td>{{ $value->customerBillingFollowups->where('status', 'pay')->count() ?? 0 }}</td>
-                        <td>{{ $value->customerBillingFollowups->where('status', 'pay')->sum('payment_amount') ?? 0 }}
+                        <td>{{ $value->prospectiveCustomerSurveys->whereIn('status', [ProspectiveCustomerSurveyStatusEnum::Pending, ProspectiveCustomerSurveyStatusEnum::Ongoing])->count() }}
                         </td>
-                        <td>Selesai: {{ $doneCount }} <br /> Belum Selesai: {{ $pendingOrOngoingCount }} <br />
-                            Total:
-                            {{ $doneCount + $pendingOrOngoingCount }}</td>
+                        <td>{{ $value->prospectiveCustomerSurveys->where('status', ProspectiveCustomerSurveyStatusEnum::Done)->count() }}
+                        </td>
+                        <td>{{ $value->prospectiveCustomerSurveys->count() }}</td>
                     </tr>
                 @endforeach
             </tbody>

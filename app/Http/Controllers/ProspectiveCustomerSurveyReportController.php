@@ -8,6 +8,7 @@ use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use App\Exports\ProspectiveCustomerSurveyExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProspectiveCustomerSurveyReportController extends Controller
 {
@@ -167,6 +168,28 @@ class ProspectiveCustomerSurveyReportController extends Controller
         $start_date = $request->start_date ?? date('Y-01-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
-        return Excel::download(new ProspectiveCustomerSurveyExport($start_date, $end_date), Carbon::now()->toDateString() . 'prospective_customer_survey_report.xlsx');
+        return Excel::download(new ProspectiveCustomerSurveyExport($start_date, $end_date), 'laporan-survei-' . Carbon::now()->toDateString() . '.xlsx');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $start_date = $request->start_date ?? date('Y-01-01');
+        $end_date = $request->end_date ?? date('Y-m-t');
+
+        // Implement PDF export logic here
+        // For example, you can use a library like DomPDF or Snappy to generate the PDF
+         $officerReports = User::with(['prospectiveCustomerSurveys' => function ($query) use ($start_date, $end_date) {
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }, 'roles'])->whereHas('roles', function($query) {
+            $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
+        })->get();
+
+        $pdf = Pdf::loadView('prospective-customer-survey-reports.pdf', [
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'data' => $officerReports,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('laporan-survei-' . Carbon::now()->toDateString() . '.pdf');
     }
 }
