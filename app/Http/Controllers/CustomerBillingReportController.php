@@ -143,6 +143,6 @@ class CustomerBillingReportController extends Controller
         $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
-        return Excel::download(new CustomerBillingExport($start_date, $end_date), Carbon::now()->toDateString() . '-billing-reports.xls');
+        return Excel::download(new CustomerBillingExport($start_date, $end_date), 'laporan-penagihan-' . Carbon::now()->toDateString() . '.xls');
     }
 }
