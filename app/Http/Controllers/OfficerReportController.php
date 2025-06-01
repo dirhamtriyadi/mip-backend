@@ -199,7 +199,7 @@ class OfficerReportController extends Controller
         $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
-        return Excel::download(new OfficerReportExport($start_date, $end_date), Carbon::now()->toDateString() . '-officer-reports.xls');
+        return Excel::download(new OfficerReportExport($start_date, $end_date), 'laporan-petugas-' . Carbon::now()->toDateString() . '.xls');
     }
 
     public function exportByUser(Request $request)
@@ -219,7 +219,7 @@ class OfficerReportController extends Controller
             return redirect()->back()->with('error', 'User not found');
         }
 
-        return Excel::download(new OfficerReportByUserExport($start_date, $end_date, $request->user_id), Carbon::now()->toDateString() . '-officer-reports-' . $user->name . '.xls');
+        return Excel::download(new OfficerReportByUserExport($start_date, $end_date, $request->user_id), 'laporan-petugas-' . Carbon::now()->toDateString() . '-' . $user->name . '.xls');
     }
 
     public function exportPdf(Request $request)
