@@ -18,8 +18,8 @@ class CustomerBillingController extends Controller
     public function index(Request $request)
     {
         $search = $request->search ?? null;
-        $start_date = $request->start_date ?? Carbon::now()->startOfMonth();
-        $end_date = $request->end_date ?? Carbon::now();
+        $start_date = $request->start_date ?? Carbon::now()->startOfYear()->startOfDay();
+        $end_date = $request->end_date ?? Carbon::now()->endOfDay();
 
         $user = auth()->user();
 
@@ -28,7 +28,7 @@ class CustomerBillingController extends Controller
             $end_date = Carbon::parse($request->end_date)->endOfDay()->format('Y-m-d H:i:s');
         } else {
             $start_date = Carbon::now()->startOfMonth()->startOfDay()->format('Y-m-d H:i:s');
-            $end_date = Carbon::now()->endOfMonth()->endOfDay()->format('Y-m-d H:i:s');
+            $end_date = Carbon::now()->endOfDay()->format('Y-m-d H:i:s');
         }
 
         $customerBillings = CustomerBilling::with(['customer', 'user', 'billingFollowups'])

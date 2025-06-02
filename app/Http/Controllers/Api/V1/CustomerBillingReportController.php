@@ -19,7 +19,7 @@ class CustomerBillingReportController extends Controller
     public function index(Request $request)
     {
         $search = $request->search ?? null;
-        $start_date = $request->start_date ?? Carbon::now()->startOfMonth();
+        $start_date = $request->start_date ?? Carbon::now()->startOfYear();
         $end_date = $request->end_date ?? Carbon::now();
 
         $user = auth()->user();
