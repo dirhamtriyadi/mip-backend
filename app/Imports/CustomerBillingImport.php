@@ -17,6 +17,29 @@ class CustomerBillingImport implements ToModel, WithHeadingRow
         $this->user_id = $user_id;
     }
 
+    private function parseDate($dateValue)
+    {
+        if (empty($dateValue)) return null;
+
+        try {
+            // Coba format dengan slash (10/05/2026)
+            return Carbon::createFromFormat('d/m/Y', $dateValue)->format('Y-m-d');
+        } catch (\Exception $e) {
+            try {
+                // Coba format dengan dash (10-05-2026)
+                return Carbon::createFromFormat('d-m-Y', $dateValue)->format('Y-m-d');
+            } catch (\Exception $e) {
+                try {
+                    // Fallback ke Carbon::parse untuk format lain
+                    return Carbon::parse($dateValue)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    // Jika semua gagal, return null
+                    return null;
+                }
+            }
+        }
+    }
+
     /**
     * @param array $row
     *
@@ -41,11 +64,12 @@ class CustomerBillingImport implements ToModel, WithHeadingRow
             'installments' => $row['installments'] ?? $row['angsuran'] ?? null,
             'month_arrears' => $row['month_arrears'] ?? $row['tgk_bln'] ?? null,
             'arrears' => $row['arrears'] ?? $row['tunggakan'] ?? null,
-            'due_date' => isset($row['due_date']) && !empty($row['due_date'])
-                ? Carbon::parse($row['due_date'])->format('Y-m-d')
-                : (isset($row['jth_tempo']) && !empty($row['jth_tempo'])
-                    ? Carbon::parse($row['jth_tempo'])->format('Y-m-d')
-                    : null),
+            'due_date' => $this->parseDate($row['due_date'] ?? $row['jth_tempo'] ?? null),
+            // 'due_date' => isset($row['due_date']) && !empty($row['due_date'])
+            //     ? Carbon::createFromFormat('d/m/Y', $row['due_date'])->format('Y-m-d')
+            //     : (isset($row['jth_tempo']) && !empty($row['jth_tempo'])
+            //         ? Carbon::createFromFormat('d/m/Y', $row['jth_tempo'])->format('Y-m-d')
+            //         : null),
             'description' => $row['description'] ?? $row['keterangan'] ?? null,
             'created_by' => $user->id,
         ]);
