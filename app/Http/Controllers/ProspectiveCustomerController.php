@@ -104,7 +104,6 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp',
-            'bank' => 'required|string|max:255',
             'ktp' => 'required|file|mimes:jpg,png,jpeg|max:2048',
             'kk' => 'required|file|mimes:jpg,png,jpeg|max:2048',
             'status' => 'nullable|in:pending,approved,rejected',
