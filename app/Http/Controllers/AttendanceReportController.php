@@ -34,7 +34,7 @@ class AttendanceReportController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         // get request start_date and end_date or set default this month
-        $start_date = $request->start_date ?? date('Y-01-01');
+        $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         return view('attendance-reports.index', [
@@ -47,7 +47,7 @@ class AttendanceReportController extends Controller implements HasMiddleware
     public function fetchDataTable(Request $request)
     {
         // get request start_date and end_date or set default this month
-        $start_date = $request->start_date ?? date('Y-01-01');
+        $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         // get all users with attendances between start_date and end_date with deleted_at and deteled_by is null
