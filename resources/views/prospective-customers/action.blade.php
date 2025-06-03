@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-center">
-    @if ($value->status === 'pending')
+    @if ($value->status->label() === 'pending')
         <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-proccess-customer"
             data-prospectiveCustomer="{{ json_encode($value) }}">
             <i class="fas fa-spinner"></i> Proses
