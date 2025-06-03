@@ -1,5 +1,9 @@
+@php
+    use App\Enums\ProspectiveCustomerStatusEnum;
+@endphp
+
 <div class="d-flex justify-content-center">
-    @if ($value->status->label() === 'pending')
+    @if ($value->status->value === ProspectiveCustomerStatusEnum::Pending->value)
         <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-proccess-customer"
             data-prospectiveCustomer="{{ json_encode($value) }}">
             <i class="fas fa-spinner"></i> Proses
