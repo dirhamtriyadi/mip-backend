@@ -22,6 +22,9 @@ class CustomerBillingExport implements FromView
 
     public function view(): View
     {
+        $start_date = $this->start_date;
+        $end_date = $this->end_date;
+
         // Query dasar dengan tanggal
         $customerBilling = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups' => function ($query) use ($start_date, $end_date) {
                 $query->whereDate('created_at', '>=', $start_date)
