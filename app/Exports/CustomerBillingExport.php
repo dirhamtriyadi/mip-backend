@@ -23,8 +23,11 @@ class CustomerBillingExport implements FromView
     public function view(): View
     {
         // Query dasar dengan tanggal
-        $customerBilling = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups'])
-            ->whereBetween('created_at', [$this->start_date, $this->end_date]);
+        $customerBilling = CustomerBilling::with(['customer', 'user', 'latestBillingFollowups' => function ($query) use ($start_date, $end_date) {
+                $query->whereDate('created_at', '>=', $start_date)
+                      ->whereDate('created_at', '<=', $end_date);
+            }]);
+            // ->whereBetween('created_at', [$this->start_date, $this->end_date]);
 
         // Terapkan filter berdasarkan izin pengguna
         if (!$this->user->hasPermissionTo('laporan-penagihan.all-data')) {
