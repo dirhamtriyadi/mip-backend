@@ -18,7 +18,7 @@ class ProspectiveCustomerSurveyReportController extends Controller
     public function index(Request $request)
     {
         // get request start_date and end_date or set default this month
-        $start_date = $request->start_date ?? date('Y-01-01');
+        $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         return view('prospective-customer-survey-reports.index', [
@@ -31,7 +31,7 @@ class ProspectiveCustomerSurveyReportController extends Controller
     public function fetchDataTable(Request $request)
     {
         // get request start_date and end_date or set default this month
-        $start_date = $request->start_date ?? date('Y-01-01');
+        $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         // get all users with prospectiveCustomerSurveys between start_date and end_date with deleted_at and deteled_by is null
@@ -165,7 +165,7 @@ class ProspectiveCustomerSurveyReportController extends Controller
 
     public function export(Request $request)
     {
-        $start_date = $request->start_date ?? date('Y-01-01');
+        $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         return Excel::download(new ProspectiveCustomerSurveyExport($start_date, $end_date), 'laporan-survei-' . Carbon::now()->toDateString() . '.xlsx');
@@ -173,7 +173,7 @@ class ProspectiveCustomerSurveyReportController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $start_date = $request->start_date ?? date('Y-01-01');
+        $start_date = $request->start_date ?? date('Y-m-01');
         $end_date = $request->end_date ?? date('Y-m-t');
 
         // Implement PDF export logic here
