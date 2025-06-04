@@ -53,6 +53,7 @@ class CustomerBillingImport implements ToModel, WithHeadingRow
         $customer = Customer::updateOrCreate([
             'no_contract' => $row['no_contract'] ?? $row['no_kontrak'],
         ], [
+            'no_contract' => $row['no_contract'] ?? $row['no_kontrak'],
             'bank_account_number' => $row['bank_account_number'] ?? $row['no_rekening'] ?? null,
             'name_customer' => $row['name_customer'] ?? $row['nama_nasabah'],
             'name_mother' => $row['name_mother'] ?? $row['nama_ibu'] ?? null,
