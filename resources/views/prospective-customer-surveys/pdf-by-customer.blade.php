@@ -456,10 +456,10 @@
                     {{ Carbon\Carbon::parse($data->dateSurvey)->translatedFormat('l - d F Y') }}</span></td>
         </tr>
         <tr>
-            <td><strong>Latitude</strong></td>
-            <td><span class="value">: {{ $data->latitude ?? '0' }}</span></td>
-            <td><strong>Longitude</strong></td>
-            <td><span class="value">: {{ $data->longitude ?? '0' }}</span></td>
+            <td style="width: 15%;">Latitude</td>
+            <td style="width: 80%;"><span class="value">: {{ $data->latitude ?? '0' }}</span></td>
+            <td style="width: 15%;">Longitude</td>
+            <td style="width: 80%;"><span class="value">: {{ $data->longitude ?? '0' }}</span></td>
         </tr>
     </table>
     <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 50px">
