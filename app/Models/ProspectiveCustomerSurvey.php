@@ -13,7 +13,7 @@ class ProspectiveCustomerSurvey extends Model
     use HasFactory;
     // use SoftDeletes;
 
-    protected $table = 'prospective-customer-surveys';
+    protected $table = 'prospective_customer_surveys';
 
     protected $casts = [
         'status' => ProspectiveCustomerSurveyStatusEnum::class,

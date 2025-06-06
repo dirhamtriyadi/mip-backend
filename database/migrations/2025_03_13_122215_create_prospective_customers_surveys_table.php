@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prospective-customer-surveys', function (Blueprint $table) {
+        Schema::create('prospective_customer_surveys', function (Blueprint $table) {
             $table->id();
             $table->foreignId('prospective_customer_id')->nullable()->constrained('prospective_customers')->comment('ID calon nasabah');
             $table->enum('status', ['pending', 'ongoing', 'done'])->nullable()->default('pending')->comment('Status survei');
@@ -117,6 +117,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('prospective-customer-surveys');
+        Schema::dropIfExists('prospective_customer_surveys');
     }
 };
