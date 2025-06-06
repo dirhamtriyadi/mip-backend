@@ -30,9 +30,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('banks', BankController::class);
 
         // Attendance
-        Route::get('attendances/work-schedules', [AttendanceController::class, 'workSchedules'])->name('attendances.work-schedules');
-        Route::post('attendances/check-in', [AttendanceController::class, 'checkIn'])->name('attendances.check-in');
-        Route::post('attendances/check-out', [AttendanceController::class, 'checkOut'])->name('attendances.check-out');
+        Route::get('attendances/work-schedules', [AttendanceController::class, 'workSchedules'])->name('attendances.workSchedules');
+        Route::post('attendances/check-in', [AttendanceController::class, 'checkIn'])->name('attendances.checkIn');
+        Route::post('attendances/check-out', [AttendanceController::class, 'checkOut'])->name('attendances.checkOut');
         Route::post('attendances/sick', [AttendanceController::class, 'sick'])->name('attendances.sick');
         Route::post('attendances/permit', [AttendanceController::class, 'permit'])->name('attendances.permit');
 
@@ -50,8 +50,8 @@ Route::prefix('v1')->group(function () {
         // Customer Billing Report
         Route::get('customer-billing-reports', [CustomerBillingReportController::class, 'index'])->name('customer-billing-reports.index');
         Route::get('customer-billing-reports/{id}', [CustomerBillingReportController::class, 'show'])->name('customer-billing-reports.show');
-        Route::get('customer-billing-reports/export-pdf/by-user', [CustomerBillingReportController::class, 'exportPdfByUser'])->name('customer-billing-reports.export-pdf.by-user');
-        Route::get('customer-billing-reports/export-pdf/by-customer', [CustomerBillingReportController::class, 'exportPdfByCustomer'])->name('customer-billing-reports.export-pdf.by-customer');
+        Route::get('customer-billing-reports/export-pdf/by-user', [CustomerBillingReportController::class, 'exportPdfByUser'])->name('customer-billing-reports.exportPdfByUser');
+        Route::get('customer-billing-reports/export-pdf/by-customer', [CustomerBillingReportController::class, 'exportPdfByCustomer'])->name('customer-billing-reports.exportPdfByCustomer');
 
         // Prospective Customer
         Route::post('prospective-customers', [ProspectiveCustomerController::class, 'store'])->name('prospective-customers.store');
@@ -69,7 +69,7 @@ Route::prefix('v1')->group(function () {
         // Profile
         Route::get('profile', [ProfileController::class, 'index'])->name('profile');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::put('profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+        Route::put('profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
 
         // Auth
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
