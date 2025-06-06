@@ -55,6 +55,10 @@ class ProspectiveCustomerSurveyResource extends JsonResource
             'recommendation_from_treasurer' => $this->recommendation_from_treasurer,
             'recommendation_from_other' => $this->recommendation_from_other,
             'recommendation_pt' => $this->recommendation_pt,
+            'recommendation_pt_enum' => [
+                'label' => $this->recommendation_pt->label(),
+                'value' => $this->recommendation_pt->value,
+            ],
             'descriptionSurvey' => $this->descriptionSurvey,
             'locationSurvey' => $this->locationSurvey,
             'dateSurvey' => $this->dateSurvey,
