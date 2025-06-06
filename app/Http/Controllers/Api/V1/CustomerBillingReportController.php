@@ -22,11 +22,11 @@ class CustomerBillingReportController extends Controller
         $user = auth()->user();
 
         if ($request->start_date && $request->end_date) {
-            $start_date = Carbon::parse($request->start_date)->startOfDay();
-            $end_date = Carbon::parse($request->end_date)->endOfDay();
+            $start_date = Carbon::parse($request->start_date)->startOfDay()->format('Y-m-d H:i:s');
+            $end_date = Carbon::parse($request->end_date)->endOfDay()->format('Y-m-d H:i:s');
         } else {
-            $start_date = Carbon::now()->startOfMonth()->startOfDay();
-            $end_date = Carbon::now()->endOfMonth()->endOfDay();
+            $start_date = Carbon::now()->startOfMonth()->startOfDay()->format('Y-m-d H:i:s');
+            $end_date = Carbon::now()->endOfMonth()->endOfDay()->format('Y-m-d H:i:s');
         }
 
         // Query yang diperbaiki
