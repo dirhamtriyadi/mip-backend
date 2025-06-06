@@ -19,8 +19,8 @@ class ProspectiveCustomerSurveyResource extends JsonResource
             'id' => $this->id,
             'status' => $this->status,
             'status_enum' => [
-                'label' => $this->status->label(),
-                'value' => $this->status->value,
+                'label' => $this->status ? $this->status->label() : null,
+                'value' => $this->status ? $this->status->value : null,
             ],
             'name' => $this->name,
             'address' => $this->address,
