@@ -140,7 +140,7 @@ class ProspectiveCustomerSurveyController extends Controller
             'status' => 'nullable|in:pending,ongoing,done',
             'name' => 'required|string|max:255',
             'address' => 'required|string',
-            'number_ktp' => 'required|string|unique:prospective-customer-surveys,number_ktp',
+            'number_ktp' => 'required|string|unique:prospective_customer_surveys,number_ktp',
             'address_status' => 'nullable|string',
             'phone_number' => 'nullable|string',
             'npwp' => 'nullable|string',
@@ -286,7 +286,7 @@ class ProspectiveCustomerSurveyController extends Controller
             'user_id' => 'nullable|exists:users,id',
             'name' => 'nullable|string',
             'address' => 'nullable|string',
-            'number_ktp' => 'nullable|string|unique:prospective-customer-surveys,number_ktp,' . $id,
+            'number_ktp' => 'nullable|string|unique:prospective_customer_surveys,number_ktp,' . $id,
             'address_status' => 'nullable|string',
             'phone_number' => 'nullable|string',
             'npwp' => 'nullable|string',
@@ -412,7 +412,7 @@ class ProspectiveCustomerSurveyController extends Controller
     {
         $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'required|exists:prospective-customer-surveys,id',
+            'ids.*' => 'required|exists:prospective_customer_surveys,id',
         ]);
 
         $ids = $request->input('ids', []);
@@ -432,7 +432,7 @@ class ProspectiveCustomerSurveyController extends Controller
     {
         $validatedData = $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'required|exists:prospective-customer-surveys,id',
+            'ids.*' => 'required|exists:prospective_customer_surveys,id',
             'user_id' => 'required|exists:users,id',
         ]);
 

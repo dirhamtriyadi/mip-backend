@@ -79,7 +79,7 @@ class ProspectiveCustomerSurveyController extends Controller
             'user_id' => 'nullable|exists:users,id',
             'name' => 'nullable|string',
             'address' => 'nullable|string',
-            'number_ktp' => 'nullable|string|unique:prospective-customer-surveys,number_ktp,' . $id,
+            'number_ktp' => 'nullable|string|unique:prospective_customer_surveys,number_ktp,' . $id,
             'address_status' => 'nullable|string',
             'phone_number' => 'nullable|string',
             'npwp' => 'nullable|string',
