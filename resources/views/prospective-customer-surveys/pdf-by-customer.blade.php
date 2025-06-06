@@ -446,14 +446,14 @@
     </table>
     <table>
         <tr>
-            <td style="height: 100px">{{ $data->descriptionSurvey }}</td>
+            <td style="height: 100px">{{ $data->description_survey }}</td>
         </tr>
     </table>
     <table>
         <tr>
             <td>Tempat - hari - tanggal</td>
-            <td><span class="value">: {{ $data->locationSurvey ?? 'Lokasi kosong' }} -
-                    {{ Carbon\Carbon::parse($data->dateSurvey)->translatedFormat('l - d F Y') }}</span></td>
+            <td><span class="value">: {{ $data->location_survey ?? 'Lokasi kosong' }} -
+                    {{ Carbon\Carbon::parse($data->date_survey)->translatedFormat('l - d F Y') }}</span></td>
         </tr>
         <tr>
             <td style="width: 15%;">Latitude</td>

@@ -785,34 +785,34 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="descriptionSurvey">Keterangan</label>
-                                        <textarea class="form-control" id="descriptionSurvey" name="descriptionSurvey" placeholder="Masukkan keterangan"
-                                            rows="3">{{ old('descriptionSurvey') }}</textarea>
-                                        @error('descriptionSurvey')
+                                        <label for="description_survey">Keterangan</label>
+                                        <textarea class="form-control" id="description_survey" name="description_survey" placeholder="Masukkan keterangan"
+                                            rows="3">{{ old('description_survey') }}</textarea>
+                                        @error('description_survey')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="locationSurvey">Tempat</label>
-                                        <input type="text" class="form-control" id="locationSurvey"
-                                            name="locationSurvey" placeholder="Masukkan tempat"
-                                            value="{{ old('locationSurvey') }}">
-                                        @error('locationSurvey')
+                                        <label for="location_survey">Tempat</label>
+                                        <input type="text" class="form-control" id="location_survey"
+                                            name="location_survey" placeholder="Masukkan tempat"
+                                            value="{{ old('location_survey') }}">
+                                        @error('location_survey')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="dateSurvey">Tanggal</label>
+                                        <label for="date_survey">Tanggal</label>
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
-                                                data-target="#reservationdate" name="dateSurvey"
-                                                placeholder="Masukan Tanggal" value="{{ old('dateSurvey') }}">
+                                                data-target="#reservationdate" name="date_survey"
+                                                placeholder="Masukan Tanggal" value="{{ old('date_survey') }}">
                                             <div class="input-group-append" data-target="#reservationdate"
                                                 data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                         </div>
-                                        @error('dateSurvey')
+                                        @error('date_survey')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -833,12 +833,12 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="locationString">Lokasi</label>
-                                        <input type="text" class="form-control" id="locationString"
-                                            name="locationString"
+                                        <label for="location_string">Lokasi</label>
+                                        <input type="text" class="form-control" id="location_string"
+                                            name="location_string"
                                             placeholder="Masukkan lokasi latitude dan longitude digabungkan dengan koma"
-                                            value="{{ old('locationString') }}">
-                                        @error('locationString')
+                                            value="{{ old('location_string') }}">
+                                        @error('location_string')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>

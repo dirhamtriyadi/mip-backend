@@ -81,12 +81,12 @@ return new class extends Migration
             $table->string('source_2_prospect_character')->nullable()->comment('Karakter calon nasabah sumber informasi kedua');
 
             $table->enum('recommendation_pt', ['yes', 'no'])->nullable()->comment('Apakah direkomendasikan?');
-            $table->text('descriptionSurvey')->nullable()->comment('Keterangan rekomendasi PT');
-            $table->text('locationSurvey')->nullable()->comment('Tempat lokasi survei');
-            $table->date('dateSurvey')->nullable()->comment('Tanggal survei');
+            $table->text('description_survey')->nullable()->comment('Keterangan rekomendasi PT');
+            $table->text('location_survey')->nullable()->comment('Tempat lokasi survei');
+            $table->date('date_survey')->nullable()->comment('Tanggal survei');
             $table->string('latitude')->nullable()->comment('Latitude');
             $table->string('longitude')->nullable()->comment('Longitude');
-            $table->string('locationString')->nullable()->comment('Lokasi survei');
+            $table->string('location_string')->nullable()->comment('Lokasi survei');
 
             // Tanda tangan
             $table->text('signature_officer')->nullable()->comment('Tanda tangan officer');

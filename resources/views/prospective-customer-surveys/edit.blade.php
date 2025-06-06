@@ -91,11 +91,15 @@
                                         <select class="form-control select2" style="width: 100%;" id="status"
                                             name="status">
                                             <option selected>Pilih Status Proses</option>
-                                            <option value="pending" {{ old('status') == 'pending' || $data->status == 'pending' ? 'selected' : '' }}>
+                                            <option value="pending"
+                                                {{ old('status') == 'pending' || $data->status == 'pending' ? 'selected' : '' }}>
                                                 Menunggu</option>
-                                            <option value="ongoing" {{ old('status') == 'ongoing' || $data->status == 'ongoing' ? 'selected' : '' }}>
+                                            <option value="ongoing"
+                                                {{ old('status') == 'ongoing' || $data->status == 'ongoing' ? 'selected' : '' }}>
                                                 Proses</option>
-                                            <option value="done" {{ old('status') == 'done' || $data->status == 'done' ? 'selected' : '' }}>Berhasil
+                                            <option value="done"
+                                                {{ old('status') == 'done' || $data->status == 'done' ? 'selected' : '' }}>
+                                                Berhasil
                                             </option>
                                         </select>
                                         @error('status')
@@ -105,7 +109,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="name">Nama calon nasabah *</label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            placeholder="Masukkan nama calon nasabah" value="{{ old('name', $data->name) }}">
+                                            placeholder="Masukkan nama calon nasabah"
+                                            value="{{ old('name', $data->name) }}">
                                         @error('name')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -113,7 +118,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="address">Alamat calon nasabah *</label>
                                         <input type="text" class="form-control" id="address" name="address"
-                                            placeholder="Masukkan alamat calon nasabah" value="{{ old('address', $data->address) }}">
+                                            placeholder="Masukkan alamat calon nasabah"
+                                            value="{{ old('address', $data->address) }}">
                                         @error('address')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -121,7 +127,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="number_ktp">No KTP calon nasabah *</label>
                                         <input type="text" class="form-control" id="number_ktp" name="number_ktp"
-                                            placeholder="Masukkan nomor KTP calon nasabah" value="{{ old('number_ktp', $data->number_ktp) }}">
+                                            placeholder="Masukkan nomor KTP calon nasabah"
+                                            value="{{ old('number_ktp', $data->number_ktp) }}">
                                         @error('number_ktp')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -147,7 +154,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="npwp">NPWP calon nasabah</label>
                                         <input type="text" class="form-control" id="npwp" name="npwp"
-                                            placeholder="Masukkan NPWP calon nasabah" value="{{ old('npwp', $data->npwp) }}">
+                                            placeholder="Masukkan NPWP calon nasabah"
+                                            value="{{ old('npwp', $data->npwp) }}">
                                         @error('npwp')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -173,7 +181,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="job_type">Jenis Pekerjaan</label>
                                         <input type="text" class="form-control" id="job_type" name="job_type"
-                                            placeholder="Masukkan jenis pekerjaan" value="{{ old('job_type', $data->job_type) }}">
+                                            placeholder="Masukkan jenis pekerjaan"
+                                            value="{{ old('job_type', $data->job_type) }}">
                                         @error('job_type')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -181,7 +190,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="company_name">Nama Perusahaan</label>
                                         <input type="text" class="form-control" id="company_name" name="company_name"
-                                            placeholder="Masukkan nama perusahaan" value="{{ old('company_name', $data->company_name) }}">
+                                            placeholder="Masukkan nama perusahaan"
+                                            value="{{ old('company_name', $data->company_name) }}">
                                         @error('company_name')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -189,7 +199,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="job_level">Jabatan</label>
                                         <input type="text" class="form-control" id="job_level" name="job_level"
-                                            placeholder="Masukkan jabatan" value="{{ old('job_level', $data->job_level) }}">
+                                            placeholder="Masukkan jabatan"
+                                            value="{{ old('job_level', $data->job_level) }}">
                                         @error('job_level')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -241,7 +252,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="children">Tanggungan Anak</label>
                                         <input type="text" class="form-control" id="children" name="children"
-                                            placeholder="Masukkan tanggungan" value="{{ old('children', $data->children) }}">
+                                            placeholder="Masukkan tanggungan"
+                                            value="{{ old('children', $data->children) }}">
                                         @error('children')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -249,7 +261,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="wife">Tanggungan Istri</label>
                                         <input type="text" class="form-control" id="wife" name="wife"
-                                            placeholder="Masukkan tanggungan istri" value="{{ old('wife', $data->wife) }}">
+                                            placeholder="Masukkan tanggungan istri"
+                                            value="{{ old('wife', $data->wife) }}">
                                         @error('wife')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -257,7 +270,8 @@
                                     <div class="form-group" style="margin-top: 10px;">
                                         <label for="couple_jobs">Pekerjaan Pasangan</label>
                                         <input type="text" class="form-control" id="couple_jobs" name="couple_jobs"
-                                            placeholder="Masukkan pekerjaan pasangan" value="{{ old('couple_jobs', $data->couple_jobs) }}">
+                                            placeholder="Masukkan pekerjaan pasangan"
+                                            value="{{ old('couple_jobs', $data->couple_jobs) }}">
                                         @error('couple_jobs')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -797,34 +811,34 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="descriptionSurvey">Keterangan</label>
-                                        <textarea class="form-control" id="descriptionSurvey" name="descriptionSurvey" placeholder="Masukkan keterangan"
-                                            rows="3">{{ old('descriptionSurvey') }}</textarea>
-                                        @error('descriptionSurvey')
+                                        <label for="description_survey">Keterangan</label>
+                                        <textarea class="form-control" id="description_survey" name="description_survey" placeholder="Masukkan keterangan"
+                                            rows="3">{{ old('description_survey') }}</textarea>
+                                        @error('description_survey')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="locationSurvey">Tempat</label>
-                                        <input type="text" class="form-control" id="locationSurvey"
-                                            name="locationSurvey" placeholder="Masukkan tempat"
-                                            value="{{ old('locationSurvey') }}">
-                                        @error('locationSurvey')
+                                        <label for="location_survey">Tempat</label>
+                                        <input type="text" class="form-control" id="location_survey"
+                                            name="location_survey" placeholder="Masukkan tempat"
+                                            value="{{ old('location_survey') }}">
+                                        @error('location_survey')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="dateSurvey">Tanggal</label>
+                                        <label for="date_survey">Tanggal</label>
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
                                             <input type="text" class="form-control datetimepicker-input"
-                                                data-target="#reservationdate" name="dateSurvey"
-                                                placeholder="Masukan Tanggal" value="{{ old('dateSurvey') }}">
+                                                data-target="#reservationdate" name="date_survey"
+                                                placeholder="Masukan Tanggal" value="{{ old('date_survey') }}">
                                             <div class="input-group-append" data-target="#reservationdate"
                                                 data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                         </div>
-                                        @error('dateSurvey')
+                                        @error('date_survey')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -845,12 +859,12 @@
                                         @enderror
                                     </div>
                                     <div class="form-group" style="margin-top: 10px;">
-                                        <label for="locationString">Lokasi</label>
-                                        <input type="text" class="form-control" id="locationString"
-                                            name="locationString"
+                                        <label for="location_string">Lokasi</label>
+                                        <input type="text" class="form-control" id="location_string"
+                                            name="location_string"
                                             placeholder="Masukkan lokasi latitude dan longitude digabungkan dengan koma"
-                                            value="{{ old('locationString') }}">
-                                        @error('locationString')
+                                            value="{{ old('location_string') }}">
+                                        @error('location_string')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -862,7 +876,8 @@
                                             <label class="custom-file-label" for="signature_officer">Choose file</label>
                                         </div>
                                         @if ($data->signature_officer)
-                                            <img src="{{ asset('storage/' . $data->signature_officer) }}" alt="signature_officer" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->signature_officer) }}"
+                                                alt="signature_officer" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -878,7 +893,8 @@
                                             <label class="custom-file-label" for="signature_customer">Choose file</label>
                                         </div>
                                         @if ($data->signature_customer)
-                                            <img src="{{ asset('storage/' . $data->signature_customer) }}" alt="signature_customer" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->signature_customer) }}"
+                                                alt="signature_customer" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -894,7 +910,8 @@
                                             <label class="custom-file-label" for="signature_couple">Choose file</label>
                                         </div>
                                         @if ($data->signature_couple)
-                                            <img src="{{ asset('storage/' . $data->signature_couple) }}" alt="signature_couple" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->signature_couple) }}"
+                                                alt="signature_couple" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -928,7 +945,8 @@
                                             <label class="custom-file-label" for="workplace_image1">Choose file</label>
                                         </div>
                                         @if ($data->workplace_image1)
-                                            <img src="{{ asset('storage/' . $data->workplace_image1) }}" alt="workplace_image1" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->workplace_image1) }}"
+                                                alt="workplace_image1" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -944,7 +962,8 @@
                                             <label class="custom-file-label" for="workplace_image2">Choose file</label>
                                         </div>
                                         @if ($data->workplace_image2)
-                                            <img src="{{ asset('storage/' . $data->workplace_image2) }}" alt="workplace_image2" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->workplace_image2) }}"
+                                                alt="workplace_image2" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -960,7 +979,8 @@
                                             <label class="custom-file-label" for="customer_image">Choose file</label>
                                         </div>
                                         @if ($data->customer_image)
-                                            <img src="{{ asset('storage/' . $data->customer_image) }}" alt="customer_image" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->customer_image) }}"
+                                                alt="customer_image" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -976,7 +996,8 @@
                                             <label class="custom-file-label" for="ktp_image">Choose file</label>
                                         </div>
                                         @if ($data->ktp_image)
-                                            <img src="{{ asset('storage/' . $data->ktp_image) }}" alt="ktp_image" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->ktp_image) }}" alt="ktp_image"
+                                                style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -993,7 +1014,8 @@
                                                 file</label>
                                         </div>
                                         @if ($data->loan_guarantee_image1)
-                                            <img src="{{ asset('storage/' . $data->loan_guarantee_image1) }}" alt="loan_guarantee_image1" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->loan_guarantee_image1) }}"
+                                                alt="loan_guarantee_image1" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -1010,7 +1032,8 @@
                                                 file</label>
                                         </div>
                                         @if ($data->loan_guarantee_image2)
-                                            <img src="{{ asset('storage/' . $data->loan_guarantee_image2) }}" alt="loan_guarantee_image2" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->loan_guarantee_image2) }}"
+                                                alt="loan_guarantee_image2" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -1026,7 +1049,8 @@
                                             <label class="custom-file-label" for="kk_image">Choose file</label>
                                         </div>
                                         @if ($data->kk_image)
-                                            <img src="{{ asset('storage/' . $data->kk_image) }}" alt="kk_image" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->kk_image) }}" alt="kk_image"
+                                                style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -1042,7 +1066,8 @@
                                             <label class="custom-file-label" for="id_card_image">Choose file</label>
                                         </div>
                                         @if ($data->id_card_image)
-                                            <img src="{{ asset('storage/' . $data->id_card_image) }}" alt="id_card_image" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->id_card_image) }}"
+                                                alt="id_card_image" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -1058,7 +1083,8 @@
                                             <label class="custom-file-label" for="salary_slip_image1">Choose file</label>
                                         </div>
                                         @if ($data->salary_slip_image1)
-                                            <img src="{{ asset('storage/' . $data->salary_slip_image1) }}" alt="salary_slip_image1" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->salary_slip_image1) }}"
+                                                alt="salary_slip_image1" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -1071,10 +1097,12 @@
                                         <div class="custom-file">
                                             <input type="file" class="custom-file-input" id="salary_slip_image2"
                                                 name="salary_slip_image2" value="{{ old('salary_slip_image2') }}">
-                                            <label class="custom-file-label" for="salary_slip_image2">Choose file</label>
+                                            <label class="custom-file-label" for="salary_slip_image2">Choose
+                                                file</label>
                                         </div>
                                         @if ($data->salary_slip_image2)
-                                            <img src="{{ asset('storage/' . $data->salary_slip_image2) }}" alt="salary_slip_image2" style="width: 100px; height: 100px;">
+                                            <img src="{{ asset('storage/' . $data->salary_slip_image2) }}"
+                                                alt="salary_slip_image2" style="width: 100px; height: 100px;">
                                         @else
                                             -
                                         @endif
@@ -1087,7 +1115,8 @@
                             </div>
                             <!-- /.card -->
                             <div class="mt-2 d-flex justify-content-center">
-                                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Submit</button>
+                                <button type="submit" class="btn btn-primary"
+                                    style="margin-top: 10px;">Submit</button>
                             </div>
                         </form>
                     </div>

@@ -505,16 +505,16 @@
                         "data": "recommendation_pt"
                     },
                     {
-                        "data": "descriptionSurvey"
+                        "data": "description_survey"
                     },
                     {
-                        "data": "locationSurvey"
+                        "data": "location_survey"
                     },
                     {
-                        "data": "dateSurvey"
+                        "data": "date_survey"
                     },
                     {
-                        "data": "locationString"
+                        "data": "location_string"
                     },
                     {
                         "data": "signature_officer"
