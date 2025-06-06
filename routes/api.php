@@ -72,6 +72,7 @@ Route::prefix('v1')->group(function () {
         Route::put('profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
 
         // Auth
+        Route::get('auth/me', [AuthController::class, 'me']);
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     });
 });

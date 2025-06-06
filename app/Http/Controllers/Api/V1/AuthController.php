@@ -11,6 +11,43 @@ use App\Http\Resources\Api\V1\UserResource;
 
 class AuthController extends Controller
 {
+    public function me(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User not authenticated',
+                ], 401);
+            }
+
+            // Load relationships jika diperlukan
+            $user->load(['bank', 'detailUser']);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User data retrieved successfully',
+                'data' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'bank' => $user->bank,
+                    'detail' => $user->detailUser,
+                    'email_verified_at' => $user->email_verified_at,
+                ],
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to get user data',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
