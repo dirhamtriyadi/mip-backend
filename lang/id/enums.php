@@ -27,5 +27,9 @@ return [
         'pending' => 'Menunggu',
         'ongoing' => 'Sedang Berlangsung',
         'done' => 'Selesai',
+    ],
+    'prospective_customer_surveys_recommendation_pt' => [
+        'yes' => 'Ya',
+        'no' => 'Tidak',
     ]
 ];

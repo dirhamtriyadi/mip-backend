@@ -27,5 +27,9 @@ return [
         'pending' => 'Pending',
         'ongoing' => 'Ongoing',
         'done' => 'Done',
+    ],
+    'prospective_customer_surveys_recommendation_pt' => [
+        'yes' => 'Yes',
+        'no' => 'No',
     ]
 ];

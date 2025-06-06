@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\ProspectiveCustomerSurveyStatusEnum;
+use App\Enums\ProspectiveCustomerSurveyRecommendationPtEnum;
 
 class ProspectiveCustomerSurvey extends Model
 {
@@ -16,6 +17,7 @@ class ProspectiveCustomerSurvey extends Model
 
     protected $casts = [
         'status' => ProspectiveCustomerSurveyStatusEnum::class,
+        'recommendation_pt' => ProspectiveCustomerSurveyRecommendationPtEnum::class,
     ];
 
     protected $fillable = [

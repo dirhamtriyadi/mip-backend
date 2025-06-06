@@ -441,7 +441,7 @@
         <tr>
             <td></td>
             <td>Direkomendasikan</td>
-            <td><span class="value">: {{ $data->recommendation_pt }}</span></td>
+            <td><span class="value">: {{ $data->recommendation_pt->label() }}</span></td>
         </tr>
     </table>
     <table>
