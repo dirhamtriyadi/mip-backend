@@ -505,7 +505,7 @@
     </table>
     <table class="table-file" style="width: 100%; border-collapse: collapse; table-layout: fixed;">
         <tr style="width: 33.33%;">
-            <td style="width: 33.33%; height: 150px;">1. Latitude/Longitude dab Gedung</td>
+            <td style="width: 33.33%; height: 150px;">1. Latitude/Longitude dan Gedung</td>
             <td style="width: 33.33%; height: 150px;">
                 @if (!empty($data->workplace_image1))
                     <img src="{{ public_path('storage/' . $data->workplace_image1) }}"
