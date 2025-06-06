@@ -18,6 +18,10 @@ class ProspectiveCustomerSurveyResource extends JsonResource
         return [
             'id' => $this->id,
             'status' => $this->status,
+            'status_enum' => [
+                'label' => $this->status->label(),
+                'value' => $this->status->value,
+            ],
             'name' => $this->name,
             'address' => $this->address,
             'number_ktp' => $this->number_ktp,
