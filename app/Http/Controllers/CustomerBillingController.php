@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\CustomerBillingImport;
 use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class CustomerBillingController extends Controller implements HasMiddleware
 {
@@ -135,37 +136,50 @@ class CustomerBillingController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'bill_number' => 'nullable|unique:billings',
-            // 'date' => 'required|date',
-            'customer_id' => 'required|exists:customers,id',
-            'user_id' => 'nullable|exists:users,id',
-            // 'status' => 'nullable|in:pending,process,success,cancel',
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'bill_number' => 'nullable|unique:billings',
+                // 'date' => 'required|date',
+                'customer_id' => 'required|exists:customers,id',
+                'user_id' => 'nullable|exists:users,id',
+                // 'status' => 'nullable|in:pending,process,success,cancel',
+            ]);
 
-        $customer = Customer::findOrFail($validatedData['customer_id']);
-        if ($validatedData['bill_number'] === null) {
-            $datePrefix = Carbon::now()->format('Ymd'); // YYYYMMDD
-            $lastBill = CustomerBilling::where('bill_number', 'like', "$datePrefix%")
-                ->latest('bill_number')
-                ->first();
+            $customer = Customer::findOrFail($validatedData['customer_id']);
+            if ($validatedData['bill_number'] === null) {
+                $datePrefix = Carbon::now()->format('Ymd'); // YYYYMMDD
+                $lastBill = CustomerBilling::where('bill_number', 'like', "$datePrefix%")
+                    ->latest('bill_number')
+                    ->first();
 
-            if ($lastBill) {
-                // Ambil nomor terakhir dan tambahkan 1
-                $lastNumber = (int) substr($lastBill->bill_number, -4);
-                $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-            } else {
-                // Jika belum ada, mulai dari 0001
-                $nextNumber = '0001';
+                if ($lastBill) {
+                    // Ambil nomor terakhir dan tambahkan 1
+                    $lastNumber = (int) substr($lastBill->bill_number, -4);
+                    $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+                } else {
+                    // Jika belum ada, mulai dari 0001
+                    $nextNumber = '0001';
+                }
+
+                $validatedData['bill_number'] = $datePrefix . $nextNumber;
             }
+            $validatedData['created_by'] = auth()->id();
 
-            $validatedData['bill_number'] = $datePrefix . $nextNumber;
+            CustomerBilling::create($validatedData);
+
+            return redirect()->route('customer-billings.index')->with('success', 'Data berhasil disimpan');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menyimpan data: ' . $th->getMessage())->withInput();
         }
-        $validatedData['created_by'] = auth()->id();
-
-        CustomerBilling::create($validatedData);
-
-        return redirect()->route('customer-billings.index')->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -197,25 +211,38 @@ class CustomerBillingController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'bill_number' => 'nullable|unique:customer_billings,bill_number,' . $id,
-            // 'date' => 'required|date',
-            'customer_id' => 'required|exists:customers,id',
-            'user_id' => 'nullable|exists:users,id',
-            // 'status' => 'required|in:pending,process,success,cancel',
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'bill_number' => 'nullable|unique:customer_billings,bill_number,' . $id,
+                // 'date' => 'required|date',
+                'customer_id' => 'required|exists:customers,id',
+                'user_id' => 'nullable|exists:users,id',
+                // 'status' => 'required|in:pending,process,success,cancel',
+            ]);
 
-        $customerBilling = CustomerBilling::findOrFail($id);
+            $customerBilling = CustomerBilling::findOrFail($id);
 
-        $customer = Customer::findOrFail($validatedData['customer_id']);
-        if ($validatedData['bill_number'] === null) {
-            $validatedData['bill_number'] = Carbon::now()->format('YmdHis') . $customer->no;
+            $customer = Customer::findOrFail($validatedData['customer_id']);
+            if ($validatedData['bill_number'] === null) {
+                $validatedData['bill_number'] = Carbon::now()->format('YmdHis') . $customer->no;
+            }
+            $validatedData['updated_by'] = auth()->id();
+
+            $customerBilling->update($validatedData);
+
+            return redirect()->route('customer-billings.index')->with('success', 'Data berhasil diperbarui');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal memperbarui data: ' . $th->getMessage())->withInput();
         }
-        $validatedData['updated_by'] = auth()->id();
-
-        $customerBilling->update($validatedData);
-
-        return redirect()->route('customer-billings.index')->with('success', 'Data berhasil diperbarui');
     }
 
     /**
@@ -223,12 +250,20 @@ class CustomerBillingController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $customerBilling = CustomerBilling::findOrFail($id);
-        // $customerBilling->deleted_by = auth()->id();
-        $customerBilling->save();
-        $customerBilling->delete();
+        try {
+            //code...
+            $customerBilling = CustomerBilling::findOrFail($id);
+            // $customerBilling->deleted_by = auth()->id();
+            $customerBilling->save();
+            $customerBilling->delete();
 
-        return redirect()->route('customer-billings.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('customer-billings.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $th->getMessage());
+        }
     }
 
     public function import(Request $request)
@@ -278,17 +313,25 @@ class CustomerBillingController extends Controller implements HasMiddleware
             'ids.*' => 'required|exists:customer_billings,id',
         ]);
 
-        $ids = $request->input('ids', []);
-        $user = auth()->user();
+        try {
+            //code...
+            $ids = $request->input('ids', []);
+            $user = auth()->user();
 
-        foreach ($ids as $id) {
-            $customerBilling = CustomerBilling::findOrFail($id);
-            // $customerBilling->deleted_by = $user->id;
-            $customerBilling->save();
-            $customerBilling->delete();
+            foreach ($ids as $id) {
+                $customerBilling = CustomerBilling::findOrFail($id);
+                // $customerBilling->deleted_by = $user->id;
+                $customerBilling->save();
+                $customerBilling->delete();
+            }
+
+            return redirect()->route('customer-billings.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $th->getMessage());
         }
-
-        return redirect()->route('customer-billings.index')->with('success', 'Data berhasil dihapus');
     }
 
     public function massSelectOfficer(Request $request)
@@ -299,16 +342,24 @@ class CustomerBillingController extends Controller implements HasMiddleware
             'user_id' => 'required|exists:users,id',
         ]);
 
-        $ids = $request->input('ids', []);
-        $user = auth()->user();
+        try {
+            //code...
+            $ids = $request->input('ids', []);
+            $user = auth()->user();
 
-        foreach ($ids as $id) {
-            $customerBilling = CustomerBilling::findOrFail($id);
-            $customerBilling->user_id = $validatedData['user_id'];
-            $customerBilling->updated_by = $user->id;
-            $customerBilling->save();
+            foreach ($ids as $id) {
+                $customerBilling = CustomerBilling::findOrFail($id);
+                $customerBilling->user_id = $validatedData['user_id'];
+                $customerBilling->updated_by = $user->id;
+                $customerBilling->save();
+            }
+
+            return redirect()->route('customer-billings.index')->with('success', 'Data berhasil ditandatangani');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal memperbarui data: ' . $th->getMessage());
         }
-
-        return redirect()->route('customer-billings.index')->with('success', 'Data berhasil ditandatangani');
     }
 }

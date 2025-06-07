@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Exports\ProspectiveCustomerSurveyExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Helpers\LoggerHelper;
 
 class ProspectiveCustomerSurveyReportController extends Controller
 {
@@ -165,10 +166,25 @@ class ProspectiveCustomerSurveyReportController extends Controller
 
     public function export(Request $request)
     {
-        $start_date = $request->start_date ?? date('Y-m-01');
-        $end_date = $request->end_date ?? date('Y-m-t');
+        try {
+            //code...
+            $start_date = $request->start_date ?? date('Y-m-01');
+            $end_date = $request->end_date ?? date('Y-m-t');
 
-        return Excel::download(new ProspectiveCustomerSurveyExport($start_date, $end_date), 'laporan-survei-' . Carbon::now()->toDateString() . '.xlsx');
+            return Excel::download(new ProspectiveCustomerSurveyExport($start_date, $end_date), 'laporan-survei-' . Carbon::now()->toDateString() . '.xlsx');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to export data.',
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
+            ], 500);
+        }
     }
 
     public function exportPdf(Request $request)
@@ -178,18 +194,33 @@ class ProspectiveCustomerSurveyReportController extends Controller
 
         // Implement PDF export logic here
         // For example, you can use a library like DomPDF or Snappy to generate the PDF
-         $officerReports = User::with(['prospectiveCustomerSurveys' => function ($query) use ($start_date, $end_date) {
-            $query->whereBetween('created_at', [$start_date, $end_date]);
-        }, 'roles'])->whereHas('roles', function($query) {
-            $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
-        })->get();
+        try {
+            //code...
+            $officerReports = User::with(['prospectiveCustomerSurveys' => function ($query) use ($start_date, $end_date) {
+               $query->whereBetween('created_at', [$start_date, $end_date]);
+           }, 'roles'])->whereHas('roles', function($query) {
+               $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
+           })->get();
 
-        $pdf = Pdf::loadView('prospective-customer-survey-reports.pdf', [
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-            'data' => $officerReports,
-        ])->setPaper('a4', 'portrait');
+           $pdf = Pdf::loadView('prospective-customer-survey-reports.pdf', [
+               'start_date' => $start_date,
+               'end_date' => $end_date,
+               'data' => $officerReports,
+           ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('laporan-survei-' . Carbon::now()->toDateString() . '.pdf');
+           return $pdf->download('laporan-survei-' . Carbon::now()->toDateString() . '.pdf');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to export PDF.',
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
+            ], 500);
+        }
     }
 }

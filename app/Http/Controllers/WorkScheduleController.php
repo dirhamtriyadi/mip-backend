@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\WorkSchedule;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class WorkScheduleController extends Controller implements HasMiddleware
 {
@@ -68,21 +70,35 @@ class WorkScheduleController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'work_start_time' => 'required|date_format:H:i',
-            'work_end_time' => 'required|date_format:H:i',
-            'working_days_json' => 'required|json',
-        ]);
 
-        $tempData = [
-            'work_start_time' => $validatedData['work_start_time'],
-            'work_end_time' => $validatedData['work_end_time'],
-            'working_days' => $validatedData['working_days_json'],
-        ];
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'work_start_time' => 'required|date_format:H:i',
+                'work_end_time' => 'required|date_format:H:i',
+                'working_days_json' => 'required|json',
+            ]);
 
-        WorkSchedule::create($tempData);
+            $tempData = [
+                'work_start_time' => $validatedData['work_start_time'],
+                'work_end_time' => $validatedData['work_end_time'],
+                'working_days' => $validatedData['working_days_json'],
+            ];
 
-        return redirect()->route('work-schedules.index')->with('success', 'Data berhasil ditambahkan');
+            WorkSchedule::create($tempData);
+
+            return redirect()->route('work-schedules.index')->with('success', 'Data berhasil ditambahkan');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->withErrors(['general' => 'Gagal menyimpan data: ' . $th->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -110,19 +126,33 @@ class WorkScheduleController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'work_start_time' => 'required|date_format:H:i',
-            'work_end_time' => 'required|date_format:H:i',
-            'working_days_json' => 'required|json',
-        ]);
 
-        $workSchedule = WorkSchedule::findOrFail($id);
-        $workSchedule->work_start_time = $validatedData['work_start_time'];
-        $workSchedule->work_end_time = $validatedData['work_end_time'];
-        $workSchedule->working_days = $validatedData['working_days_json'];
-        $workSchedule->save();
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'work_start_time' => 'required|date_format:H:i',
+                'work_end_time' => 'required|date_format:H:i',
+                'working_days_json' => 'required|json',
+            ]);
 
-        return redirect()->route('work-schedules.index')->with('success', 'Work schedule updated successfully.');
+            $workSchedule = WorkSchedule::findOrFail($id);
+            $workSchedule->work_start_time = $validatedData['work_start_time'];
+            $workSchedule->work_end_time = $validatedData['work_end_time'];
+            $workSchedule->working_days = $validatedData['working_days_json'];
+            $workSchedule->save();
+
+            return redirect()->route('work-schedules.index')->with('success', 'Work schedule updated successfully.');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->withErrors(['general' => 'Gagal memperbarui data: ' . $th->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -130,9 +160,17 @@ class WorkScheduleController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $workSchedule = WorkSchedule::findOrFail($id);
-        $workSchedule->delete();
+        try {
+            //code...
+            $workSchedule = WorkSchedule::findOrFail($id);
+            $workSchedule->delete();
 
-        return redirect()->route('work-schedules.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('work-schedules.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->withErrors(['general' => 'Gagal menghapus data: ' . $th->getMessage()])->withInput();
+        }
     }
 }

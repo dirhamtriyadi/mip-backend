@@ -7,6 +7,8 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Http\Request;
 use App\Models\Bank;
 use Yajra\DataTables\Facades\DataTables;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class BankContoller extends Controller implements HasMiddleware
 {
@@ -78,9 +80,22 @@ class BankContoller extends Controller implements HasMiddleware
             'branch_code' => 'nullable|numeric|unique:banks'
         ]);
 
-        $bank = Bank::create($validatedData);
+        try {
+            //code...
+            $bank = Bank::create($validatedData);
 
-        return redirect()->route('banks.index')->with('success', 'Bank berhasil dibuat');
+            return redirect()->route('banks.index')->with('success', 'Bank berhasil dibuat');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal membuat bank: ' . $th->getMessage())->withInput();
+        }
     }
 
     /**
@@ -108,16 +123,29 @@ class BankContoller extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:banks,name,'.$id,
-            'branch_code' => 'nullable|numeric|unique:banks,branch_code,'.$id
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255|unique:banks,name,'.$id,
+                'branch_code' => 'nullable|numeric|unique:banks,branch_code,'.$id
+            ]);
 
-        $bank = Bank::findOrFail($id);
+            $bank = Bank::findOrFail($id);
 
-        $bank->update($validatedData);
+            $bank->update($validatedData);
 
-        return redirect()->route('banks.index')->with('success', 'Bank berhasil diupdate');
+            return redirect()->route('banks.index')->with('success', 'Bank berhasil diupdate');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal mengupdate bank: ' . $th->getMessage())->withInput();
+        }
     }
 
     /**
@@ -125,10 +153,18 @@ class BankContoller extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $bank = Bank::findOrFail($id);
+        try {
+            //code...
+            $bank = Bank::findOrFail($id);
 
-        $bank->delete();
+            $bank->delete();
 
-        return redirect()->route('banks.index')->with('success', 'Bank berhasil dihapus');
+            return redirect()->route('banks.index')->with('success', 'Bank berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menghapus bank: ' . $th->getMessage())->withInput();
+        }
     }
 }

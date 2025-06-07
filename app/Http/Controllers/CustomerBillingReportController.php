@@ -10,6 +10,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use App\Exports\CustomerBillingExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Helpers\LoggerHelper;
 
 class CustomerBillingReportController extends Controller
 {
@@ -142,10 +143,25 @@ class CustomerBillingReportController extends Controller
      */
     public function export(Request $request)
     {
-        // get request start_date and end_date or set default this month
-        $start_date = $request->start_date ?? date('Y-m-01');
-        $end_date = $request->end_date ?? date('Y-m-t');
+        try {
+            //code...
+            // get request start_date and end_date or set default this month
+            $start_date = $request->start_date ?? date('Y-m-01');
+            $end_date = $request->end_date ?? date('Y-m-t');
 
-        return Excel::download(new CustomerBillingExport($start_date, $end_date), 'laporan-penagihan-' . Carbon::now()->toDateString() . '.xls');
+            return Excel::download(new CustomerBillingExport($start_date, $end_date), 'laporan-penagihan-' . Carbon::now()->toDateString() . '.xls');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to export data.',
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
+            ], 500);
+        }
     }
 }

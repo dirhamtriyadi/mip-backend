@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\AnnualHoliday;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class AnnualHolidayController extends Controller implements HasMiddleware
 {
@@ -65,14 +67,27 @@ class AnnualHolidayController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'holiday_date' => 'required|date',
-            'description' => 'required|string'
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'holiday_date' => 'required|date',
+                'description' => 'required|string'
+            ]);
 
-        AnnualHoliday::create($validatedData);
+            AnnualHoliday::create($validatedData);
 
-        return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil disimpan');
+            return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil disimpan');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -100,15 +115,28 @@ class AnnualHolidayController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'holiday_date' => 'required|date',
-            'description' => 'required|string'
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'holiday_date' => 'required|date',
+                'description' => 'required|string'
+            ]);
 
-        $annualHoliday = AnnualHoliday::findOrFail($id);
-        $annualHoliday->update($validatedData);
+            $annualHoliday = AnnualHoliday::findOrFail($id);
+            $annualHoliday->update($validatedData);
 
-        return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil diubah');
+            return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil diubah');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengubah data: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -116,10 +144,18 @@ class AnnualHolidayController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $annualHoliday = AnnualHoliday::findOrFail($id);
-        $annualHoliday->delete();
+        try {
+            //code...
+            $annualHoliday = AnnualHoliday::findOrFail($id);
+            $annualHoliday->delete();
 
-        return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('annual-holidays.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data: ' . $th->getMessage());
+        }
 
     }
 }

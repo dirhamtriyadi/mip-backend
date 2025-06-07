@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Yajra\DataTables\Facades\DataTables;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class RoleController extends Controller implements HasMiddleware
 {
@@ -71,20 +73,34 @@ class RoleController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
-            'permissions' => 'nullable|array',
-        ]);
 
-        $role = new Role();
-        $role->name = $validatedData['name'];
-        $role->save();
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255|unique:roles,name',
+                'permissions' => 'nullable|array',
+            ]);
 
-        if ($request->filled('permissions')) {
-            $role->syncPermissions($validatedData['permissions']);
+            $role = new Role();
+            $role->name = $validatedData['name'];
+            $role->save();
+
+            if ($request->filled('permissions')) {
+                $role->syncPermissions($validatedData['permissions']);
+            }
+
+            return redirect()->route('roles.index')->with('success', 'Data berhasil disimpan');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Data gagal disimpan: ' . $th->getMessage());
         }
-
-        return redirect()->route('roles.index')->with('success', 'Data berhasil disimpan');
     }
 
     /**
@@ -114,22 +130,36 @@ class RoleController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $id,
-            'permissions' => 'nullable|array',
-        ]);
 
-        $role = Role::findOrFail($id);
-        $role->name = $validatedData['name'];
-        $role->save();
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255|unique:roles,name,' . $id,
+                'permissions' => 'nullable|array',
+            ]);
 
-        if ($request->filled('permissions')) {
-            $role->syncPermissions($validatedData['permissions']);
-        } else {
-            $role->syncPermissions([]);
+            $role = Role::findOrFail($id);
+            $role->name = $validatedData['name'];
+            $role->save();
+
+            if ($request->filled('permissions')) {
+                $role->syncPermissions($validatedData['permissions']);
+            } else {
+                $role->syncPermissions([]);
+            }
+
+            return redirect()->route('roles.index')->with('success', 'Data berhasil diubah');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Data gagal diubah: ' . $th->getMessage());
         }
-
-        return redirect()->route('roles.index')->with('success', 'Data berhasil diubah');
     }
 
     /**
@@ -137,9 +167,17 @@ class RoleController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $role = Role::findOrFail($id);
-        $role->delete();
+        try {
+            //code...
+            $role = Role::findOrFail($id);
+            $role->delete();
 
-        return redirect()->route('roles.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('roles.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Data gagal dihapus: ' . $th->getMessage());
+        }
     }
 }

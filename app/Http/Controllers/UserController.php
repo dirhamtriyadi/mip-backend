@@ -10,6 +10,8 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Bank;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller implements HasMiddleware
 {
@@ -79,30 +81,43 @@ class UserController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'nik' => 'required|string|max:255|unique:detail_users,nik',
-            'bank_id' => 'nullable|exists:banks,id',
-            'role' => 'nullable|exists:roles,name',
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8|confirmed',
+                'nik' => 'required|string|max:255|unique:detail_users,nik',
+                'bank_id' => 'nullable|exists:banks,id',
+                'role' => 'nullable|exists:roles,name',
+            ]);
 
-        $user = new User();
-        $user->name = $validatedData['name'];
-        $user->email = $validatedData['email'];
-        $user->password = Hash::make($validatedData['password']);
-        $user->bank_id = $validatedData['bank_id'];
-        $user->save();
-        $user->detail_users()->create([
-            'nik' => $validatedData['nik'],
-        ]);
+            $user = new User();
+            $user->name = $validatedData['name'];
+            $user->email = $validatedData['email'];
+            $user->password = Hash::make($validatedData['password']);
+            $user->bank_id = $validatedData['bank_id'];
+            $user->save();
+            $user->detail_users()->create([
+                'nik' => $validatedData['nik'],
+            ]);
 
-        if ($request->filled('role')) {
-            $user->assignRole($validatedData['role']);
+            if ($request->filled('role')) {
+                $user->assignRole($validatedData['role']);
+            }
+
+            return redirect()->route('users.index')->with('success', 'User created successfully.');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Failed to create user: ' . $th->getMessage());
         }
-
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
     /**
@@ -136,38 +151,51 @@ class UserController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id)->load('detail_users');
-        $detailUserId = $user->detail_users->id ?? null;
+        try {
+            //code...
+            $user = User::findOrFail($id)->load('detail_users');
+            $detailUserId = $user->detail_users->id ?? null;
 
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8|confirmed',
-            'nik' => 'required|string|max:255|unique:detail_users,nik,' . $detailUserId,
-            'bank_id' => 'nullable|exists:banks,id',
-            'role' => 'nullable|array',
-            'role.*' => 'exists:roles,name',
-        ]);
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+                'password' => 'nullable|string|min:8|confirmed',
+                'nik' => 'required|string|max:255|unique:detail_users,nik,' . $detailUserId,
+                'bank_id' => 'nullable|exists:banks,id',
+                'role' => 'nullable|array',
+                'role.*' => 'exists:roles,name',
+            ]);
 
-        $user->name = $validatedData['name'];
-        $user->email = $validatedData['email'];
-        if ($validatedData['password']) {
-            $user->password = Hash::make($validatedData['password']);
+            $user->name = $validatedData['name'];
+            $user->email = $validatedData['email'];
+            if ($validatedData['password']) {
+                $user->password = Hash::make($validatedData['password']);
+            }
+            $user->bank_id = $validatedData['bank_id'];
+            $user->save();
+            $user->detail_users()->updateOrCreate(
+                ['user_id' => $user->id],
+                ['nik' => $validatedData['nik']]
+            );
+
+            if ($request->filled('role')) {
+                $user->syncRoles($validatedData['role']);
+            } else {
+                $user->syncRoles([]);
+            }
+
+            return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Failed to update user: ' . $th->getMessage());
         }
-        $user->bank_id = $validatedData['bank_id'];
-        $user->save();
-        $user->detail_users()->updateOrCreate(
-            ['user_id' => $user->id],
-            ['nik' => $validatedData['nik']]
-        );
-
-        if ($request->filled('role')) {
-            $user->syncRoles($validatedData['role']);
-        } else {
-            $user->syncRoles([]);
-        }
-
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -175,9 +203,17 @@ class UserController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
+        try {
+            //code...
+            $user = User::findOrFail($id);
+            $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+            return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Failed to delete user: ' . $th->getMessage());
+        }
     }
 }

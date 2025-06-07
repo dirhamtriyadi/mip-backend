@@ -9,6 +9,8 @@ use App\Models\Leave;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class LeaveController extends Controller implements HasMiddleware
 {
@@ -82,17 +84,30 @@ class LeaveController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'status' => 'required|in:pending,approved,rejected',
-            'response' => 'nullable',
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date',
+                'status' => 'required|in:pending,approved,rejected',
+                'response' => 'nullable',
+            ]);
 
-        Leave::create($validatedData);
+            Leave::create($validatedData);
 
-        return redirect()->route('leaves.index')->with('success', 'Cuti berhasil diajukan');
+            return redirect()->route('leaves.index')->with('success', 'Cuti berhasil diajukan');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->withErrors(['general' => 'Failed to submit leave: ' . $th->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -122,18 +137,31 @@ class LeaveController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-            'status' => 'required|in:pending,approved,rejected',
-            'response' => 'nullable',
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date',
+                'status' => 'required|in:pending,approved,rejected',
+                'response' => 'nullable',
+            ]);
 
-        $leave = Leave::findOrFail($id);
-        $leave->update($validatedData);
+            $leave = Leave::findOrFail($id);
+            $leave->update($validatedData);
 
-        return redirect()->route('leaves.index')->with('success', 'Data berhasil diubah');
+            return redirect()->route('leaves.index')->with('success', 'Data berhasil diubah');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->withErrors(['general' => 'Failed to update leave: ' . $th->getMessage()])->withInput();
+        }
     }
 
     /**
@@ -141,10 +169,18 @@ class LeaveController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $leave = Leave::findOrFail($id);
-        $leave->delete();
+        try {
+            //code...
+            $leave = Leave::findOrFail($id);
+            $leave->delete();
 
-        return redirect()->route('leaves.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('leaves.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->withErrors(['general' => 'Failed to delete leave: ' . $th->getMessage()])->withInput();
+        }
     }
 
     public function response(Request $request, string $id)
@@ -154,9 +190,17 @@ class LeaveController extends Controller implements HasMiddleware
             'response' => 'nullable',
         ]);
 
-        $leave = Leave::findOrFail($id);
-        $leave->update($validatedData);
+        try {
+            //code...
+            $leave = Leave::findOrFail($id);
+            $leave->update($validatedData);
 
-        return redirect()->route('leaves.index')->with('success', 'Data berhasil diubah');
+            return redirect()->route('leaves.index')->with('success', 'Data berhasil diubah');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->withErrors(['general' => 'Failed to update leave response: ' . $th->getMessage()])->withInput();
+        }
     }
 }

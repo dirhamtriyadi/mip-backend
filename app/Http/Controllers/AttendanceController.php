@@ -11,6 +11,8 @@ use App\Models\AnnualHoliday;
 use App\Models\WorkSchedule;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class AttendanceController extends Controller implements HasMiddleware
 {
@@ -93,78 +95,126 @@ class AttendanceController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'code' => 'required',
-            'date' => 'required|date',
-            'time_check_in' => 'required|date_format:H:i',
-            'time_check_out' => 'nullable|date_format:H:i',
-            'type' => 'required|in:present,sick,permit',
-            'reason_late' => 'nullable',
-            'reason_early_out' => 'nullable',
-            'image_check_in' => 'nullable|image',
-            'image_check_out' => 'nullable|image',
-            'location_check_in' => 'nullable',
-            'location_check_out' => 'nullable',
-        ]);
+        DB::beginTransaction(); // Mulai transaksi database
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'code' => 'required',
+                'date' => 'required|date',
+                'time_check_in' => 'required|date_format:H:i',
+                'time_check_out' => 'nullable|date_format:H:i',
+                'type' => 'required|in:present,sick,permit',
+                'reason_late' => 'nullable',
+                'reason_early_out' => 'nullable',
+                'image_check_in' => 'nullable|image',
+                'image_check_out' => 'nullable|image',
+                'location_check_in' => 'nullable',
+                'location_check_out' => 'nullable',
+            ]);
 
-        // Cek apakah hari ini adalah hari libur
-        $isHoliday = AnnualHoliday::where('holiday_date', $validatedData['date'])->exists();
-        if ($isHoliday) {
-            return redirect()->back()->with('error', 'Tanggal yang dipilih adalah hari libur');
+            // Cek apakah hari ini adalah hari libur
+            $isHoliday = AnnualHoliday::where('holiday_date', $validatedData['date'])->exists();
+            if ($isHoliday) {
+                return redirect()->back()->with('error', 'Tanggal yang dipilih adalah hari libur');
+            }
+
+            // Ambil jadwal kerja
+            $workSchedule = WorkSchedule::first();
+            if (!$workSchedule) {
+                return redirect()->back()->with('error', 'Jadwal kerja belum diatur');
+            }
+
+            // Periksa apakah hari ini adalah hari kerja
+            $dayOfWeek = Carbon::parse($validatedData['date'])->format('l');
+            if (!in_array($dayOfWeek, $workSchedule->working_days)) {
+                return redirect()->back()->with('error', 'Hari ini bukan hari kerja');
+            }
+
+            // Hitung keterlambatan
+            $checkInTime = Carbon::parse($validatedData['time_check_in']);
+            $workStartTime = Carbon::parse($workSchedule->work_start_time);
+            $lateDuration = $checkInTime->greaterThan($workStartTime) ? $checkInTime->diffInMinutes($workStartTime) : 0;
+            $validatedData['late_duration'] = $lateDuration;
+
+            // Hitung pulang lebih awal
+            if ($validatedData['time_check_out']) {
+                $checkOutTime = Carbon::parse($validatedData['time_check_out']);
+                $workEndTime = Carbon::parse($workSchedule->work_end_time);
+                $earlyLeaveDuration = $checkOutTime->lessThan($workEndTime) ? $workEndTime->diffInMinutes($checkOutTime) : 0;
+                $validatedData['early_leave_duration'] = $earlyLeaveDuration;
+            }
+
+            // save image check in
+            if ($request->hasFile('image_check_in')) {
+                // save image to public/images/attendances and change name file to name user-timestamp
+                $file = $request->file('image_check_in');
+                $fileName = $validatedData['user_id'] . '-' . 'masuk' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/attendances'), $fileName);
+                $validatedData['image_check_in'] = $fileName;
+            }
+
+            // save image check out
+            if ($request->hasFile('image_check_out')) {
+                // save image to public/images/attendances and change name file to name user-timestamp
+                $file = $request->file('image_check_out');
+                $fileName = $validatedData['user_id'] . '-' . 'pulang' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/attendances'), $fileName);
+                $validatedData['image_check_out'] = $fileName;
+            }
+
+            $validatedData['created_by'] = auth()->id();
+            // $validatedData['updated_by'] = auth()->id();
+            // $validatedData['deleted_by'] = auth()->id();
+
+            Attendance::create($validatedData);
+
+            return redirect()->route('attendances.index')->with('success', 'Data berhasil ditambahkan');
+        } catch (ValidationException $e) {
+            DB::rollBack(); // Batalkan transaksi jika ada error validasi
+
+            // Hapus jika ada file yang diupload
+            if ($request->hasFile('image_check_in')) {
+                $fileName = $validatedData['user_id'] . '-' . 'masuk' . '-' . time() . '.' . $request->file('image_check_in')->getClientOriginalExtension();
+                if (file_exists(public_path('images/attendances/' . $fileName))) {
+                    unlink(public_path('images/attendances/' . $fileName));
+                }
+            }
+
+            if ($request->hasFile('image_check_out')) {
+                $fileName = $validatedData['user_id'] . '-' . 'pulang' . '-' . time() . '.' . $request->file('image_check_out')->getClientOriginalExtension();
+                if (file_exists(public_path('images/attendances/' . $fileName))) {
+                    unlink(public_path('images/attendances/' . $fileName));
+                }
+            }
+
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack(); // Batalkan transaksi jika ada error
+
+            // Hapus jika ada file yang diupload
+            if ($request->hasFile('image_check_in')) {
+                $fileName = $validatedData['user_id'] . '-' . 'masuk' . '-' . time() . '.' . $request->file('image_check_in')->getClientOriginalExtension();
+                if (file_exists(public_path('images/attendances/' . $fileName))) {
+                    unlink(public_path('images/attendances/' . $fileName));
+                }
+            }
+
+            if ($request->hasFile('image_check_out')) {
+                $fileName = $validatedData['user_id'] . '-' . 'pulang' . '-' . time() . '.' . $request->file('image_check_out')->getClientOriginalExtension();
+                if (file_exists(public_path('images/attendances/' . $fileName))) {
+                    unlink(public_path('images/attendances/' . $fileName));
+                }
+            }
+
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menambahkan data: ' . $th->getMessage())->withInput();
         }
-
-        // Ambil jadwal kerja
-        $workSchedule = WorkSchedule::first();
-        if (!$workSchedule) {
-            return redirect()->back()->with('error', 'Jadwal kerja belum diatur');
-        }
-
-        // Periksa apakah hari ini adalah hari kerja
-        $dayOfWeek = Carbon::parse($validatedData['date'])->format('l');
-        if (!in_array($dayOfWeek, $workSchedule->working_days)) {
-            return redirect()->back()->with('error', 'Hari ini bukan hari kerja');
-        }
-
-        // Hitung keterlambatan
-        $checkInTime = Carbon::parse($validatedData['time_check_in']);
-        $workStartTime = Carbon::parse($workSchedule->work_start_time);
-        $lateDuration = $checkInTime->greaterThan($workStartTime) ? $checkInTime->diffInMinutes($workStartTime) : 0;
-        $validatedData['late_duration'] = $lateDuration;
-
-        // Hitung pulang lebih awal
-        if ($validatedData['time_check_out']) {
-            $checkOutTime = Carbon::parse($validatedData['time_check_out']);
-            $workEndTime = Carbon::parse($workSchedule->work_end_time);
-            $earlyLeaveDuration = $checkOutTime->lessThan($workEndTime) ? $workEndTime->diffInMinutes($checkOutTime) : 0;
-            $validatedData['early_leave_duration'] = $earlyLeaveDuration;
-        }
-
-        // save image check in
-        if ($request->hasFile('image_check_in')) {
-            // save image to public/images/attendances and change name file to name user-timestamp
-            $file = $request->file('image_check_in');
-            $fileName = $validatedData['user_id'] . '-' . 'masuk' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/attendances'), $fileName);
-            $validatedData['image_check_in'] = $fileName;
-        }
-
-        // save image check out
-        if ($request->hasFile('image_check_out')) {
-            // save image to public/images/attendances and change name file to name user-timestamp
-            $file = $request->file('image_check_out');
-            $fileName = $validatedData['user_id'] . '-' . 'pulang' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/attendances'), $fileName);
-            $validatedData['image_check_out'] = $fileName;
-        }
-
-        $validatedData['created_by'] = auth()->id();
-        // $validatedData['updated_by'] = auth()->id();
-        // $validatedData['deleted_by'] = auth()->id();
-
-        Attendance::create($validatedData);
-
-        return redirect()->route('attendances.index')->with('success', 'Data berhasil ditambahkan');
     }
 
     /**
@@ -194,88 +244,136 @@ class AttendanceController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'code' => 'required',
-            'date' => 'required|date',
-            'time_check_in' => 'required|date_format:H:i',
-            'time_check_out' => 'nullable|date_format:H:i',
-            'type' => 'required|in:present,sick,permit',
-            'reason_late' => 'nullable',
-            'reason_early_out' => 'nullable',
-            'image_check_in' => 'nullable|image',
-            'image_check_out' => 'nullable|image',
-            'location_check_in' => 'nullable',
-            'location_check_out' => 'nullable',
-        ]);
+        DB::beginTransaction(); // Mulai transaksi database
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'code' => 'required',
+                'date' => 'required|date',
+                'time_check_in' => 'required|date_format:H:i',
+                'time_check_out' => 'nullable|date_format:H:i',
+                'type' => 'required|in:present,sick,permit',
+                'reason_late' => 'nullable',
+                'reason_early_out' => 'nullable',
+                'image_check_in' => 'nullable|image',
+                'image_check_out' => 'nullable|image',
+                'location_check_in' => 'nullable',
+                'location_check_out' => 'nullable',
+            ]);
 
-        // Ambil jadwal kerja
-        $isHoliday = AnnualHoliday::where('holiday_date', $validatedData['date'])->exists();
-        if ($isHoliday) {
-            return redirect()->back()->with('error', 'Tanggal yang dipilih adalah hari libur');
-        }
-
-        // Ambil jadwal kerja
-        $workSchedule = WorkSchedule::first();
-        if (!$workSchedule) {
-            return redirect()->back()->with('error', 'Jadwal kerja belum diatur');
-        }
-
-        // Periksa apakah hari ini adalah hari kerja
-        $dayOfWeek = Carbon::parse($validatedData['date'])->format('l');
-        if (!in_array($dayOfWeek, $workSchedule->working_days)) {
-            return redirect()->back()->with('error', 'Tanggal yang dipilih adalah hari libur');
-        }
-
-        // Hitung keterlambatan
-        $checkInTime = Carbon::parse($validatedData['time_check_in']);
-        $workStartTime = Carbon::parse($workSchedule->work_start_time);
-        $lateDuration = $checkInTime->greaterThan($workStartTime) ? $checkInTime->diffInMinutes($workStartTime) : 0;
-        $validatedData['late_duration'] = $lateDuration;
-
-        // Hitung pulang lebih awal
-        if ($validatedData['time_check_out']) {
-            $checkOutTime = Carbon::parse($validatedData['time_check_out']);
-            $workEndTime = Carbon::parse($workSchedule->work_end_time);
-            $earlyLeaveDuration = $checkOutTime->lessThan($workEndTime) ? $workEndTime->diffInMinutes($checkOutTime) : 0;
-            $validatedData['early_leave_duration'] = $earlyLeaveDuration;
-        }
-
-        $attendance = Attendance::findOrFail($id);
-
-        // save image check in
-        if ($request->hasFile('image_check_in')) {
-            // remove old image
-            if (file_exists(public_path('images/attendances/' . $attendance->image_check_in))) {
-                unlink(public_path('images/attendances/' . $attendance->image_check_in));
+            // Ambil jadwal kerja
+            $isHoliday = AnnualHoliday::where('holiday_date', $validatedData['date'])->exists();
+            if ($isHoliday) {
+                return redirect()->back()->with('error', 'Tanggal yang dipilih adalah hari libur');
             }
 
-            // save image to public/images/attendances and change name file to name user-timestamp
-            $file = $request->file('image_check_in');
-            $fileName = $validatedData['user_id'] . '-' . 'masuk' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/attendances'), $fileName);
-            $validatedData['image_check_in'] = $fileName;
-        }
-
-        // save image check out
-        if ($request->hasFile('image_check_out')) {
-            // remove old image
-            if (file_exists(public_path('images/attendances/' . $attendance->image_check_out))) {
-                unlink(public_path('images/attendances/' . $attendance->image_check_out));
+            // Ambil jadwal kerja
+            $workSchedule = WorkSchedule::first();
+            if (!$workSchedule) {
+                return redirect()->back()->with('error', 'Jadwal kerja belum diatur');
             }
 
-            // save image to public/images/attendances and change name file to name user-timestamp
-            $file = $request->file('image_check_out');
-            $fileName = $validatedData['user_id'] . '-' . 'pulang' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/attendances'), $fileName);
-            $validatedData['image_check_out'] = $fileName;
+            // Periksa apakah hari ini adalah hari kerja
+            $dayOfWeek = Carbon::parse($validatedData['date'])->format('l');
+            if (!in_array($dayOfWeek, $workSchedule->working_days)) {
+                return redirect()->back()->with('error', 'Tanggal yang dipilih adalah hari libur');
+            }
+
+            // Hitung keterlambatan
+            $checkInTime = Carbon::parse($validatedData['time_check_in']);
+            $workStartTime = Carbon::parse($workSchedule->work_start_time);
+            $lateDuration = $checkInTime->greaterThan($workStartTime) ? $checkInTime->diffInMinutes($workStartTime) : 0;
+            $validatedData['late_duration'] = $lateDuration;
+
+            // Hitung pulang lebih awal
+            if ($validatedData['time_check_out']) {
+                $checkOutTime = Carbon::parse($validatedData['time_check_out']);
+                $workEndTime = Carbon::parse($workSchedule->work_end_time);
+                $earlyLeaveDuration = $checkOutTime->lessThan($workEndTime) ? $workEndTime->diffInMinutes($checkOutTime) : 0;
+                $validatedData['early_leave_duration'] = $earlyLeaveDuration;
+            }
+
+            $attendance = Attendance::findOrFail($id);
+
+            // save image check in
+            if ($request->hasFile('image_check_in')) {
+                // remove old image
+                if (file_exists(public_path('images/attendances/' . $attendance->image_check_in))) {
+                    unlink(public_path('images/attendances/' . $attendance->image_check_in));
+                }
+
+                // save image to public/images/attendances and change name file to name user-timestamp
+                $file = $request->file('image_check_in');
+                $fileName = $validatedData['user_id'] . '-' . 'masuk' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/attendances'), $fileName);
+                $validatedData['image_check_in'] = $fileName;
+            }
+
+            // save image check out
+            if ($request->hasFile('image_check_out')) {
+                // remove old image
+                if (file_exists(public_path('images/attendances/' . $attendance->image_check_out))) {
+                    unlink(public_path('images/attendances/' . $attendance->image_check_out));
+                }
+
+                // save image to public/images/attendances and change name file to name user-timestamp
+                $file = $request->file('image_check_out');
+                $fileName = $validatedData['user_id'] . '-' . 'pulang' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/attendances'), $fileName);
+                $validatedData['image_check_out'] = $fileName;
+            }
+
+            $validatedData['updated_by'] = auth()->id();
+
+            $attendance->update($validatedData);
+
+            return redirect()->route('attendances.index')->with('success', 'Data berhasil diubah');
+        } catch (ValidationException $e) {
+            DB::rollBack(); // Batalkan transaksi jika ada error validasi
+
+            // Hapus jika ada file yang diupload
+            if ($request->hasFile('image_check_in')) {
+                $fileName = $validatedData['user_id'] . '-' . 'masuk' . '-' . time() . '.' . $request->file('image_check_in')->getClientOriginalExtension();
+                if (file_exists(public_path('images/attendances/' . $fileName))) {
+                    unlink(public_path('images/attendances/' . $fileName));
+                }
+            }
+
+            if ($request->hasFile('image_check_out')) {
+                $fileName = $validatedData['user_id'] . '-' . 'pulang' . '-' . time() . '.' . $request->file('image_check_out')->getClientOriginalExtension();
+                if (file_exists(public_path('images/attendances/' . $fileName))) {
+                    unlink(public_path('images/attendances/' . $fileName));
+                }
+            }
+
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack(); // Batalkan transaksi jika ada error
+
+            // Hapus jika ada file yang diupload
+            if ($request->hasFile('image_check_in')) {
+                $fileName = $validatedData['user_id'] . '-' . 'masuk' . '-' . time() . '.' . $request->file('image_check_in')->getClientOriginalExtension();
+                if (file_exists(public_path('images/attendances/' . $fileName))) {
+                    unlink(public_path('images/attendances/' . $fileName));
+                }
+            }
+
+            if ($request->hasFile('image_check_out')) {
+                $fileName = $validatedData['user_id'] . '-' . 'pulang' . '-' . time() . '.' . $request->file('image_check_out')->getClientOriginalExtension();
+                if (file_exists(public_path('images/attendances/' . $fileName))) {
+                    unlink(public_path('images/attendances/' . $fileName));
+                }
+            }
+
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal mengubah data: ' . $th->getMessage())->withInput();
         }
-
-        $validatedData['updated_by'] = auth()->id();
-
-        $attendance->update($validatedData);
-
-        return redirect()->route('attendances.index')->with('success', 'Data berhasil diubah');
     }
 
     /**
@@ -283,17 +381,25 @@ class AttendanceController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $attendance = Attendance::findOrFail($id);
+        try {
+            //code...
+            $attendance = Attendance::findOrFail($id);
 
-        // remove image
-        // if (file_exists(public_path('images/attendances/' . $attendance->image))) {
-        //     unlink(public_path('images/attendances/' . $attendance->image));
-        // }
+            // remove image
+            // if (file_exists(public_path('images/attendances/' . $attendance->image))) {
+            //     unlink(public_path('images/attendances/' . $attendance->image));
+            // }
 
-        $attendance->deleted_by = auth()->id();
-        $attendance->save();
-        $attendance->delete();
+            $attendance->deleted_by = auth()->id();
+            $attendance->save();
+            $attendance->delete();
 
-        return redirect()->route('attendances.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('attendances.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $th->getMessage())->withInput();
+        }
     }
 }

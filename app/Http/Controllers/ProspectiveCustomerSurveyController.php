@@ -9,6 +9,8 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class ProspectiveCustomerSurveyController extends Controller
 {
@@ -134,83 +136,83 @@ class ProspectiveCustomerSurveyController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi data
-        $validatedData = $request->validate([
-            'user_id' => 'nullable|exists:users,id',
-            'status' => 'nullable|in:pending,ongoing,done',
-            'name' => 'required|string|max:255',
-            'address' => 'required|string',
-            'number_ktp' => 'required|string|unique:prospective_customer_surveys,number_ktp',
-            'address_status' => 'nullable|string',
-            'phone_number' => 'nullable|string',
-            'npwp' => 'nullable|string',
-            'job_type' => 'nullable|string',
-            'company_name' => 'nullable|string',
-            'job_level' => 'nullable|string',
-            'employee_tenure' => 'nullable|string',
-            'employee_status' => 'nullable|string',
-            'salary' => 'nullable|string',
-            'other_business' => 'nullable|string',
-            'monthly_living_expenses' => 'nullable|string',
-            'children' => 'nullable|string',
-            'wife' => 'nullable|string',
-            'couple_jobs' => 'nullable|string',
-            'couple_business' => 'nullable|string',
-            'couple_income' => 'nullable|string',
-            'bank_debt' => 'nullable|string',
-            'cooperative_debt' => 'nullable|string',
-            'personal_debt' => 'nullable|string',
-            'online_debt' => 'nullable|string',
-            'customer_character_analysis' => 'nullable|string',
-            'financial_report_analysis' => 'nullable|string',
-            'slik_result' => 'nullable|string',
-            'info_provider_name' => 'nullable|string',
-            'info_provider_position' => 'nullable|string',
-            'workplace_condition' => 'nullable|string',
-            'employee_count' => 'nullable|string',
-            'business_duration' => 'nullable|string',
-            'office_address' => 'nullable|string',
-            'office_phone' => 'nullable|string',
-            'loan_application' => 'nullable|string',
-            'recommendation_from_vendors' => 'nullable|string',
-            'recommendation_from_treasurer' => 'nullable|string',
-            'recommendation_from_other' => 'nullable|string',
-            'recommendation_pt' => 'nullable|in:yes,no',
-            'description_survey' => 'nullable|string',
-            'location_survey' => 'nullable|string',
-            'date_survey' => 'nullable|date',
-            'latitude' => 'nullable|string',
-            'longitude' => 'nullable|string',
-            'location_string' => 'nullable|string',
-            'signature_officer' => 'nullable|image',
-            'signature_customer' => 'nullable|image',
-            'signature_couple' => 'nullable|image',
-            'workplace_image1' => 'nullable|image',
-            'workplace_image2' => 'nullable|image',
-            'customer_image' => 'nullable|image',
-            'ktp_image' => 'nullable|image',
-            'loan_guarantee_image1' => 'nullable|image',
-            'loan_guarantee_image2' => 'nullable|image',
-            'kk_image' => 'nullable|image',
-            'id_card_image' => 'nullable|image',
-            'salary_slip_image1' => 'nullable|image',
-            'salary_slip_image2' => 'nullable|image',
-        ]);
-
-        // Daftar field gambar yang akan di-upload
-        $imageFields = [
-            'signature_officer', 'signature_customer', 'signature_couple',
-            'workplace_image1', 'workplace_image2', 'customer_image',
-            'ktp_image', 'loan_guarantee_image1', 'loan_guarantee_image2',
-            'kk_image', 'id_card_image', 'salary_slip_image1', 'salary_slip_image2'
-        ];
-
-        // Menyimpan path file yang di-upload untuk rollback jika terjadi error
-        $uploadedImages = [];
-
-        DB::beginTransaction(); // Mulai transaksi
+        DB::beginTransaction();
 
         try {
+            // Validasi data
+            $validatedData = $request->validate([
+                'user_id' => 'nullable|exists:users,id',
+                'status' => 'nullable|in:pending,ongoing,done',
+                'name' => 'required|string|max:255',
+                'address' => 'required|string',
+                'number_ktp' => 'required|string|unique:prospective_customer_surveys,number_ktp',
+                'address_status' => 'nullable|string',
+                'phone_number' => 'nullable|string',
+                'npwp' => 'nullable|string',
+                'job_type' => 'nullable|string',
+                'company_name' => 'nullable|string',
+                'job_level' => 'nullable|string',
+                'employee_tenure' => 'nullable|string',
+                'employee_status' => 'nullable|string',
+                'salary' => 'nullable|string',
+                'other_business' => 'nullable|string',
+                'monthly_living_expenses' => 'nullable|string',
+                'children' => 'nullable|string',
+                'wife' => 'nullable|string',
+                'couple_jobs' => 'nullable|string',
+                'couple_business' => 'nullable|string',
+                'couple_income' => 'nullable|string',
+                'bank_debt' => 'nullable|string',
+                'cooperative_debt' => 'nullable|string',
+                'personal_debt' => 'nullable|string',
+                'online_debt' => 'nullable|string',
+                'customer_character_analysis' => 'nullable|string',
+                'financial_report_analysis' => 'nullable|string',
+                'slik_result' => 'nullable|string',
+                'info_provider_name' => 'nullable|string',
+                'info_provider_position' => 'nullable|string',
+                'workplace_condition' => 'nullable|string',
+                'employee_count' => 'nullable|string',
+                'business_duration' => 'nullable|string',
+                'office_address' => 'nullable|string',
+                'office_phone' => 'nullable|string',
+                'loan_application' => 'nullable|string',
+                'recommendation_from_vendors' => 'nullable|string',
+                'recommendation_from_treasurer' => 'nullable|string',
+                'recommendation_from_other' => 'nullable|string',
+                'recommendation_pt' => 'nullable|in:yes,no',
+                'description_survey' => 'nullable|string',
+                'location_survey' => 'nullable|string',
+                'date_survey' => 'nullable|date',
+                'latitude' => 'nullable|string',
+                'longitude' => 'nullable|string',
+                'location_string' => 'nullable|string',
+                'signature_officer' => 'nullable|image',
+                'signature_customer' => 'nullable|image',
+                'signature_couple' => 'nullable|image',
+                'workplace_image1' => 'nullable|image',
+                'workplace_image2' => 'nullable|image',
+                'customer_image' => 'nullable|image',
+                'ktp_image' => 'nullable|image',
+                'loan_guarantee_image1' => 'nullable|image',
+                'loan_guarantee_image2' => 'nullable|image',
+                'kk_image' => 'nullable|image',
+                'id_card_image' => 'nullable|image',
+                'salary_slip_image1' => 'nullable|image',
+                'salary_slip_image2' => 'nullable|image',
+            ]);
+
+            // Daftar field gambar yang akan di-upload
+            $imageFields = [
+                'signature_officer', 'signature_customer', 'signature_couple',
+                'workplace_image1', 'workplace_image2', 'customer_image',
+                'ktp_image', 'loan_guarantee_image1', 'loan_guarantee_image2',
+                'kk_image', 'id_card_image', 'salary_slip_image1', 'salary_slip_image2'
+            ];
+
+            // Menyimpan path file yang di-upload untuk rollback jika terjadi error
+            $uploadedImages = [];
+
             // Upload gambar jika ada
             foreach ($imageFields as $field) {
                 if ($request->hasFile($field)) {
@@ -228,6 +230,8 @@ class ProspectiveCustomerSurveyController extends Controller
             return redirect()->route('prospective-customer-surveys.index')->with('success', 'Survey created successfully');
         } catch (ValidationException $e) {
             DB::rollBack(); // Rollback jika validasi gagal
+
+            LoggerHelper::logError($e);
 
             // Hapus file yang sudah terunggah
             foreach ($uploadedImages as $path) {
@@ -278,85 +282,85 @@ class ProspectiveCustomerSurveyController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $survey = ProspectiveCustomerSurvey::findOrFail($id);
-
-        $validatedData = $request->validate([
-            // 'status' => 'nullable|in:pending,ongoing,done',
-            'status' => 'nullable|in:pending,ongoing,done',
-            'user_id' => 'nullable|exists:users,id',
-            'name' => 'nullable|string',
-            'address' => 'nullable|string',
-            'number_ktp' => 'nullable|string|unique:prospective_customer_surveys,number_ktp,' . $id,
-            'address_status' => 'nullable|string',
-            'phone_number' => 'nullable|string',
-            'npwp' => 'nullable|string',
-            'job_type' => 'nullable|string',
-            'company_name' => 'nullable|string',
-            'job_level' => 'nullable|string',
-            'employee_tenure' => 'nullable|string',
-            'employee_status' => 'nullable|string',
-            'salary' => 'nullable|string',
-            'other_business' => 'nullable|string',
-            'monthly_living_expenses' => 'nullable|string',
-            'children' => 'nullable|string',
-            'wife' => 'nullable|string',
-            'couple_jobs' => 'nullable|string',
-            'couple_business' => 'nullable|string',
-            'couple_income' => 'nullable|string',
-            'bank_debt' => 'nullable|string',
-            'cooperative_debt' => 'nullable|string',
-            'personal_debt' => 'nullable|string',
-            'online_debt' => 'nullable|string',
-            'customer_character_analysis' => 'nullable|string',
-            'financial_report_analysis' => 'nullable|string',
-            'slik_result' => 'nullable|string',
-            'info_provider_name' => 'nullable|string',
-            'info_provider_position' => 'nullable|string',
-            'workplace_condition' => 'nullable|string',
-            'employee_count' => 'nullable|string',
-            'business_duration' => 'nullable|string',
-            'office_address' => 'nullable|string',
-            'office_phone' => 'nullable|string',
-            'loan_application' => 'nullable|string',
-            'recommendation_from_vendors' => 'nullable|string',
-            'recommendation_from_treasurer' => 'nullable|string',
-            'recommendation_from_other' => 'nullable|string',
-            'recommendation_pt' => 'nullable|in:yes,no',
-            'description_survey' => 'nullable|string',
-            'location_survey' => 'nullable|string',
-            'date_survey' => 'nullable|date',
-            'latitude' => 'nullable|string',
-            'longitude' => 'nullable|string',
-            'location_string' => 'nullable|string',
-            'signature_officer' => 'nullable|image',
-            'signature_customer' => 'nullable|image',
-            'signature_couple' => 'nullable|image',
-            'workplace_image1' => 'nullable|image',
-            'workplace_image2' => 'nullable|image',
-            'customer_image' => 'nullable|image',
-            'ktp_image' => 'nullable|image',
-            'loan_guarantee_image1' => 'nullable|image',
-            'loan_guarantee_image2' => 'nullable|image',
-            'kk_image' => 'nullable|image',
-            'id_card_image' => 'nullable|image',
-            'salary_slip_image1' => 'nullable|image',
-            'salary_slip_image2' => 'nullable|image',
-        ]);
-
-        // Daftar field gambar
-        $imageFields = [
-            'signature_officer', 'signature_customer', 'signature_couple',
-            'workplace_image1', 'workplace_image2', 'customer_image',
-            'ktp_image', 'loan_guarantee_image1', 'loan_guarantee_image2',
-            'kk_image', 'id_card_image', 'salary_slip_image1', 'salary_slip_image2'
-        ];
-
-        // Simpan file yang diunggah untuk rollback jika ada error
-        $uploadedImages = [];
-        $oldImages = [];
-
         DB::beginTransaction();
         try {
+            $survey = ProspectiveCustomerSurvey::findOrFail($id);
+
+            $validatedData = $request->validate([
+                // 'status' => 'nullable|in:pending,ongoing,done',
+                'status' => 'nullable|in:pending,ongoing,done',
+                'user_id' => 'nullable|exists:users,id',
+                'name' => 'nullable|string',
+                'address' => 'nullable|string',
+                'number_ktp' => 'nullable|string|unique:prospective_customer_surveys,number_ktp,' . $id,
+                'address_status' => 'nullable|string',
+                'phone_number' => 'nullable|string',
+                'npwp' => 'nullable|string',
+                'job_type' => 'nullable|string',
+                'company_name' => 'nullable|string',
+                'job_level' => 'nullable|string',
+                'employee_tenure' => 'nullable|string',
+                'employee_status' => 'nullable|string',
+                'salary' => 'nullable|string',
+                'other_business' => 'nullable|string',
+                'monthly_living_expenses' => 'nullable|string',
+                'children' => 'nullable|string',
+                'wife' => 'nullable|string',
+                'couple_jobs' => 'nullable|string',
+                'couple_business' => 'nullable|string',
+                'couple_income' => 'nullable|string',
+                'bank_debt' => 'nullable|string',
+                'cooperative_debt' => 'nullable|string',
+                'personal_debt' => 'nullable|string',
+                'online_debt' => 'nullable|string',
+                'customer_character_analysis' => 'nullable|string',
+                'financial_report_analysis' => 'nullable|string',
+                'slik_result' => 'nullable|string',
+                'info_provider_name' => 'nullable|string',
+                'info_provider_position' => 'nullable|string',
+                'workplace_condition' => 'nullable|string',
+                'employee_count' => 'nullable|string',
+                'business_duration' => 'nullable|string',
+                'office_address' => 'nullable|string',
+                'office_phone' => 'nullable|string',
+                'loan_application' => 'nullable|string',
+                'recommendation_from_vendors' => 'nullable|string',
+                'recommendation_from_treasurer' => 'nullable|string',
+                'recommendation_from_other' => 'nullable|string',
+                'recommendation_pt' => 'nullable|in:yes,no',
+                'description_survey' => 'nullable|string',
+                'location_survey' => 'nullable|string',
+                'date_survey' => 'nullable|date',
+                'latitude' => 'nullable|string',
+                'longitude' => 'nullable|string',
+                'location_string' => 'nullable|string',
+                'signature_officer' => 'nullable|image',
+                'signature_customer' => 'nullable|image',
+                'signature_couple' => 'nullable|image',
+                'workplace_image1' => 'nullable|image',
+                'workplace_image2' => 'nullable|image',
+                'customer_image' => 'nullable|image',
+                'ktp_image' => 'nullable|image',
+                'loan_guarantee_image1' => 'nullable|image',
+                'loan_guarantee_image2' => 'nullable|image',
+                'kk_image' => 'nullable|image',
+                'id_card_image' => 'nullable|image',
+                'salary_slip_image1' => 'nullable|image',
+                'salary_slip_image2' => 'nullable|image',
+            ]);
+
+            // Daftar field gambar
+            $imageFields = [
+                'signature_officer', 'signature_customer', 'signature_couple',
+                'workplace_image1', 'workplace_image2', 'customer_image',
+                'ktp_image', 'loan_guarantee_image1', 'loan_guarantee_image2',
+                'kk_image', 'id_card_image', 'salary_slip_image1', 'salary_slip_image2'
+            ];
+
+            // Simpan file yang diunggah untuk rollback jika ada error
+            $uploadedImages = [];
+            $oldImages = [];
+
             // Upload gambar jika ada
             foreach ($imageFields as $field) {
                 if ($request->hasFile($field)) {
@@ -382,8 +386,20 @@ class ProspectiveCustomerSurveyController extends Controller
 
             DB::commit();
             return redirect()->route('prospective-customer-surveys.index')->with('success', 'Survey updated successfully');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+
+            LoggerHelper::logError($e);
+            // Hapus file baru yang diunggah jika terjadi error
+            foreach ($uploadedImages as $newPath) {
+                Storage::disk('public')->delete($newPath);
+            }
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
             DB::rollBack();
+
+            LoggerHelper::logError($e);
 
             // Hapus file baru yang diunggah jika terjadi error
             foreach ($uploadedImages as $newPath) {
@@ -400,12 +416,20 @@ class ProspectiveCustomerSurveyController extends Controller
      */
     public function destroy(string $id)
     {
-        $prospectiveCustomerSurvey = ProspectiveCustomerSurvey::findOrFail($id);
-        // $prospectiveCustomerSurvey->deleted_by = $user->id;
-        $prospectiveCustomerSurvey->save();
-        $prospectiveCustomerSurvey->delete();
+        try {
+            //code...
+            $prospectiveCustomerSurvey = ProspectiveCustomerSurvey::findOrFail($id);
+            // $prospectiveCustomerSurvey->deleted_by = $user->id;
+            $prospectiveCustomerSurvey->save();
+            $prospectiveCustomerSurvey->delete();
 
-        return redirect()->route('prospective-customer-surveys.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('prospective-customer-surveys.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $th->getMessage());
+        }
     }
 
     public function massDelete(Request $request)
@@ -415,17 +439,30 @@ class ProspectiveCustomerSurveyController extends Controller
             'ids.*' => 'required|exists:prospective_customer_surveys,id',
         ]);
 
-        $ids = $request->input('ids', []);
-        $user = auth()->user();
+        try {
+            //code...
+            $ids = $request->input('ids', []);
+            $user = auth()->user();
 
-        foreach ($ids as $id) {
-            $survey = ProspectiveCustomerSurvey::findOrFail($id);
-            // $survey->deleted_by = $user->id;
-            $survey->save();
-            $survey->delete();
+            foreach ($ids as $id) {
+                $survey = ProspectiveCustomerSurvey::findOrFail($id);
+                // $survey->deleted_by = $user->id;
+                $survey->save();
+                $survey->delete();
+            }
+
+            return redirect()->route('prospective-customer-surveys.index')->with('success', 'Data berhasil dihapus');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $th->getMessage());
         }
-
-        return redirect()->route('prospective-customer-surveys.index')->with('success', 'Data berhasil dihapus');
     }
 
     public function massSelectOfficer(Request $request)
@@ -436,27 +473,48 @@ class ProspectiveCustomerSurveyController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        $ids = $request->input('ids', []);
-        $user = auth()->user();
+        try {
+            //code...
+            $ids = $request->input('ids', []);
+            $user = auth()->user();
 
-        foreach ($ids as $id) {
-            $survey = ProspectiveCustomerSurvey::findOrFail($id);
-            $survey->user_id = $validatedData['user_id'];
-            // $survey->updated_by = $user->id;
-            $survey->save();
+            foreach ($ids as $id) {
+                $survey = ProspectiveCustomerSurvey::findOrFail($id);
+                $survey->user_id = $validatedData['user_id'];
+                // $survey->updated_by = $user->id;
+                $survey->save();
+            }
+
+            return redirect()->route('prospective-customer-surveys.index')->with('success', 'Data berhasil ditandatangani');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menandatangani data: ' . $th->getMessage());
         }
-
-        return redirect()->route('prospective-customer-surveys.index')->with('success', 'Data berhasil ditandatangani');
     }
 
     public function exportPdfByCustomer(string $id)
     {
-        $survey = ProspectiveCustomerSurvey::findOrFail($id);
+        try {
+            //code...
+            $survey = ProspectiveCustomerSurvey::findOrFail($id);
 
-        $pdf = Pdf::loadView('prospective-customer-surveys.pdf-by-customer', [
-            'data' => $survey,
-        ])->setPaper('a4', 'portrait');
+            $pdf = Pdf::loadView('prospective-customer-surveys.pdf-by-customer', [
+                'data' => $survey,
+            ])->setPaper('a4', 'portrait');
 
-        return $pdf->stream('pdf');
+            return $pdf->stream('pdf');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $th->getMessage());
+        }
     }
 }

@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Models\Bank;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class ProspectiveCustomerController extends Controller implements HasMiddleware
 {
@@ -101,20 +103,20 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp',
-            'ktp' => 'required|file|mimes:jpg,png,jpeg|max:2048',
-            'kk' => 'required|file|mimes:jpg,png,jpeg|max:2048',
-            'status' => 'nullable|in:pending,approved,rejected',
-            'status_message' => 'nullable|string',
-            'user_id' => 'nullable|exists:users,id',
-            'bank_id' => 'nullable|exists:banks,id',
-        ]);
-
         DB::beginTransaction(); // Mulai transaksi database
 
         try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp',
+                'ktp' => 'required|file|mimes:jpg,png,jpeg|max:2048',
+                'kk' => 'required|file|mimes:jpg,png,jpeg|max:2048',
+                'status' => 'nullable|in:pending,approved,rejected',
+                'status_message' => 'nullable|string',
+                'user_id' => 'nullable|exists:users,id',
+                'bank_id' => 'nullable|exists:banks,id',
+            ]);
+
             // Simpan file jika ada
             if ($request->hasFile('ktp')) {
                 $file = $request->file('ktp');
@@ -138,8 +140,17 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
 
             DB::commit(); // Jika berhasil, simpan perubahan
             return redirect()->route('prospective-customers.index')->with('success', 'Prospective Customer created successfully.');
+        } catch (ValidationException $e) {
+            DB::rollBack(); // Batalkan transaksi jika ada error validasi
+
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (\Throwable $e) {
             DB::rollBack(); // Jika ada error, batalkan semua perubahan
+
+            LoggerHelper::logError($e);
 
             // Hapus file jika sudah terlanjur disimpan
             if (!empty($validatedData['ktp'])) {
@@ -182,56 +193,92 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp,' . $id,
-            'ktp' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
-            'kk' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
-            'status' => 'nullable|in:approved,rejected',
-            'status_message' => 'nullable|string',
-            'user_id' => 'nullable|exists:users,id',
-            'bank_id' => 'nullable|exists:banks,id',
-        ]);
+        DB::beginTransaction(); // Mulai transaksi database
 
-        $prospectiveCustomer = ProspectiveCustomer::findOrFail($id);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'no_ktp' => 'required|numeric|unique:prospective_customers,no_ktp,' . $id,
+                'ktp' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
+                'kk' => 'nullable|file|mimes:jpg,png,jpeg|max:2048',
+                'status' => 'nullable|in:approved,rejected',
+                'status_message' => 'nullable|string',
+                'user_id' => 'nullable|exists:users,id',
+                'bank_id' => 'nullable|exists:banks,id',
+            ]);
 
-        // save image check in
-        if ($request->hasFile('ktp')) {
-            // remove old image
-            if (file_exists(public_path('images/prospective-customers/' . $prospectiveCustomer->ktp))) {
-                unlink(public_path('images/prospective-customers/' . $prospectiveCustomer->ktp));
+            $prospectiveCustomer = ProspectiveCustomer::findOrFail($id);
+
+            // save image check in
+            if ($request->hasFile('ktp')) {
+                // remove old image
+                if (file_exists(public_path('images/prospective-customers/' . $prospectiveCustomer->ktp))) {
+                    unlink(public_path('images/prospective-customers/' . $prospectiveCustomer->ktp));
+                }
+
+                // save image to public/images/prospective-customers and change name file to name user-timestamp
+                $file = $request->file('ktp');
+                $fileName = $validatedData['name'] . '-' . 'ktp' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/prospective-customers'), $fileName);
+                $validatedData['ktp'] = $fileName;
+            } else {
+                unset($validatedData['ktp']);
             }
 
-            // save image to public/images/prospective-customers and change name file to name user-timestamp
-            $file = $request->file('ktp');
-            $fileName = $validatedData['name'] . '-' . 'ktp' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/prospective-customers'), $fileName);
-            $validatedData['ktp'] = $fileName;
-        } else {
-            unset($validatedData['ktp']);
-        }
+            // save image check out
+            if ($request->hasFile('kk')) {
+                // remove old image
+                if (file_exists(public_path('images/prospective-customers/' . $prospectiveCustomer->kk))) {
+                    unlink(public_path('images/prospective-customers/' . $prospectiveCustomer->kk));
+                }
 
-        // save image check out
-        if ($request->hasFile('kk')) {
-            // remove old image
-            if (file_exists(public_path('images/prospective-customers/' . $prospectiveCustomer->kk))) {
-                unlink(public_path('images/prospective-customers/' . $prospectiveCustomer->kk));
+                // save image to public/images/prospective-customers and change name file to name user-timestamp
+                $file = $request->file('kk');
+                $fileName = $validatedData['name'] . '-' . 'kk' . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/prospective-customers'), $fileName);
+                $validatedData['kk'] = $fileName;
+            } else {
+                unset($validatedData['kk']);
             }
 
-            // save image to public/images/prospective-customers and change name file to name user-timestamp
-            $file = $request->file('kk');
-            $fileName = $validatedData['name'] . '-' . 'kk' . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/prospective-customers'), $fileName);
-            $validatedData['kk'] = $fileName;
-        } else {
-            unset($validatedData['kk']);
+            $validatedData['updated_by'] = auth()->id();
+
+            $prospectiveCustomer->update($validatedData);
+
+            DB::commit(); // Jika berhasil, simpan perubahan
+            return redirect()->route('prospective-customers.index')->with('success', 'Prospective Customer updated successfully.');
+        } catch (ValidationException $e) {
+            DB::rollBack(); // Batalkan transaksi jika ada error validasi
+
+            // Hapus file jika sudah terlanjur disimpan
+            if (!empty($validatedData['ktp'])) {
+                File::delete(public_path('images/prospective-customers/' . $validatedData['ktp']));
+            }
+            if (!empty($validatedData['kk'])) {
+                File::delete(public_path('images/prospective-customers/' . $validatedData['kk']));
+            }
+
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+
+            DB::rollBack(); // Jika ada error, batalkan semua perubahan
+            // Hapus file jika sudah terlanjur disimpan
+            if (!empty($validatedData['ktp'])) {
+                File::delete(public_path('images/prospective-customers/' . $validatedData['ktp']));
+            }
+            if (!empty($validatedData['kk'])) {
+                File::delete(public_path('images/prospective-customers/' . $validatedData['kk']));
+            }
+
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Failed to update Prospective Customer: ' . $th->getMessage());
         }
-
-        $validatedData['updated_by'] = auth()->id();
-
-        $prospectiveCustomer->update($validatedData);
-
-        return redirect()->route('prospective-customers.index')->with('success', 'Prospective Customer updated successfully.');
     }
 
     /**
@@ -239,21 +286,29 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $prospectiveCustomer = ProspectiveCustomer::findOrFail($id);
+        try {
+            //code...
+            $prospectiveCustomer = ProspectiveCustomer::findOrFail($id);
 
-        // remove image
-        if (file_exists(public_path('images/prospective-customers/' . $prospectiveCustomer->ktp))) {
-            unlink(public_path('images/prospective-customers/' . $prospectiveCustomer->ktp));
+            // remove image
+            if (file_exists(public_path('images/prospective-customers/' . $prospectiveCustomer->ktp))) {
+                unlink(public_path('images/prospective-customers/' . $prospectiveCustomer->ktp));
+            }
+            if (file_exists(public_path('images/prospective-customers/' . $prospectiveCustomer->kk))) {
+                unlink(public_path('images/prospective-customers/' . $prospectiveCustomer->kk));
+            }
+
+            // $prospectiveCustomer->deleted_by = auth()->id();
+            $prospectiveCustomer->save();
+            $prospectiveCustomer->delete();
+
+            return redirect()->route('prospective-customers.index')->with('success', 'Prospective Customer deleted successfully.');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Failed to delete Prospective Customer: ' . $th->getMessage());
         }
-        if (file_exists(public_path('images/prospective-customers/' . $prospectiveCustomer->kk))) {
-            unlink(public_path('images/prospective-customers/' . $prospectiveCustomer->kk));
-        }
-
-        // $prospectiveCustomer->deleted_by = auth()->id();
-        $prospectiveCustomer->save();
-        $prospectiveCustomer->delete();
-
-        return redirect()->route('prospective-customers.index')->with('success', 'Prospective Customer deleted successfully.');
     }
 
     public function proccessProspectiveCustomer(Request $request)
@@ -271,36 +326,48 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
             'status_message' => 'nullable|string',
         ]);
 
-        $prospectiveCustomer = ProspectiveCustomer::findOrFail($request->id);
-        $prospectiveCustomer->status = $request->status;
+        try {
+            //code...
+            $prospectiveCustomer = ProspectiveCustomer::findOrFail($request->id);
+            $prospectiveCustomer->status = $request->status;
 
-        if ($request->status === 'approved') {
-            // $prospectiveCustomer->status_message = null;
-            $prospectiveCustomer->status_message = $request->status_message;
-            $prospectiveCustomer->fill($validatedData);
-        } else {
-            $prospectiveCustomer->status_message = $request->status_message;
+            if ($request->status === 'approved') {
+                // $prospectiveCustomer->status_message = null;
+                $prospectiveCustomer->status_message = $request->status_message;
+                $prospectiveCustomer->fill($validatedData);
+            } else {
+                $prospectiveCustomer->status_message = $request->status_message;
+            }
+
+            $prospectiveCustomer->save();
+
+            if ($request->status === 'approved') {
+                $prospectiveCustomer->prospectiveCustomerSurvey()->updateOrCreate(
+                    ['prospective_customer_id' => $prospectiveCustomer->id],
+                    [
+                        'user_id' => $validatedData['user_id'] ?? null,
+                        'status' => 'pending',
+                        'name' => $validatedData['name'] ?? $prospectiveCustomer->name,
+                        'address' => $validatedData['address'] ?? $prospectiveCustomer->address,
+                        'number_ktp' => $validatedData['no_ktp'] ?? $prospectiveCustomer->no_ktp,
+                        'address_status' => $validatedData['address_status'] ?? $prospectiveCustomer->address_status,
+                        'phone_number' => $validatedData['phone_number'] ?? $prospectiveCustomer->phone_number,
+                        'npwp' => $validatedData['npwp'] ?? $prospectiveCustomer->npwp,
+                    ]
+                );
+            }
+
+            return redirect()->route('prospective-customers.index')->with('success', 'Prospective Customer updated successfully.');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Failed to process Prospective Customer: ' . $th->getMessage());
         }
-
-        $prospectiveCustomer->save();
-
-        if ($request->status === 'approved') {
-            $prospectiveCustomer->prospectiveCustomerSurvey()->updateOrCreate(
-                ['prospective_customer_id' => $prospectiveCustomer->id],
-                [
-                    'user_id' => $validatedData['user_id'] ?? null,
-                    'status' => 'pending',
-                    'name' => $validatedData['name'] ?? $prospectiveCustomer->name,
-                    'address' => $validatedData['address'] ?? $prospectiveCustomer->address,
-                    'number_ktp' => $validatedData['no_ktp'] ?? $prospectiveCustomer->no_ktp,
-                    'address_status' => $validatedData['address_status'] ?? $prospectiveCustomer->address_status,
-                    'phone_number' => $validatedData['phone_number'] ?? $prospectiveCustomer->phone_number,
-                    'npwp' => $validatedData['npwp'] ?? $prospectiveCustomer->npwp,
-                ]
-            );
-        }
-
-        return redirect()->route('prospective-customers.index')
-            ->with('success', 'Prospective Customer updated successfully.');
     }
 }

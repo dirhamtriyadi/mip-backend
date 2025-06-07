@@ -243,53 +243,77 @@ class OfficerReportController extends Controller
 
     public function export(Request $request)
     {
-        // get request start_date and end_date or set default this month
-        $start_date = $request->start_date ?? date('Y-m-01');
-        $end_date = $request->end_date ?? date('Y-m-t');
+        try {
+            //code...
+            // get request start_date and end_date or set default this month
+            $start_date = $request->start_date ?? date('Y-m-01');
+            $end_date = $request->end_date ?? date('Y-m-t');
 
-        return Excel::download(new OfficerReportExport($start_date, $end_date), 'laporan-petugas-' . Carbon::now()->toDateString() . '.xls');
+            return Excel::download(new OfficerReportExport($start_date, $end_date), 'laporan-petugas-' . Carbon::now()->toDateString() . '.xls');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal mengekspor laporan: ' . $th->getMessage());
+        }
     }
 
     public function exportByUser(Request $request)
     {
-        // get request start_date and end_date or set default this month
-        $start_date = $request->start_date ?? date('Y-m-01');
-        $end_date = $request->end_date ?? date('Y-m-t');
-        $user_id = $request->user_id;
+        try {
+            //code...
+            // get request start_date and end_date or set default this month
+            $start_date = $request->start_date ?? date('Y-m-01');
+            $end_date = $request->end_date ?? date('Y-m-t');
+            $user_id = $request->user_id;
 
-        if(!$user_id){
-            return redirect()->back()->with('error', 'User id is required');
+            if(!$user_id){
+                return redirect()->back()->with('error', 'User id is required');
+            }
+
+            $user = User::find($user_id);
+
+            if(!$user){
+                return redirect()->back()->with('error', 'User not found');
+            }
+
+            return Excel::download(new OfficerReportByUserExport($start_date, $end_date, $request->user_id), 'laporan-petugas-' . Carbon::now()->toDateString() . '-' . $user->name . '.xls');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal mengekspor laporan: ' . $th->getMessage());
         }
-
-        $user = User::find($user_id);
-
-        if(!$user){
-            return redirect()->back()->with('error', 'User not found');
-        }
-
-        return Excel::download(new OfficerReportByUserExport($start_date, $end_date, $request->user_id), 'laporan-petugas-' . Carbon::now()->toDateString() . '-' . $user->name . '.xls');
     }
 
     public function exportPdf(Request $request)
     {
-        // get request start_date and end_date or set default this month
-        $start_date = $request->start_date ?? date('Y-m-01');
-        $end_date = $request->end_date ?? date('Y-m-t');
+        try {
+            //code...
+            // get request start_date and end_date or set default this month
+            $start_date = $request->start_date ?? date('Y-m-01');
+            $end_date = $request->end_date ?? date('Y-m-t');
 
-        $officerReports = User::with(['customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
-            $query->whereBetween('created_at', [$start_date, $end_date]);
-        }, 'prospectiveCustomerSurveys' => function ($query) use ($start_date, $end_date) {
-            $query->whereBetween('created_at', [$start_date, $end_date]);
-        }, 'roles'])->whereHas('roles', function($query) {
-            $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
-        })->get();
+            $officerReports = User::with(['customerBillingFollowups' => function ($query) use ($start_date, $end_date) {
+                $query->whereBetween('created_at', [$start_date, $end_date]);
+            }, 'prospectiveCustomerSurveys' => function ($query) use ($start_date, $end_date) {
+                $query->whereBetween('created_at', [$start_date, $end_date]);
+            }, 'roles'])->whereHas('roles', function($query) {
+                $query->where('name', 'Surveyor')->orWhere('name', 'Penagih');
+            })->get();
 
-        $pdf = Pdf::loadView('officer-reports.pdf', [
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-            'data' => $officerReports,
-        ])->setPaper('a4', 'portrait');
+            $pdf = Pdf::loadView('officer-reports.pdf', [
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'data' => $officerReports,
+            ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('laporan-petugas-' . Carbon::now()->toDateString() . '.pdf');
+            return $pdf->download('laporan-petugas-' . Carbon::now()->toDateString() . '.pdf');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal mengekspor PDF: ' . $th->getMessage());
+        }
     }
 }

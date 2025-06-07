@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Bank;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -42,23 +44,36 @@ class ProfileController extends Controller
             'role.*' => 'exists:roles,name',
         ]);
 
-        $user = User::findOrFail(auth()->id());
-        $user->name = $validatedData['name'];
-        $user->email = $validatedData['email'];
-        $user->bank_id = $validatedData['bank_id'];
-        $user->save();
-        $user->detail_users()->updateOrCreate(
-            ['user_id' => $user->id],
-            ['nik' => $validatedData['nik']]
-        );
+        try {
+            //code...
+            $user = User::findOrFail(auth()->id());
+            $user->name = $validatedData['name'];
+            $user->email = $validatedData['email'];
+            $user->bank_id = $validatedData['bank_id'];
+            $user->save();
+            $user->detail_users()->updateOrCreate(
+                ['user_id' => $user->id],
+                ['nik' => $validatedData['nik']]
+            );
 
-        if ($request->filled('role')) {
-            $user->syncRoles($validatedData['role']);
-        } else {
-            $user->syncRoles([]);
+            if ($request->filled('role')) {
+                $user->syncRoles($validatedData['role']);
+            } else {
+                $user->syncRoles([]);
+            }
+
+            return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->withErrors(['general' => 'Failed to update profile: ' . $th->getMessage()])->withInput();
         }
-
-        return redirect()->route('profile.index')->with('success', 'Profile updated successfully.');
     }
 
     public function updatePassword(Request $request)
@@ -67,10 +82,23 @@ class ProfileController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::findOrFail(auth()->id());
-        $user->password = Hash::make($validatedData['password']);
-        $user->save();
+        try {
+            //code...
+            $user = User::findOrFail(auth()->id());
+            $user->password = Hash::make($validatedData['password']);
+            $user->save();
 
-        return redirect()->route('profile.index')->with('success', 'Password updated successfully.');
+            return redirect()->route('profile.index')->with('success', 'Password updated successfully.');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->withErrors(['general' => 'Failed to update password: ' . $th->getMessage()])->withInput();
+        }
     }
 }

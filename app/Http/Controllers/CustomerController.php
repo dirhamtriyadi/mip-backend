@@ -10,6 +10,8 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Bank;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Helpers\LoggerHelper;
+use Illuminate\Validation\ValidationException;
 
 class CustomerController extends Controller implements HasMiddleware
 {
@@ -92,54 +94,67 @@ class CustomerController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'no_contract' => 'required|numeric|unique:customers',
-            'bank_account_number' => 'nullable|numeric|unique:customers',
-            'name_customer' => 'required',
-            'name_mother' => 'nullable',
-            'phone_number' => 'nullable',
-            'status' => 'nullable|in:paid,not_yet_paid',
-            'bank_id' => 'nullable|numeric',
-            // 'user_id' => 'nullable|numeric',
-            'margin_start' => 'nullable|numeric',
-            'os_start' => 'nullable|numeric',
-            'margin_remaining' => 'nullable|numeric',
-            'installments' => 'nullable|numeric',
-            'month_arrears' => 'nullable|numeric',
-            'arrears' => 'nullable|numeric',
-            'due_date' => 'nullable|date',
-            'address' => 'nullable',
-            'village' => 'nullable',
-            'subdistrict' => 'nullable',
-            'description' => 'nullable'
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'no_contract' => 'required|numeric|unique:customers',
+                'bank_account_number' => 'nullable|numeric|unique:customers',
+                'name_customer' => 'required',
+                'name_mother' => 'nullable',
+                'phone_number' => 'nullable',
+                'status' => 'nullable|in:paid,not_yet_paid',
+                'bank_id' => 'nullable|numeric',
+                // 'user_id' => 'nullable|numeric',
+                'margin_start' => 'nullable|numeric',
+                'os_start' => 'nullable|numeric',
+                'margin_remaining' => 'nullable|numeric',
+                'installments' => 'nullable|numeric',
+                'month_arrears' => 'nullable|numeric',
+                'arrears' => 'nullable|numeric',
+                'due_date' => 'nullable|date',
+                'address' => 'nullable',
+                'village' => 'nullable',
+                'subdistrict' => 'nullable',
+                'description' => 'nullable'
+            ]);
 
-        $validatedData['created_by'] = auth()->id();
-        $customer = Customer::create([
-            'no_contract' => $validatedData['no_contract'],
-            'bank_account_number' => $validatedData['bank_account_number'],
-            'name_customer' => $validatedData['name_customer'],
-            'name_mother' => $validatedData['name_mother'],
-            'phone_number' => $validatedData['phone_number'],
-            'status' => $validatedData['status'] ?? null,
-            'bank_id' => $validatedData['bank_id'],
-            // 'user_id' => $validatedData['user_id'],
-            'margin_start' => $validatedData['margin_start'],
-            'os_start' => $validatedData['os_start'],
-            'margin_remaining' => $validatedData['margin_remaining'],
-            'installments' => $validatedData['installments'],
-            'month_arrears' => $validatedData['month_arrears'],
-            'arrears' => $validatedData['arrears'],
-            'due_date' => $validatedData['due_date'],
-            'description' => $validatedData['description']
-        ]);
-        $customer->customerAddress()->updateOrCreate(['customer_id' => $customer->id], [
-            'address' => $validatedData['address'],
-            'village' => $validatedData['village'],
-            'subdistrict' => $validatedData['subdistrict']
-        ]);
+            $validatedData['created_by'] = auth()->id();
+            $customer = Customer::create([
+                'no_contract' => $validatedData['no_contract'],
+                'bank_account_number' => $validatedData['bank_account_number'],
+                'name_customer' => $validatedData['name_customer'],
+                'name_mother' => $validatedData['name_mother'],
+                'phone_number' => $validatedData['phone_number'],
+                'status' => $validatedData['status'] ?? null,
+                'bank_id' => $validatedData['bank_id'],
+                // 'user_id' => $validatedData['user_id'],
+                'margin_start' => $validatedData['margin_start'],
+                'os_start' => $validatedData['os_start'],
+                'margin_remaining' => $validatedData['margin_remaining'],
+                'installments' => $validatedData['installments'],
+                'month_arrears' => $validatedData['month_arrears'],
+                'arrears' => $validatedData['arrears'],
+                'due_date' => $validatedData['due_date'],
+                'description' => $validatedData['description']
+            ]);
+            $customer->customerAddress()->updateOrCreate(['customer_id' => $customer->id], [
+                'address' => $validatedData['address'],
+                'village' => $validatedData['village'],
+                'subdistrict' => $validatedData['subdistrict']
+            ]);
 
-        return redirect()->route('customers.index')->with('success', 'Data berhasil disimpan');
+            return redirect()->route('customers.index')->with('success', 'Data berhasil disimpan');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('errors', 'Gagal menyimpan data: ' . $th->getMessage())->withInput();
+        }
     }
 
     /**
@@ -171,57 +186,70 @@ class CustomerController extends Controller implements HasMiddleware
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
-            'no_contract' => 'required|numeric|unique:customers,no_contract,' . $id,
-            'bank_account_number' => 'nullable|numeric|unique:customers,bank_account_number,' . $id,
-            'name_customer' => 'required',
-            'name_mother' => 'nullable',
-            'phone_number' => 'nullable',
-            'status' => 'nullable|in:paid,not_yet_paid',
-            'bank_id' => 'nullable|numeric',
-            // 'user_id' => 'nullable|numeric',
-            'margin_start' => 'nullable|numeric',
-            'os_start' => 'nullable|numeric',
-            'margin_remaining' => 'nullable|numeric',
-            'installments' => 'nullable|numeric',
-            'month_arrears' => 'nullable|numeric',
-            'arrears' => 'nullable|numeric',
-            'due_date' => 'nullable|date',
-            'address' => 'nullable',
-            'village' => 'nullable',
-            'subdistrict' => 'nullable',
-            'description' => 'nullable'
-        ]);
+        try {
+            //code...
+            $validatedData = $request->validate([
+                'no_contract' => 'required|numeric|unique:customers,no_contract,' . $id,
+                'bank_account_number' => 'nullable|numeric|unique:customers,bank_account_number,' . $id,
+                'name_customer' => 'required',
+                'name_mother' => 'nullable',
+                'phone_number' => 'nullable',
+                'status' => 'nullable|in:paid,not_yet_paid',
+                'bank_id' => 'nullable|numeric',
+                // 'user_id' => 'nullable|numeric',
+                'margin_start' => 'nullable|numeric',
+                'os_start' => 'nullable|numeric',
+                'margin_remaining' => 'nullable|numeric',
+                'installments' => 'nullable|numeric',
+                'month_arrears' => 'nullable|numeric',
+                'arrears' => 'nullable|numeric',
+                'due_date' => 'nullable|date',
+                'address' => 'nullable',
+                'village' => 'nullable',
+                'subdistrict' => 'nullable',
+                'description' => 'nullable'
+            ]);
 
-        $validatedData['updated_by'] = auth()->id();
+            $validatedData['updated_by'] = auth()->id();
 
-        $customer = Customer::findOrFail($id);
-        $customer->update([
-            'no_contract' => $validatedData['no_contract'],
-            'bank_account_number' => $validatedData['bank_account_number'],
-            'name_customer' => $validatedData['name_customer'],
-            'name_mother' => $validatedData['name_mother'],
-            'phone_number' => $validatedData['phone_number'],
-            'status' => $validatedData['status'] ?? null,
-            'bank_id' => $validatedData['bank_id'],
-            // 'user_id' => $validatedData['user_id'],
-            'margin_start' => $validatedData['margin_start'],
-            'os_start' => $validatedData['os_start'],
-            'margin_remaining' => $validatedData['margin_remaining'],
-            'installments' => $validatedData['installments'],
-            'month_arrears' => $validatedData['month_arrears'],
-            'arrears' => $validatedData['arrears'],
-            'due_date' => $validatedData['due_date'],
-            'description' => $validatedData['description']
-        ]);
+            $customer = Customer::findOrFail($id);
+            $customer->update([
+                'no_contract' => $validatedData['no_contract'],
+                'bank_account_number' => $validatedData['bank_account_number'],
+                'name_customer' => $validatedData['name_customer'],
+                'name_mother' => $validatedData['name_mother'],
+                'phone_number' => $validatedData['phone_number'],
+                'status' => $validatedData['status'] ?? null,
+                'bank_id' => $validatedData['bank_id'],
+                // 'user_id' => $validatedData['user_id'],
+                'margin_start' => $validatedData['margin_start'],
+                'os_start' => $validatedData['os_start'],
+                'margin_remaining' => $validatedData['margin_remaining'],
+                'installments' => $validatedData['installments'],
+                'month_arrears' => $validatedData['month_arrears'],
+                'arrears' => $validatedData['arrears'],
+                'due_date' => $validatedData['due_date'],
+                'description' => $validatedData['description']
+            ]);
 
-        $customer->customerAddress()->updateOrCreate(['customer_id' => $customer->id], [
-            'address' => $validatedData['address'],
-            'village' => $validatedData['village'],
-            'subdistrict' => $validatedData['subdistrict']
-        ]);
+            $customer->customerAddress()->updateOrCreate(['customer_id' => $customer->id], [
+                'address' => $validatedData['address'],
+                'village' => $validatedData['village'],
+                'subdistrict' => $validatedData['subdistrict']
+            ]);
 
-        return redirect()->route('customers.index')->with('success', 'Data berhasil diperbarui');
+            return redirect()->route('customers.index')->with('success', 'Data berhasil diperbarui');
+        } catch (ValidationException $e) {
+            LoggerHelper::logError($e);
+
+            // Jika ada error validasi, kembalikan dengan pesan error
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('errors', 'Gagal memperbarui data: ' . $th->getMessage())->withInput();
+        }
     }
 
     /**
@@ -229,11 +257,19 @@ class CustomerController extends Controller implements HasMiddleware
      */
     public function destroy(string $id)
     {
-        $customer = Customer::findOrFail($id);
-        $customer->deleted_by = auth()->id();
-        $customer->save();
-        $customer->delete();
+        try {
+            //code...
+            $customer = Customer::findOrFail($id);
+            $customer->deleted_by = auth()->id();
+            $customer->save();
+            $customer->delete();
 
-        return redirect()->route('customers.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('customers.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('errors', 'Gagal menghapus data: ' . $th->getMessage())->withInput();
+        }
     }
 }
