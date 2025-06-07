@@ -1,4 +1,5 @@
 <?php
+// filepath: /home/dirham/Downloads/mip-backend/app/Helpers/LoggerHelper.php
 
 namespace App\Helpers;
 
@@ -15,7 +16,7 @@ class LoggerHelper
         $controller = $caller['class'] ?? 'UnknownController';
         $action = $caller['function'] ?? 'unknownMethod';
 
-        $log = <<<LOG
+        $log = "\n" . <<<LOG
 ==================== ERROR LOG ====================
 Controller : {$controller}
 Action     : {$action}

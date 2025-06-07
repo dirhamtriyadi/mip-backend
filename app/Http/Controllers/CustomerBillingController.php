@@ -13,6 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\CustomerBillingImport;
+use App\Helpers\LoggerHelper;
 
 class CustomerBillingController extends Controller implements HasMiddleware
 {
@@ -238,10 +239,28 @@ class CustomerBillingController extends Controller implements HasMiddleware
             'user_id' => 'nullable|numeric',
         ]);
 
-        $file = $request->file('file');
-        Excel::import(new CustomerBillingImport($validatedData['bank_id'], $validatedData['user_id']), $file);
+        try {
+            $file = $request->file('file');
+            Excel::import(new CustomerBillingImport($validatedData['bank_id'], $validatedData['user_id']), $file);
 
-        return redirect()->route('customer-billings.index')->with('success', 'Data berhasil diimport');
+            return redirect()->route('customer-billings.index')->with('success', 'Data berhasil diimport');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            LoggerHelper::logError($e);
+
+            return redirect()->route('customer-billings.index')->withErrors([
+                'file' => collect($failures)->map(function ($failure) {
+                    return "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+                })->toArray()
+            ]);
+        } catch (\Throwable $th) {
+            LoggerHelper::logError($th);
+
+            return redirect()->route('customer-billings.index')->withErrors([
+                // 'file' => 'Terjadi kesalahan saat mengimport file: ' . $th->getMessage()
+                'file' => 'Terjadi kesalahan saat mengimport file, pastikan format file benar dan sesuai template yang telah disediakan, jika data kosong atau tidak ada biarkan saja kolom tersebut kosong.',
+            ]);
+        }
     }
 
     public function templateImport()
