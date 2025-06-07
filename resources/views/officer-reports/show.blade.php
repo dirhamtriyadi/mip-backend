@@ -107,6 +107,7 @@
                                                 <th>Nama Nasabah</th>
                                                 <th>Status</th>
                                                 <th>Bayar</th>
+                                                <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -230,6 +231,11 @@
                 {
                     "data": "payment_amount",
                     "render": $.fn.dataTable.render.number('.', ',', 0, 'Rp. ')
+                },
+                {
+                    "data": "action",
+                    "orderable": false,
+                    "searchable": false
                 }
             ],
             "columnDefs": [{

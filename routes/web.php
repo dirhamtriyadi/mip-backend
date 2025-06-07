@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
     Route::get('officer-reports/export-by-user', [OfficerReportController::class, 'exportByUser'])->name('officer-reports.exportByUser');
     Route::get('officer-reports/export-pdf', [OfficerReportController::class, 'exportPdf'])->name('officer-reports.exportPdf');
     Route::post('officer-reports/fetch-data-table-by-officer', [OfficerReportController::class, 'fetchDataTableByOfficer'])->name('officer-reports.fetchDataTableByOfficer');
+    Route::delete('officer-reports/delete-billing-followups-by-user/{id}', [OfficerReportController::class, 'destroyBillingFollowupByUser'])->name('officer-reports.destroyBillingFollowupByUser');
     Route::post('officer-reports/fetch-data-table-by-officer-survey', [OfficerReportController::class, 'fetchDataTableByOfficerSurvey'])->name('officer-reports.fetchDataTableByOfficerSurvey');
     Route::get('officer-reports/{id}', [OfficerReportController::class, 'show'])->name('officer-reports.show');
 

@@ -10,6 +10,8 @@ use App\Exports\OfficerReportByUserExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\BillingFollowup;
+use App\Helpers\LoggerHelper;
 
 class OfficerReportController extends Controller
 {
@@ -157,8 +159,54 @@ class OfficerReportController extends Controller
             ->editColumn('status', function ($data) {
                 return $data->status ? '<span class="badge badge-' . $data->status->color() . '">' . $data->status->label() . '</span>' : '-';
             })
+            ->addColumn('action', function ($data) {
+                return view('officer-reports.action-billing', [
+                    'value' => $data,
+                ]);
+            })
             ->rawColumns(['status'])
             ->toJson();
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroyBillingFollowupByUser(string $id)
+    {
+        try {
+            //code...
+            $billingFollowup = BillingFollowup::findOrFail($id);
+            if ($billingFollowup->proof) {
+                // Hapus file proof jika ada
+                $filePath = public_path('images/customer-billings/' . $billingFollowup->proof);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+            if ($billingFollowup->signature_officer) {
+                // Hapus file signature_officer jika ada
+                $filePath = public_path('images/customer-billings/' . $billingFollowup->signature_officer);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+            if ($billingFollowup->signature_customer) {
+                // Hapus file signature_customer jika ada
+                $filePath = public_path('images/customer-billings/' . $billingFollowup->signature_customer);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            }
+            // Hapus data billing followup
+            $billingFollowup->delete();
+
+            return redirect()->back()->with('success', 'Data berhasil dihapus.');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $th->getMessage());
+        }
     }
 
     public function fetchDataTableByOfficerSurvey(Request $request)
