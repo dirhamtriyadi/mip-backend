@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Validator;
 use App\Http\Resources\Api\V1\ProspectiveCustomerResource;
+use App\Helpers\LoggerHelper;
 
 class ProspectiveCustomerController extends Controller
 {
@@ -66,7 +67,7 @@ class ProspectiveCustomerController extends Controller
                 'message' => 'Data berhasil disimpan',
                 'data' => new ProspectiveCustomerResource($prospectiveCustomer),
             ], 201);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack(); // Jika ada error, batalkan semua perubahan
 
             // Hapus file jika sudah terlanjur disimpan
@@ -77,12 +78,15 @@ class ProspectiveCustomerController extends Controller
                 File::delete(public_path('images/prospective-customers/' . $validatedData['kk']));
             }
 
+            LoggerHelper::logError($e);
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Terjadi kesalahan',
                 'errors' => [
-                    'message' => $e->getMessage(),
-                ],
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
             ], 500);
         }
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Bank;
 use App\Http\Resources\Api\V1\BankResource;
+use App\Helpers\LoggerHelper;
 
 class BankController extends Controller
 {
@@ -22,13 +23,26 @@ class BankController extends Controller
      */
     public function allBanks()
     {
-        $banks = Bank::all();
+        try {
+            $banks = Bank::all();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'List of all banks',
-            'data' => BankResource::collection($banks),
-        ], 200);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'List of all banks',
+                'data' => BankResource::collection($banks),
+            ], 200);
+        } catch (\Throwable $th) {
+            LoggerHelper::logError($th);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve banks',
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
+            ], 500);
+        }
     }
 
     /**

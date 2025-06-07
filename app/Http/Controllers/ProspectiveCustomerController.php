@@ -138,7 +138,7 @@ class ProspectiveCustomerController extends Controller implements HasMiddleware
 
             DB::commit(); // Jika berhasil, simpan perubahan
             return redirect()->route('prospective-customers.index')->with('success', 'Prospective Customer created successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack(); // Jika ada error, batalkan semua perubahan
 
             // Hapus file jika sudah terlanjur disimpan

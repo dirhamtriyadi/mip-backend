@@ -8,6 +8,7 @@ use Auth;
 use Validator;
 use App\Models\User;
 use App\Http\Resources\Api\V1\UserResource;
+use App\Helpers\LoggerHelper;
 
 class AuthController extends Controller
 {
@@ -24,7 +25,7 @@ class AuthController extends Controller
             }
 
             // Load relationships jika diperlukan
-            $user->load(['bank', 'detailUser']);
+            $user->load(['bank', 'detail_users']);
 
             return response()->json([
                 'status' => 'success',
@@ -39,88 +40,138 @@ class AuthController extends Controller
                 ],
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            LoggerHelper::logError($e);
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to get user data',
-                'error' => $e->getMessage(),
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
             ], 500);
         }
     }
 
     public function register(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:6',
+            ]);
 
-        if ($validator->fails()) {
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation Error.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $data = $request->all();
+            $data['password'] = bcrypt($data['password']);
+
+            $user = User::create($data);
+
+            $token = $user->createToken('token')->plainTextToken;
+
+            return response()->json([
+                'data' => $user,
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'roles' => $user->getRoleNames(),
+                'permissions' => $user->getAllPermissions()
+            ], 201);
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'Validation Error.',
-                'errors' => $validator->errors()
-            ], 422);
+                'message' => 'Failed to register user',
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
+            ], 500);
         }
-
-        $data = $request->all();
-        $data['password'] = bcrypt($data['password']);
-
-        $user = User::create($data);
-
-        $token = $user->createToken('token')->plainTextToken;
-
-        return response()->json([
-            'data' => $user,
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()
-        ], 201);
     }
 
     public function login(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
+        try {
+            //code...
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required|string',
+            ]);
 
-        if ($validator->fails()) {
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation Error.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // logic login
+            if (!Auth::attempt($request->only('email', 'password'))) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+
+            $user = User::with('detail_users')->where('email', $request->email)->first();
+            // $user = Auth::user()->with('detail_users')->first();
+
+            $token = $user->createToken('token')->plainTextToken;
+
+            return response()->json([
+                'data' => new UserResource($user),
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                // 'roles' => $user->getRoleNames(),
+                // 'permissions' => $user->getAllPermissions()
+            ], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'Validation Error.',
-                'errors' => $validator->errors()
-            ], 422);
+                'message' => 'Failed to login',
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
+            ], 500);
         }
-
-        // logic login
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 401);
-        }
-
-        $user = User::with('detail_users')->where('email', $request->email)->first();
-        // $user = Auth::user()->with('detail_users')->first();
-
-        $token = $user->createToken('token')->plainTextToken;
-
-        return response()->json([
-            'data' => new UserResource($user),
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            // 'roles' => $user->getRoleNames(),
-            // 'permissions' => $user->getAllPermissions()
-        ], 200);
     }
 
     public function logout() {
-        Auth::user()->tokens()->delete();
+        try {
+            //code...
+            Auth::user()->tokens()->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Token revoked',
-        ], 200);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Token revoked',
+            ], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to logout',
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
+            ], 500);
+        }
     }
 }

@@ -11,12 +11,15 @@ use Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Helpers\LoggerHelper;
 
 class ProspectiveCustomerSurveyController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
+        try {
+            //code...
+            $user = auth()->user();
 
         // Ambil parameter pencarian
         $search = $request->search;
@@ -30,7 +33,9 @@ class ProspectiveCustomerSurveyController extends Controller
             $end_date = $request->filled('end_date')
                 ? Carbon::parse($request->end_date)->endOfDay()->format('Y-m-d H:i:s')
                 : Carbon::now()->endOfDay()->format('Y-m-d H:i:s');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            LoggerHelper::logError($e);
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid date format',
@@ -59,17 +64,45 @@ class ProspectiveCustomerSurveyController extends Controller
             'message' => 'Data retrieved successfully',
             'data' => ProspectiveCustomerSurveyResource::collection($surveys->get())
         ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve data',
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
+            ], 500);
+        }
     }
 
     public function show(Request $request, string $id)
     {
-        $survey = ProspectiveCustomerSurvey::findOrFail($id);
+        try {
+            //code...
+            $survey = ProspectiveCustomerSurvey::findOrFail($id);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data retrieved successfully',
-            'data' => ProspectiveCustomerSurveyResource::make($survey)
-        ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data retrieved successfully',
+                'data' => ProspectiveCustomerSurveyResource::make($survey)
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data not found',
+                'errors' => [
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
+            ], 404);
+        }
     }
 
     public function update(Request $request, string $id)
@@ -191,25 +224,45 @@ class ProspectiveCustomerSurveyController extends Controller
                 }
             }
 
+            LoggerHelper::logError($th);
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Terjadi kesalahan',
                 'errors' => [
-                    'message' => $th->getMessage(),
-                ],
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
             ], 500);
         }
     }
 
     public function exportPdfByCustomer(string $id)
     {
-        $survey = ProspectiveCustomerSurvey::findOrFail($id);
+        try {
+            //code...
+            $survey = ProspectiveCustomerSurvey::findOrFail($id);
 
-        $pdf = Pdf::loadView('prospective-customer-surveys.pdf-by-customer', [
-            'data' => $survey,
-        ])->setPaper('a4', 'portrait');
+            $pdf = Pdf::loadView('prospective-customer-surveys.pdf-by-customer', [
+                'data' => $survey,
+            ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('pdf');
+            return $pdf->download('pdf');
+        } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to export PDF',
+                'errors' => [
+                    'errors' => [
+                        'general' => [$th->getMessage()], // atau
+                        'exception' => $th->getMessage()
+                    ]
+                ],
+            ], 500);
+        }
     }
 
     public function updateStatus(Request $request, string $id)
@@ -235,12 +288,16 @@ class ProspectiveCustomerSurveyController extends Controller
                 'message' => 'Status updated successfully',
             ]);
         } catch (\Throwable $th) {
+            //throw $th;
+            LoggerHelper::logError($th);
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error updating status',
                 'errors' => [
-                    'message' => $th->getMessage(),
-                ],
+                    'general' => [$th->getMessage()], // atau
+                    'exception' => $th->getMessage()
+                ]
             ], 500);
         }
 

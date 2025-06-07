@@ -25,13 +25,13 @@ class CustomerBillingImport implements ToModel, WithHeadingRow
 
         try {
             return Carbon::createFromFormat('d/m/Y', $dateValue)->format('Y-m-d');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 return Carbon::createFromFormat('d-m-Y', $dateValue)->format('Y-m-d');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 try {
                     return Carbon::parse($dateValue)->format('Y-m-d');
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     return null;
                 }
             }
